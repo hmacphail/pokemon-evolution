@@ -1,0 +1,27 @@
+{
+  "name": "pokemon-evolution",
+  "version": "1.0.0",
+  "description": "Pokemon Evolution",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hmacphail/pokemon-evolution.git"
+  },
+  "author": "Heather MacPhail",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hmacphail/pokemon-evolution/issues"
+  },
+  "keywords": [
+    "pokemon",
+    "evolution"
+  ],
+  "dependencies": {
+    "express": "^4.14.0"
+  },
+  "homepage": "https://github.com/hmacphail/pokemon-evolution#readme",
+  "devDependencies": {}
+}
