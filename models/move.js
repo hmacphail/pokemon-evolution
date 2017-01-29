@@ -1,16 +1,14 @@
 var Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('Pokemon', {
-    pokedexId: {
-      type: Sequelize.FLOAT
-    },
+  return sequelize.define('Move', {
     name: {
       type: Sequelize.STRING(20)
     },
-
+    isTM: {
+      type: Sequelize.BOOLEAN
+    }
   }, {
-    freezeTableName: true,
     timestamps: false
   });
 }

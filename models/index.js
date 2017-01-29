@@ -27,9 +27,17 @@ if (!global.hasOwnProperty('db')) {
   global.db = {
     Sequelize: Sequelize,
     sequelize: sequelize,
+
+    Generation: sequelize.import(__dirname + '/generation'),
     Pokemon: sequelize.import(__dirname + '/pokemon'),
-    Generation: sequelize.import(__dirname + '/generation')
-    // add your other models here
+    Evolution: sequelize.import(__dirname + '/evolution'),
+    Type: sequelize.import(__dirname + '/type'),
+    Effectiveness: sequelize.import(__dirname + '/effectiveness'),
+    Skill: sequelize.import(__dirname + '/skill'),
+    Skillset: sequelize.import(__dirname + '/skillset'),
+    Move: sequelize.import(__dirname + '/move'),
+    Learnset: sequelize.import(__dirname + '/learnset'),
+    Item: sequelize.import(__dirname + '/item')
   }
   /*
     Associations can be defined here. E.g. like this:
