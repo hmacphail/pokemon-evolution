@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('Skill', {
+  return sequelize.define('skill', {
     name: {
       type: Sequelize.STRING(20)
     }

@@ -1,8 +1,8 @@
 var Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('Evolution', {
-    evolutionTrigger: {
+  return sequelize.define('evolution', {
+    trigger: {
       type: Sequelize.ENUM,
       values: ['level', 'item', 'trade']
     },

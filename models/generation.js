@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('Generation', {
+  return sequelize.define('generation', {
     name: {
       type: Sequelize.STRING(20)
     }

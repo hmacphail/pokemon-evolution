@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('Pokemon', {
+  return sequelize.define('pokemon', {
     pokedexId: {
       type: Sequelize.FLOAT
     },
