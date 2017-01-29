@@ -48,9 +48,11 @@ app.use(methodOverride());
 //app.get('/', routes.index);
 //app.get('/pokemon', pokemon.list);
 
+app.port = process.env.PORT || 5000;
+
 db.sequelize.sync().then(function() {
-  http.createServer(app).listen(5000, function(){
-    console.log('Express server listening on port 5000');
+  http.createServer(app).listen(app.port, function(){
+    console.log('Express server listening on port ' + app.port);
   });
 });
 
