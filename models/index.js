@@ -27,7 +27,8 @@ if (!global.hasOwnProperty('db')) {
   global.db = {
     Sequelize: Sequelize,
     sequelize: sequelize,
-    Pokemon: sequelize.import(__dirname + '/pokemon')
+    Pokemon: sequelize.import(__dirname + '/pokemon'),
+    Generation: sequelize.import(__dirname + '/generation')
     // add your other models here
   }
   /*

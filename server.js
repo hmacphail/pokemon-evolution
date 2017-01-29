@@ -76,51 +76,45 @@ db.sequelize.sync().then(function() {
 // routes ======================================================================
 
 // api ---------------------------------------------------------------------
-// get all pokemon
-app.get('/api/all_pokemon', function(req, res) {
-    // use sequelize to get all pokemon in the database
-    db.Pokemon.findAll().then(function (all_pokemon){
-      //console.log(all_pokemon.get('name'));
-      res.json(all_pokemon);
+// get all generations
+app.get('/api/generations', function(req, res) {
+
+    // use sequelize to get all generations in the database
+    db.Generation.findAll().then(function(generations) {
+        res.json(generations); // return all generations in JSON format
     });
 });
-/*
-// create todo and send back all todos after creation
-app.post('/api/pokemon', function(req, res) {
+
+// create generation and send back all generations after creation
+app.post('/api/generation', function(req, res) {
 
     // create a todo, information comes from AJAX request from Angular
-    Pokemon.create({
-        text : req.body.text,
-        done : false
-    }, function(err, todo) {
-        if (err)
-            res.send(err);
+    db.Generation.create({
+      name: req.body.text,
+    }).then(function() {
 
-        // get and return all the todos after you create another
-        Todo.find(function(err, todos) {
-            if (err)
-                res.send(err)
-            res.json(todos);
+        // get and return all the generations after you create another
+        db.Generation.findAll().then(function(generations) {
+            res.json(generations);
         });
     });
 
 });
 
-// delete a todo
-app.delete('/api/todos/:todo_id', function(req, res) {
-    Todo.remove({
-        _id : req.params.todo_id
-    }, function(err, todo) {
-        if (err)
-            res.send(err);
+// delete a generation
+app.delete('/api/generation/:generation_id', function(req, res) {
+    db.Generation.destroy({ where:
+      { id: req.params.generation_id }
+    }).then(function() {
 
-        // get and return all the todos after you create another
-        Todo.find(function(err, todos) {
-            if (err)
-                res.send(err)
-            res.json(todos);
+        // get and return all the generations after you delete one
+        db.Generation.findAll().then(function(generations) {
+            res.json(generations);
         });
     });
 });
-*/
 
+// application -------------------------------------------------------------
+app.get('*', function(req, res) {
+  res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
+});
