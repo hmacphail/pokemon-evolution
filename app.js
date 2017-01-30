@@ -19,8 +19,8 @@ app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse applica
 app.use(methodOverride());
 
 // routes ================================
-app.use('/api', require('./app/routes/api'));
-app.use('/', require('./app/routes/application'));
+app.use('/api', require('./config/routes/api'));
+app.use('/', require('./config/routes/application'));
 
 // start up server =======================
 db.sequelize.sync().then(function() {

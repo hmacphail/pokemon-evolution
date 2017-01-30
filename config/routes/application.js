@@ -5,7 +5,7 @@ var rootdir = global.rootdir;
 // main application ===============================
 
 router.get('*', function(req, res) {
-  res.sendFile(rootdir + '/app/views/home.html');
+  res.sendFile(rootdir + '/app/views/index.html');
 });
 
 module.exports = router;
