@@ -1,6 +1,6 @@
 var scotchTodo = angular.module('scotchTodo', []);
 
-function mainController($scope, $http) {
+function homeController($scope, $http) {
     $scope.formData = {};
 
     // when landing on the page, get all generations and show them
