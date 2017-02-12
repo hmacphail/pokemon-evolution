@@ -2,7 +2,7 @@ if (!global.hasOwnProperty('db')) {
   var Sequelize = require('sequelize')
     , sequelize = null
 
-  if (process.env.DATABASE_URL) {
+  if (process.env.NODE_ENV) {
     // the application is executed on Heroku ... use the postgres database
     sequelize = new Sequelize(process.env.DATABASE_URL, {
       dialect:  'postgres',
@@ -29,16 +29,16 @@ if (!global.hasOwnProperty('db')) {
     sequelize: sequelize,
 
     // link to model definitions and add to db variable
-    Generation: sequelize.import(__dirname + '/models/generation'),
-    Pokemon: sequelize.import(__dirname + '/models/pokemon'),
-    Evolution: sequelize.import(__dirname + '/models/evolution'),
-    Type: sequelize.import(__dirname + '/models/type'),
-    Effectiveness: sequelize.import(__dirname + '/models/effectiveness'),
-    Skill: sequelize.import(__dirname + '/models/skill'),
-    Skillset: sequelize.import(__dirname + '/models/skillset'),
-    Move: sequelize.import(__dirname + '/models/move'),
-    Learnset: sequelize.import(__dirname + '/models/learnset'),
-    Item: sequelize.import(__dirname + '/models/item')
+    Generation: sequelize.import(__dirname + '/generation'),
+    Pokemon: sequelize.import(__dirname + '/pokemon'),
+    Evolution: sequelize.import(__dirname + '/evolution'),
+    Type: sequelize.import(__dirname + '/type'),
+    Effectiveness: sequelize.import(__dirname + '/effectiveness'),
+    Skill: sequelize.import(__dirname + '/skill'),
+    Skillset: sequelize.import(__dirname + '/skillset'),
+    Move: sequelize.import(__dirname + '/move'),
+    Learnset: sequelize.import(__dirname + '/learnset'),
+    Item: sequelize.import(__dirname + '/item')
   }
   // global table associations
   db.Generation.hasMany(db.Pokemon, {as: 'GenIntroduced', foreignKey: 'genIntroducedId'});

@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var db = require(global.rootdir + '/config/database');
+var db = require(global.rootdir + '/server/models');
 
 // api ======================================================================
 

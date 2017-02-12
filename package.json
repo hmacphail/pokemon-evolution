@@ -2,7 +2,7 @@
   "name": "pokemon-evolution",
   "version": "0.0.0",
   "description": "Pokemon Evolution",
-  "main": "app.js",
+  "main": "index.js",
   "author": "Heather MacPhail",
   "dependencies": {
     "body-parser": "^1.4.3",
@@ -11,10 +11,10 @@
     "morgan": "^1.1.1",
     "pg": "^6.1.2",
     "pg-hstore": "^2.3.2",
-    "sequelize": "^3.30.0"
+    "sequelize": "^3.30.2"
   },
   "scripts": {
-    "start": "node app.js"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
