@@ -1,4 +1,4 @@
-var scotchTodo = angular.module('scotchTodo', []);
+var pokelution = angular.module('Pokelution', []);
 
 function homeController($scope, $http) {
     $scope.formData = {};

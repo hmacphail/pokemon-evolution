@@ -11,8 +11,8 @@ var db = require('./server/models');
 global.rootdir = __dirname;
 app.set('port', process.env.PORT || 5000);
 
-app.use(express.static(__dirname + '/public'));                 // set the static files location /public/img will be /img for users
-//app.set('views', __dirname + '/views');
+app.use("/app", express.static('app'));                // set the static files location /public/img will be /img for users
+app.use("/node_modules", express.static('node_modules'));
 app.use(morgan('dev'));                                         // log every request to the console
 app.use(bodyParser.urlencoded({'extended':'true'}));            // parse application/x-www-form-urlencoded
 app.use(bodyParser.json());                                     // parse application/json
@@ -22,10 +22,8 @@ app.use(methodOverride());
 // routes ================================
 app.use('/api', require('./server/routes/api'));
 //app.use('/', require('./server/routes/application'));
-app.get('/*', function (req, res) {
-  res.sendFile('index.html', {
-    root: './public'
-  })
+app.get('*', function (req, res) {
+  res.sendFile(__dirname + '/app/index.html');
 });
 
 // start up server =======================
