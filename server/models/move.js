@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('move', {
+  var Move = sequelize.define('move', {
     name: {
       type: Sequelize.STRING(20)
     },
@@ -9,6 +9,12 @@ module.exports = function(sequelize, DataTypes) {
       type: Sequelize.BOOLEAN
     }
   }, {
-    timestamps: false
+    timestamps: false,
+    classMethods: {
+      associate: function(db) {
+        Move.hasMany(db.Learnset);
+      }
+    }
   });
+  return Move;
 }

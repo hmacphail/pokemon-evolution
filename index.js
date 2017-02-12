@@ -9,10 +9,10 @@ var db = require('./server/models');
 
 // configuration ========================
 global.rootdir = __dirname;
-app.port = process.env.PORT || 5000;
+app.set('port', process.env.PORT || 5000);
 
 app.use(express.static(__dirname + '/public'));                 // set the static files location /public/img will be /img for users
-app.set('views', __dirname + '/views');
+//app.set('views', __dirname + '/views');
 app.use(morgan('dev'));                                         // log every request to the console
 app.use(bodyParser.urlencoded({'extended':'true'}));            // parse application/x-www-form-urlencoded
 app.use(bodyParser.json());                                     // parse application/json
@@ -20,12 +20,17 @@ app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse applica
 app.use(methodOverride());
 
 // routes ================================
-app.use('/api', require('./routes/api'));
-app.use('/', require('./routes/application'));
+app.use('/api', require('./server/routes/api'));
+//app.use('/', require('./server/routes/application'));
+app.get('/*', function (req, res) {
+  res.sendFile('index.html', {
+    root: './public'
+  })
+});
 
 // start up server =======================
 db.sequelize.sync().then(function() {
-  http.createServer(app).listen(app.port, function(){
-    console.log('Express server listening on port ' + app.port);
+  http.createServer(app).listen(app.get('port'), function(){
+    console.log('Express server listening on port ' + app.get('port'));
   });
 });

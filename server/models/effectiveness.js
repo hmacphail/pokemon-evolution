@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('effectiveness', {
+  var Effectiveness = sequelize.define('effectiveness', {
     comparison: {
       type: Sequelize.ENUM,
       values: ['strong', 'neutral', 'weak', 'unaffected']
@@ -10,4 +10,5 @@ module.exports = function(sequelize, DataTypes) {
     freezeTableName: true,
     timestamps: false
   });
+  return Effectiveness;
 }

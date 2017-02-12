@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('evolution', {
+  var Evolution = sequelize.define('evolution', {
     trigger: {
       type: Sequelize.ENUM,
       values: ['level', 'item', 'trade']
@@ -13,4 +13,5 @@ module.exports = function(sequelize, DataTypes) {
     freezeTableName: true,
     timestamps: false
   });
+  return Evolution;
 }
