@@ -1,7 +1,7 @@
 var homeController = require('./homeController');
 var errorController = require('./errorController');
-var adminController = require('./adminController');
-var todoController = require('./todoController');
+var adminController = require('./admin/adminController');
+var todoController = require('./admin/todoController');
 
 // create controllers
 var ctrl = angular.module('controllers', []);

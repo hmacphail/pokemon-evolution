@@ -19,11 +19,11 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
       controller  : 'errorController'
     })
     .when('/admin', {
-      templateUrl : '/views/admin.html',
+      templateUrl : '/views/admin/admin.html',
       controller  : 'adminController'
     })
-    .when('/todo', {
-      templateUrl : '/views/todo.html',
+    .when('/admin/todo', {
+      templateUrl : '/views/admin/todo.html',
       controller  : 'todoController'
     })
     .otherwise({redirectTo: '/404'});

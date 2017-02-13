@@ -1,4 +1,4 @@
-var todoService = require('./todoService');
+var todoService = require('./admin/todoService');
 
 // create factories
 var srvc = angular.module('services', []);

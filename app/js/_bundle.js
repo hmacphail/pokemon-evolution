@@ -4,32 +4,6 @@ module.exports = function ($scope) {
   };
 
 },{}],2:[function(require,module,exports){
-var homeController = require('./homeController');
-var errorController = require('./errorController');
-var adminController = require('./adminController');
-var todoController = require('./todoController');
-
-// create controllers
-var ctrl = angular.module('controllers', []);
-
-ctrl.controller('homeController', ['$scope', homeController]);
-ctrl.controller('errorController', ['$scope', errorController]);
-ctrl.controller('adminController', ['$scope', adminController]);
-ctrl.controller('todoController', ['$scope', 'Generations', todoController]);
-
-},{"./adminController":1,"./errorController":3,"./homeController":4,"./todoController":5}],3:[function(require,module,exports){
-module.exports = function ($scope) {
-    $scope.message = 'Page not found!';
-  };
-
-
-},{}],4:[function(require,module,exports){
-module.exports = function ($scope) {
-    $scope.message = 'Everyone come and see how good I look!';
-  };
-
-
-},{}],5:[function(require,module,exports){
 module.exports = function ($scope, Generations) {
 
     $scope.formData = {};
@@ -68,14 +42,33 @@ module.exports = function ($scope, Generations) {
     };
   };
 
+},{}],3:[function(require,module,exports){
+var homeController = require('./homeController');
+var errorController = require('./errorController');
+var adminController = require('./admin/adminController');
+var todoController = require('./admin/todoController');
+
+// create controllers
+var ctrl = angular.module('controllers', []);
+
+ctrl.controller('homeController', ['$scope', homeController]);
+ctrl.controller('errorController', ['$scope', errorController]);
+ctrl.controller('adminController', ['$scope', adminController]);
+ctrl.controller('todoController', ['$scope', 'Generations', todoController]);
+
+},{"./admin/adminController":1,"./admin/todoController":2,"./errorController":4,"./homeController":5}],4:[function(require,module,exports){
+module.exports = function ($scope) {
+    $scope.message = 'Page not found!';
+  };
+
+
+},{}],5:[function(require,module,exports){
+module.exports = function ($scope) {
+    $scope.message = 'Everyone come and see how good I look!';
+  };
+
+
 },{}],6:[function(require,module,exports){
-var todoService = require('./todoService');
-
-// create factories
-var srvc = angular.module('services', []);
-srvc.factory('Generations', ['$http', todoService]);
-
-},{"./todoService":7}],7:[function(require,module,exports){
 module.exports = function($http) {
     return {
       get: function() {
@@ -90,7 +83,14 @@ module.exports = function($http) {
     }
   };
 
-},{}],8:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
+var todoService = require('./admin/todoService');
+
+// create factories
+var srvc = angular.module('services', []);
+srvc.factory('Generations', ['$http', todoService]);
+
+},{"./admin/todoService":6}],8:[function(require,module,exports){
 /*
  AngularJS v1.6.2
  (c) 2010-2017 Google, Inc. http://angularjs.org
@@ -465,15 +465,15 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
       controller  : 'errorController'
     })
     .when('/admin', {
-      templateUrl : '/views/admin.html',
+      templateUrl : '/views/admin/admin.html',
       controller  : 'adminController'
     })
-    .when('/todo', {
-      templateUrl : '/views/todo.html',
+    .when('/admin/todo', {
+      templateUrl : '/views/admin/todo.html',
       controller  : 'todoController'
     })
     .otherwise({redirectTo: '/404'});
   $locationProvider.html5Mode(true);
 }]);
 
-},{"./controllers/controllers":2,"./services/services":6,"./vendors/angular-route.min":8,"./vendors/angular.min":9}]},{},[10]);
+},{"./controllers/controllers":3,"./services/services":7,"./vendors/angular-route.min":8,"./vendors/angular.min":9}]},{},[10]);
