@@ -16,7 +16,7 @@
   },
   "scripts": {
     "start": "nodemon index.js",
-    "browser": "watchify app/js/app.js -o app/js/bundle.js"
+    "browser": "watchify app/js/app.js -o app/js/_bundle.js"
   },
   "repository": {
     "type": "git",

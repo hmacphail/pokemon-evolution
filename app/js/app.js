@@ -8,23 +8,24 @@ require('./services/services');
 
 var app = angular.module('pokelution', ['controllers', 'services', 'ngRoute']);
 
-app.config(['$routeProvider', function($routeProvider) {
+app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
   $routeProvider
     .when('/', {
       templateUrl : '/views/home.html',
       controller  : 'homeController'
     })
-    .when('/about', {
-      templateUrl : '/views/about.html',
-      controller  : 'aboutController'
+    .when('/404', {
+      templateUrl : '/views/error.html',
+      controller  : 'errorController'
     })
-    .when('/contact', {
-      templateUrl : '/views/contact.html',
-      controller  : 'contactController'
+    .when('/admin', {
+      templateUrl : '/views/admin.html',
+      controller  : 'adminController'
     })
     .when('/todo', {
       templateUrl : '/views/todo.html',
       controller  : 'todoController'
     })
-    .otherwise({redirectTo: '/'});
+    .otherwise({redirectTo: '/404'});
+  $locationProvider.html5Mode(true);
 }]);
