@@ -2,7 +2,7 @@
   "name": "pokemon-evolution",
   "version": "0.0.0",
   "description": "Pokemon Evolution",
-  "main": "index.js",
+  "main": "app.js",
   "author": "Heather MacPhail",
   "dependencies": {
     "body-parser": "^1.16.1",
@@ -15,8 +15,9 @@
     "sequelize": "^3.30.2"
   },
   "scripts": {
-    "start": "nodemon index.js",
-    "browser": "watchify app/js/app.js -o app/js/_bundle.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "watch": "watchify app/js/app.js -o app/js/_bundle.js"
   },
   "repository": {
     "type": "git",
