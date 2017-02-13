@@ -20,10 +20,10 @@ app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse applica
 app.use(methodOverride());
 
 // routes ================================
-app.use('/api', require('./server/routes/api'));
+app.use('/api', require('./server/routes'));
 //app.use('/', require('./server/routes/application'));
 app.get('*', function (req, res) {
-  res.sendFile(__dirname + '/app/index.html');
+  res.sendFile(__dirname + '/index.html');
 });
 
 // start up server =======================

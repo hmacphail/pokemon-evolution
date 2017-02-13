@@ -458,19 +458,19 @@ var app = angular.module('pokelution', ['controllers', 'services', 'ngRoute']);
 app.config(['$routeProvider', function($routeProvider) {
   $routeProvider
     .when('/', {
-      templateUrl : '/app/views/home.html',
+      templateUrl : '/views/home.html',
       controller  : 'homeController'
     })
     .when('/about', {
-      templateUrl : '/app/views/about.html',
+      templateUrl : '/views/about.html',
       controller  : 'aboutController'
     })
     .when('/contact', {
-      templateUrl : '/app/views/contact.html',
+      templateUrl : '/views/contact.html',
       controller  : 'contactController'
     })
     .when('/todo', {
-      templateUrl : '/app/views/todo.html',
+      templateUrl : '/views/todo.html',
       controller  : 'todoController'
     })
     .otherwise({redirectTo: '/'});
