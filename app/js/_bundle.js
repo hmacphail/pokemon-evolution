@@ -1,30 +1,29 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports = function ($scope) {
-    $scope.message = 'Look! I am an about page.';
+    $scope.message = 'Home admin page';
   };
-
 
 },{}],2:[function(require,module,exports){
-module.exports = function ($scope) {
-    $scope.message = 'Contact us! JK. This is just a demo.';
-  };
-
-
-},{}],3:[function(require,module,exports){
 var homeController = require('./homeController');
-var aboutController = require('./aboutController');
-var contactController = require('./contactController');
+var errorController = require('./errorController');
+var adminController = require('./adminController');
 var todoController = require('./todoController');
 
 // create controllers
 var ctrl = angular.module('controllers', []);
 
 ctrl.controller('homeController', ['$scope', homeController]);
-ctrl.controller('aboutController', ['$scope', aboutController]);
-ctrl.controller('contactController', ['$scope', contactController]);
+ctrl.controller('errorController', ['$scope', errorController]);
+ctrl.controller('adminController', ['$scope', adminController]);
 ctrl.controller('todoController', ['$scope', 'Generations', todoController]);
 
-},{"./aboutController":1,"./contactController":2,"./homeController":4,"./todoController":5}],4:[function(require,module,exports){
+},{"./adminController":1,"./errorController":3,"./homeController":4,"./todoController":5}],3:[function(require,module,exports){
+module.exports = function ($scope) {
+    $scope.message = 'Page not found!';
+  };
+
+
+},{}],4:[function(require,module,exports){
 module.exports = function ($scope) {
     $scope.message = 'Everyone come and see how good I look!';
   };
@@ -458,23 +457,23 @@ var app = angular.module('pokelution', ['controllers', 'services', 'ngRoute']);
 app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
   $routeProvider
     .when('/', {
-      templateUrl : '/app/views/home.html',
+      templateUrl : '/views/home.html',
       controller  : 'homeController'
     })
-    .when('/about', {
-      templateUrl : '/app/views/about.html',
-      controller  : 'aboutController'
+    .when('/404', {
+      templateUrl : '/views/error.html',
+      controller  : 'errorController'
     })
-    .when('/contact', {
-      templateUrl : '/app/views/contact.html',
-      controller  : 'contactController'
+    .when('/admin', {
+      templateUrl : '/views/admin.html',
+      controller  : 'adminController'
     })
     .when('/todo', {
-      templateUrl : '/app/views/todo.html',
+      templateUrl : '/views/todo.html',
       controller  : 'todoController'
     })
-    .otherwise({redirectTo: '/'});
+    .otherwise({redirectTo: '/404'});
   $locationProvider.html5Mode(true);
 }]);
 
-},{"./controllers/controllers":3,"./services/services":6,"./vendors/angular-route.min":8,"./vendors/angular.min":9}]},{},[10]);
+},{"./controllers/controllers":2,"./services/services":6,"./vendors/angular-route.min":8,"./vendors/angular.min":9}]},{},[10]);
