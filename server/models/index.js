@@ -38,7 +38,8 @@ if (!global.hasOwnProperty('db')) {
     Skillset: sequelize.import(__dirname + '/skillset'),
     Move: sequelize.import(__dirname + '/move'),
     Learnset: sequelize.import(__dirname + '/learnset'),
-    Item: sequelize.import(__dirname + '/item')
+    Item: sequelize.import(__dirname + '/item'),
+    User: sequelize.import(__dirname + '/user')
   }
 }
 

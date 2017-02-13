@@ -39,21 +39,6 @@ module.exports = {
       });
   },
 
-  //Edit an existing generation details using model.update()
-  update(req, res) {
-    Generation.update(req.body, {
-      where: {
-        id: req.params.id
-      }
-    })
-    .then(function (updatedRecords) {
-      res.status(200).json(updatedRecords);
-    })
-    .catch(function (error){
-      res.status(500).json(error);
-    });
-  },
-
   //Delete an existing generation by the unique ID using model.destroy()
   delete(req, res) {
     Generation.destroy({
