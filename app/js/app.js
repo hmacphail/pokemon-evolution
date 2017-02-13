@@ -2,16 +2,11 @@
 require('./vendors/angular.min');
 require('./vendors/angular-route.min');
 
-// pull in the modules we are going to need (controllers, services, whatever)
-var homeController = require('./controllers/homeController');
-var aboutController = require('./controllers/aboutController');
-var contactController = require('./controllers/contactController');
-var todoController = require('./controllers/todoController');
+// pull in modules
+require('./controllers/controllers');
+require('./services/services');
 
-var todoService = require('./services/todoService');
-
-// module up
-var app = angular.module('pokelution', ['ngRoute']);
+var app = angular.module('pokelution', ['controllers', 'services', 'ngRoute']);
 
 app.config(['$routeProvider', function($routeProvider) {
   $routeProvider
@@ -32,14 +27,4 @@ app.config(['$routeProvider', function($routeProvider) {
       controller  : 'todoController'
     })
     .otherwise({redirectTo: '/'});
-
 }]);
-
-// create factories
-app.factory('Generations', ['$http', todoService]);
-
-// create controllers
-app.controller('homeController', ['$scope', homeController]);
-app.controller('aboutController', ['$scope', aboutController]);
-app.controller('contactController', ['$scope', contactController]);
-app.controller('todoController', ['$scope', 'Generations', todoController]);

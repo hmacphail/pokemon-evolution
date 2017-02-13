@@ -11,12 +11,26 @@ module.exports = function ($scope) {
 
 
 },{}],3:[function(require,module,exports){
+var homeController = require('./homeController');
+var aboutController = require('./aboutController');
+var contactController = require('./contactController');
+var todoController = require('./todoController');
+
+// create controllers
+var ctrl = angular.module('controllers', []);
+
+ctrl.controller('homeController', ['$scope', homeController]);
+ctrl.controller('aboutController', ['$scope', aboutController]);
+ctrl.controller('contactController', ['$scope', contactController]);
+ctrl.controller('todoController', ['$scope', 'Generations', todoController]);
+
+},{"./aboutController":1,"./contactController":2,"./homeController":4,"./todoController":5}],4:[function(require,module,exports){
 module.exports = function ($scope) {
     $scope.message = 'Everyone come and see how good I look!';
   };
 
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 module.exports = function ($scope, Generations) {
 
     $scope.formData = {};
@@ -55,7 +69,14 @@ module.exports = function ($scope, Generations) {
     };
   };
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
+var todoService = require('./todoService');
+
+// create factories
+var srvc = angular.module('services', []);
+srvc.factory('Generations', ['$http', todoService]);
+
+},{"./todoService":7}],7:[function(require,module,exports){
 module.exports = function($http) {
     return {
       get: function() {
@@ -70,7 +91,7 @@ module.exports = function($http) {
     }
   };
 
-},{}],6:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 /*
  AngularJS v1.6.2
  (c) 2010-2017 Google, Inc. http://angularjs.org
@@ -89,7 +110,7 @@ c.push(b[f]);c.push(e[2]||"");delete b[f]}});return c.join("")}var D=!1,s,y,q={r
 return q}]}).run(A),I=d.$$minErr("ngRoute"),k;A.$inject=["$injector"];z.provider("$routeParams",function(){this.$get=function(){return{}}});z.directive("ngView",B);z.directive("ngView",C);B.$inject=["$route","$anchorScroll","$animate"];C.$inject=["$compile","$controller","$route"]})(window,window.angular);
 
 
-},{}],7:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /*
  AngularJS v1.6.2
  (c) 2010-2017 Google, Inc. http://angularjs.org
@@ -423,21 +444,16 @@ WEEKENDRANGE:[5,6],fullDate:"EEEE, MMMM d, y",longDate:"MMMM d, y",medium:"MMM d
 c){var f=a|0,e=c;void 0===e&&(e=Math.min(b(a),3));Math.pow(10,e);return 1==f&&0==e?"one":"other"}})}]),D(function(){qe(z.document,Mc)}))})(window);!window.angular.$$csp().noInlineStyle&&window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');
 
 
-},{}],8:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 // require all of the core libraries
 require('./vendors/angular.min');
 require('./vendors/angular-route.min');
 
-// pull in the modules we are going to need (controllers, services, whatever)
-var homeController = require('./controllers/homeController');
-var aboutController = require('./controllers/aboutController');
-var contactController = require('./controllers/contactController');
-var todoController = require('./controllers/todoController');
+// pull in modules
+require('./controllers/controllers');
+require('./services/services');
 
-var todoService = require('./services/todoService');
-
-// module up
-var app = angular.module('pokelution', ['ngRoute']);
+var app = angular.module('pokelution', ['controllers', 'services', 'ngRoute']);
 
 app.config(['$routeProvider', function($routeProvider) {
   $routeProvider
@@ -458,16 +474,6 @@ app.config(['$routeProvider', function($routeProvider) {
       controller  : 'todoController'
     })
     .otherwise({redirectTo: '/'});
-
 }]);
 
-// create factories
-app.factory('Generations', ['$http', todoService]);
-
-// create controllers
-app.controller('homeController', ['$scope', homeController]);
-app.controller('aboutController', ['$scope', aboutController]);
-app.controller('contactController', ['$scope', contactController]);
-app.controller('todoController', ['$scope', 'Generations', todoController]);
-
-},{"./controllers/aboutController":1,"./controllers/contactController":2,"./controllers/homeController":3,"./controllers/todoController":4,"./services/todoService":5,"./vendors/angular-route.min":6,"./vendors/angular.min":7}]},{},[8]);
+},{"./controllers/controllers":3,"./services/services":6,"./vendors/angular-route.min":8,"./vendors/angular.min":9}]},{},[10]);
