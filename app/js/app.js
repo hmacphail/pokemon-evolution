@@ -1,46 +1,45 @@
+// require all of the core libraries
+require('./vendors/angular.min');
+require('./vendors/angular-route.min');
 
-angular.module('scotchApp', ['controllers', 'services', 'ngRoute'])
-  .config(['$routeProvider', function($routeProvider) {
-    $routeProvider
+// pull in the modules we are going to need (controllers, services, whatever)
+var homeController = require('./controllers/homeController');
+var aboutController = require('./controllers/aboutController');
+var contactController = require('./controllers/contactController');
+var todoController = require('./controllers/todoController');
 
-        // route for the home page
-        .when('/', {
-            templateUrl : '/app/views/home.html',
-            controller  : 'mainController'
-        })
+var todoService = require('./services/todoService');
 
-        // route for the about page
-        .when('/about', {
-            templateUrl : '/app/views/about.html',
-            controller  : 'aboutController'
-        })
+// module up
+var app = angular.module('pokelution', ['ngRoute']);
 
-        // route for the contact page
-        .when('/contact', {
-            templateUrl : '/app/views/contact.html',
-            controller  : 'contactController'
-        })
-
-        // route for the todo page
-        .when('/todo', {
-            templateUrl : '/app/views/todo.html',
-            controller  : 'todoController'
-        })
-
-        .otherwise({redirectTo: '/'});
+app.config(['$routeProvider', function($routeProvider) {
+  $routeProvider
+    .when('/', {
+      templateUrl : '/app/views/home.html',
+      controller  : 'homeController'
+    })
+    .when('/about', {
+      templateUrl : '/app/views/about.html',
+      controller  : 'aboutController'
+    })
+    .when('/contact', {
+      templateUrl : '/app/views/contact.html',
+      controller  : 'contactController'
+    })
+    .when('/todo', {
+      templateUrl : '/app/views/todo.html',
+      controller  : 'todoController'
+    })
+    .otherwise({redirectTo: '/'});
 
 }]);
-/*
-// create the controller and inject Angular's $scope
-scotchApp.controller('mainController', function($scope) {
-    // create a message to display in our view
-    $scope.message = 'Everyone come and see how good I look!';
-});
 
-scotchApp.controller('aboutController', function($scope) {
-    $scope.message = 'Look! I am an about page.';
-});
+// create factories
+app.factory('Generations', ['$http', todoService]);
 
-scotchApp.controller('contactController', function($scope) {
-    $scope.message = 'Contact us! JK. This is just a demo.';
-});*/
+// create controllers
+app.controller('homeController', ['$scope', homeController]);
+app.controller('aboutController', ['$scope', aboutController]);
+app.controller('contactController', ['$scope', contactController]);
+app.controller('todoController', ['$scope', 'Generations', todoController]);
