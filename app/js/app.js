@@ -8,7 +8,7 @@ require('./services/services');
 
 var app = angular.module('pokelution', ['controllers', 'services', 'ngRoute']);
 
-app.config(['$routeProvider', function($routeProvider) {
+app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
   $routeProvider
     .when('/', {
       templateUrl : '/app/views/home.html',
@@ -27,4 +27,5 @@ app.config(['$routeProvider', function($routeProvider) {
       controller  : 'todoController'
     })
     .otherwise({redirectTo: '/'});
+  $locationProvider.html5Mode(true);
 }]);
