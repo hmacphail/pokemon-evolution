@@ -2,7 +2,7 @@
   "name": "pokemon-evolution",
   "version": "0.0.0",
   "description": "Pokemon Evolution",
-  "main": "app.js",
+  "main": "index.js",
   "author": "Heather MacPhail",
   "dependencies": {
     "body-parser": "^1.16.1",
