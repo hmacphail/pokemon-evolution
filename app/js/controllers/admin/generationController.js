@@ -20,6 +20,9 @@ module.exports = function ($scope, Generations) {
       });
   };
 
+
+  // --- helper functions ---
+
   function getAllGens() {
     Generations.get().then(function(res){
       $scope.generations = res.data;

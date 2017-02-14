@@ -34,6 +34,20 @@ module.exports = {
       });
   },
 
+  //Create multiple new abilities using model.bulkCreate()
+  bulkCreate(req, res) {
+    Ability.bulkCreate(req.body)
+      .then(function() {
+        return Ability.findAll();
+      })
+      .then(function(abilities) {
+        res.status(200).json(abilities)
+      })
+      .catch(function (error) {
+        res.status(500).json(error);
+      });
+  },
+
   //Delete an existing ability by the unique ID using model.destroy()
   delete(req, res) {
     Ability.destroy({

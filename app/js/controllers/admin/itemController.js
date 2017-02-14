@@ -30,6 +30,9 @@ module.exports = function ($scope, Items) {
       });
   };
 
+
+  // --- helper functions ---
+
   function getAllItems() {
     Items.get().then(function(res){
       $scope.items = res.data;

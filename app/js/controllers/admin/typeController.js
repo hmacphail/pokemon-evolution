@@ -20,6 +20,9 @@ module.exports = function ($scope, Types) {
       });
   };
 
+
+  // --- helper functions ---
+
   function getAllTypes() {
     Types.get().then(function(res){
       $scope.types = res.data;

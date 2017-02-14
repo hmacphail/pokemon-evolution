@@ -21,6 +21,9 @@ module.exports = function ($scope, Pokemon, Generations, Types) {
       });
   };
 
+
+  // --- helper functions ---
+
   function getAllPokemon() {
     Pokemon.get().then(function(res){
       $scope.pokemon = res.data;
