@@ -18,9 +18,7 @@ module.exports = function ($scope, Generations) {
             .then(function(res) {
                 if (res.status == 200) {
                     $scope.formData = {}; // clear the form so our user is ready to enter another
-                    console.log($scope.generations);
                     $scope.generations.push(res.data); // assign our new list of todos
-                    console.log(res);
                 }
             });
     };
