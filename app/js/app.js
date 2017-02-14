@@ -17,6 +17,10 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
       templateUrl : '/views/admin/generations.html',
       controller  : 'generationController'
     })
+    .when('/admin/pokemon', {
+      templateUrl : '/views/admin/pokemon.html',
+      controller  : 'pokemonController'
+    })
     .when('/admin/types', {
       templateUrl : '/views/admin/types.html',
       controller  : 'typeController'

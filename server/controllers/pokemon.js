@@ -34,6 +34,21 @@ module.exports = {
       });
   },
 
+  //Create multiple new pokemon using model.bulkCreate()
+  bulkCreate(req, res) {
+    console.log(req.body);
+    Pokemon.bulkCreate(req.body)
+      .then(function() {
+        return Pokemon.findAll();
+      })
+      .then(function(pokemon) {
+        res.status(200).json(pokemon) // ... in order to get the array of user objects
+      })
+      .catch(function (error) {
+        res.status(500).json(error);
+      });
+  },
+
   //Delete an existing pokemon by the unique ID using model.destroy()
   delete(req, res) {
     Pokemon.destroy({
