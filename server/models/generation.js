@@ -12,8 +12,8 @@ module.exports = function(sequelize, DataTypes) {
         Generation.hasMany(db.Pokemon, {as: 'GenIntroduced', foreignKey: 'genIntroducedId'});
         Generation.hasMany(db.Effectiveness, {as: 'GenIntroduced', foreignKey: 'genIntroducedId'});
         Generation.hasMany(db.Effectiveness, {as: 'GenCompleted', foreignKey: 'genCompletedId'});
-        Generation.hasMany(db.Skill, {as: 'GenIntroduced', foreignKey: 'genIntroducedId'});
-        Generation.hasMany(db.Skillset);
+        Generation.hasMany(db.Ability, {as: 'GenIntroduced', foreignKey: 'genIntroducedId'});
+        Generation.hasMany(db.Abilityset);
         Generation.hasMany(db.Move);
         Generation.hasMany(db.Learnset, {as: 'GenIntroduced', foreignKey: 'genIntroducedId'});
         Generation.hasMany(db.Learnset, {as: 'GenCompleted', foreignKey: 'genCompletedId'});

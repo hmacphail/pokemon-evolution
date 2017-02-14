@@ -1,9 +1,9 @@
 var Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  var Skillset = sequelize.define('skillset', {
+  var Abilityset = sequelize.define('abilityset', {
   }, {
     timestamps: false
   });
-  return Skillset;
+  return Abilityset;
 }

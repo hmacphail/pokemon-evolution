@@ -6,8 +6,8 @@ var pokemon       = require('./controllers/pokemon');
 var evolutions    = require('./controllers/evolutions');
 var types         = require('./controllers/types');
 var effectiveness = require('./controllers/effectiveness');
-var skills        = require('./controllers/skills');
-var skillsets     = require('./controllers/skillsets');
+var abilities     = require('./controllers/abilities');
+var abilitysets   = require('./controllers/abilitysets');
 var moves         = require('./controllers/moves');
 var learnsets     = require('./controllers/learnsets');
 var items         = require('./controllers/items');
@@ -39,15 +39,15 @@ router.get(   '/effectiveness/:id', effectiveness.show);
 router.post(  '/effectiveness',     effectiveness.create);
 router.delete('/effectiveness/:id', effectiveness.delete);
 
-router.get(   '/skills',            skills.index);
-router.get(   '/skills/:id',        skills.show);
-router.post(  '/skills',            skills.create);
-router.delete('/skills/:id',        skills.delete);
+router.get(   '/abilities',         abilities.index);
+router.get(   '/abilities/:id',     abilities.show);
+router.post(  '/abilities',         abilities.create);
+router.delete('/abilities/:id',     abilities.delete);
 
-router.get(   '/skillsets',         skillsets.index);
-router.get(   '/skillsets/:id',     skillsets.show);
-router.post(  '/skillsets',         skillsets.create);
-router.delete('/skillsets/:id',     skillsets.delete);
+router.get(   '/abilitysets',       abilitysets.index);
+router.get(   '/abilitysets/:id',   abilitysets.show);
+router.post(  '/abilitysets',       abilitysets.create);
+router.delete('/abilitysets/:id',   abilitysets.delete);
 
 router.get(   '/moves',             moves.index);
 router.get(   '/moves/:id',         moves.show);

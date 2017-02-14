@@ -19,7 +19,7 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(db) {
         Pokemon.hasMany(db.Evolution, {as: 'FromPokemon', foreignKey: 'fromPokemonId'});
         Pokemon.hasMany(db.Evolution, {as: 'ToPokemon', foreignKey: 'toPokemonId'});
-        Pokemon.hasMany(db.Skillset);
+        Pokemon.hasMany(db.Abilityset);
         Pokemon.hasMany(db.Learnset);
       }
     }
