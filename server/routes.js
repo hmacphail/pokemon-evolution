@@ -62,6 +62,7 @@ router.delete('/learnsets/:id',     learnsets.delete);
 router.get(   '/items',             items.index);
 router.get(   '/items/:id',         items.show);
 router.post(  '/items',             items.create);
+router.post(  '/items/bulk',        items.bulkCreate);
 router.delete('/items/:id',         items.delete);
 
 router.get(   '/users',             users.index);

@@ -45,6 +45,16 @@ module.exports = function ($scope, Items) {
       });
   };
 
+  $scope.createItemsBulk = function() {
+    Items.bulkCreate(parseBulkData($scope.formData))
+      .then(function(res) {
+        if (res.status == 200) {
+          $scope.formData = {};
+          getAllItems();
+        }
+      });
+  }
+
   $scope.deleteItem = function(id) {
     Items.delete(id)
       .then(function(res) {
@@ -57,6 +67,20 @@ module.exports = function ($scope, Items) {
       $scope.items = res.data;
     });
   };
+
+  function parseBulkData(inputData) {
+    // parse pasted data from evolutionary items table
+    // http://www.serebii.net/itemdex/list/evolutionary.shtml
+    var items = [];
+    inputData.bulk.split('\n\n').forEach(function(i){
+      var item = i.split('\t');
+      items.push({
+        "name" : item[0],
+        "description" : item[1]
+      });
+    });
+    return items;
+  }
 
 };
 
@@ -101,6 +125,7 @@ module.exports = function ($scope, Pokemon, Generations, Types) {
 
   function parseBulkData(inputData) {
     // parse pasted data from bulbapedia table
+    // http://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_National_Pok%C3%A9dex_number
     var pokemon = [];
     inputData.bulk.split('\n').forEach(function(p){
       var pkmn = p.split('\t');
@@ -113,7 +138,6 @@ module.exports = function ($scope, Pokemon, Generations, Types) {
         "secondaryTypeId" : (pkmn.length == 6 ? typeIdByName(pkmn[5]) : null)
       });
     });
-    //console.log(pokemon);
     return pokemon;
   }
 
@@ -211,6 +235,9 @@ module.exports = function($http) {
     },
     create: function(data) {
       return $http.post('/api/items', data);
+    },
+    bulkCreate: function(data) {
+      return $http.post('/api/items/bulk', data);
     },
     delete: function(id) {
       return $http.delete('/api/items/' + id);

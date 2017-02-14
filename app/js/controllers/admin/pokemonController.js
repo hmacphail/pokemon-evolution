@@ -38,6 +38,7 @@ module.exports = function ($scope, Pokemon, Generations, Types) {
 
   function parseBulkData(inputData) {
     // parse pasted data from bulbapedia table
+    // http://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_National_Pok%C3%A9dex_number
     var pokemon = [];
     inputData.bulk.split('\n').forEach(function(p){
       var pkmn = p.split('\t');
@@ -50,7 +51,6 @@ module.exports = function ($scope, Pokemon, Generations, Types) {
         "secondaryTypeId" : (pkmn.length == 6 ? typeIdByName(pkmn[5]) : null)
       });
     });
-    //console.log(pokemon);
     return pokemon;
   }
 

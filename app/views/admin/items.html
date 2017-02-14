@@ -6,6 +6,23 @@
     </div>
 
     <div class="col-sm-9">
+      <form class="form-inline">
+        <div class="form-group">
+          <input type="text" class="form-control" ng-model="formData.name">
+        </div>
+        <div class="form-group">
+          <input type="text" class="form-control" ng-model="formData.description">
+        </div>
+        <button type="submit" class="btn btn-primary" ng-click="createItem()">Add One</button>
+      </form>
+      <br />
+      <form>
+        <div class="form-group">
+          <textarea class="form-control" rows="5" ng-model="formData.bulk"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" ng-click="createItemsBulk()">Add Multiple</button>
+      </form>
+      <br />
       <table class="table table-condensed">
         <tr>
           <th>Name</th>
@@ -22,16 +39,6 @@
           </td>
         </tr>
       </table>
-
-      <form class="form-inline">
-        <div class="form-group">
-          <input type="text" class="form-control" ng-model="formData.name">
-        </div>
-        <div class="form-group">
-          <input type="text" class="form-control" ng-model="formData.description">
-        </div>
-        <button type="submit" class="btn btn-primary" ng-click="createItem()">Add</button>
-      </form>
     </div>
 
   </div>
