@@ -63,6 +63,98 @@ module.exports = function ($scope, Abilities, Generations) {
 };
 
 },{}],2:[function(require,module,exports){
+module.exports = function ($scope, Effectiveness, Types, Generations) {
+
+  $scope.formData = {};
+  getAllEffectiveness();
+  getGenAndTypeData();
+
+  $scope.createEffectivenessBulk = function() {
+    Effectiveness.bulkCreate(parseBulkData($scope.formData))
+      .then(function(res) {
+        if (res.status == 200) {
+          $scope.formData = {};
+          getAllEffectiveness();
+        }
+      });
+  }
+
+  $scope.deleteEffectiveness = function(id) {
+    Effectiveness.delete(id)
+      .then(function(res) {
+        getAllEffectiveness();
+      });
+  };
+
+
+  // --- helper functions ---
+
+  function getAllEffectiveness() {
+    Effectiveness.get().then(function(res){
+      $scope.effectiveness = res.data;
+    });
+  };
+
+  function getGenAndTypeData() {
+    Generations.get().then(function(res){
+      $scope.generations = res.data;
+    });
+    Types.get().then(function(res){
+      $scope.types = res.data;
+    });
+  }
+
+  function parseBulkData(inputData) {
+    // parse pasted data from bulbapedia table
+    // http://bulbapedia.bulbagarden.net/wiki/Type/Type_chart
+    var effectiveness = [];
+    var effects = inputData.bulk.split('\n');
+
+    for (var ii = 0; ii < effects.length; ii++) {
+      var e = effects[ii].split('\t');
+      var attType = typeIdByName(e[0]);
+
+      for (var jj = 0; jj < effects.length; jj++) {
+
+        var defType = effects[jj].substr(0, effects[jj].indexOf('\t'));
+        try {
+          effectiveness.push({
+            "comparison" : getComparisonEnum(e[jj+1]),
+            "attackingTypeId" : attType,
+            "defendingTypeId" : defType,
+            "genIntroducedId" : inputData.fromGen,
+            "genCompletedId" : inputData.toGen
+          });
+        } catch(error) {
+          console.log(error);
+          return [];
+        }
+      }
+    }
+    return effectiveness;
+  }
+
+  function typeIdByName(name) {
+    for (var i = 0; i < $scope.types.length; i++){
+      if ($scope.types[i].name == name){
+        return $scope.types[i].id
+      }
+    }
+  }
+
+  function getComparisonEnum(multiplier) {
+    switch(multiplier) {
+      case "2×" : return "strong";
+      case "1×" : return "neutral";
+      case "½×" : return "weak";
+      case "0×" : return "unaffected";
+      default : throw new Error();
+    }
+  }
+
+};
+
+},{}],3:[function(require,module,exports){
 module.exports = function ($scope, Generations) {
 
   $scope.formData = {};
@@ -96,7 +188,7 @@ module.exports = function ($scope, Generations) {
 
 };
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 module.exports = function ($scope, Items) {
 
   $scope.formData = {};
@@ -154,7 +246,7 @@ module.exports = function ($scope, Items) {
 
 };
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 module.exports = function ($scope, Pokemon, Generations, Types) {
 
   $scope.formData = {};
@@ -224,7 +316,7 @@ module.exports = function ($scope, Pokemon, Generations, Types) {
 
 };
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 module.exports = function ($scope, Types) {
 
   $scope.formData = {};
@@ -258,14 +350,15 @@ module.exports = function ($scope, Types) {
 
 };
 
-},{}],6:[function(require,module,exports){
-var homeController        = require('./homeController');
-var errorController       = require('./errorController');
-var generationController  = require('./admin/generationController');
-var pokemonController     = require('./admin/pokemonController');
-var typeController        = require('./admin/typeController');
-var abilityController     = require('./admin/abilityController');
-var itemController        = require('./admin/itemController');
+},{}],7:[function(require,module,exports){
+var homeController          = require('./homeController');
+var errorController         = require('./errorController');
+var generationController    = require('./admin/generationController');
+var pokemonController       = require('./admin/pokemonController');
+var typeController          = require('./admin/typeController');
+var effectivenessController = require('./admin/effectivenessController');
+var abilityController       = require('./admin/abilityController');
+var itemController          = require('./admin/itemController');
 
 // create controllers
 var ctrl = angular.module('controllers', []);
@@ -275,22 +368,23 @@ ctrl.controller('errorController', ['$scope', errorController]);
 ctrl.controller('generationController', ['$scope', 'Generations', generationController]);
 ctrl.controller('pokemonController', ['$scope', 'Pokemon', 'Generations', 'Types', pokemonController]);
 ctrl.controller('typeController', ['$scope', 'Types', typeController]);
+ctrl.controller('effectivenessController', ['$scope', 'Effectiveness', 'Types', 'Generations', effectivenessController]);
 ctrl.controller('abilityController', ['$scope', 'Abilities', 'Generations', abilityController]);
 ctrl.controller('itemController', ['$scope', 'Items', itemController]);
 
-},{"./admin/abilityController":1,"./admin/generationController":2,"./admin/itemController":3,"./admin/pokemonController":4,"./admin/typeController":5,"./errorController":7,"./homeController":8}],7:[function(require,module,exports){
+},{"./admin/abilityController":1,"./admin/effectivenessController":2,"./admin/generationController":3,"./admin/itemController":4,"./admin/pokemonController":5,"./admin/typeController":6,"./errorController":8,"./homeController":9}],8:[function(require,module,exports){
 module.exports = function ($scope) {
     $scope.message = 'Page not found!';
   };
 
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 module.exports = function ($scope) {
     $scope.message = 'Everyone come and see how good I look!';
   };
 
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -305,7 +399,22 @@ module.exports = function($http) {
   }
 };
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
+module.exports = function($http) {
+  return {
+    get: function() {
+      return $http.get('/api/effectiveness');
+    },
+    bulkCreate: function(data) {
+      return $http.post('/api/effectiveness/bulk', data);
+    },
+    delete: function(id) {
+      return $http.delete('/api/effectiveness/' + id);
+    }
+  }
+};
+
+},{}],12:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -320,7 +429,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],11:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -338,7 +447,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -353,7 +462,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],13:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -368,22 +477,24 @@ module.exports = function($http) {
   }
 };
 
-},{}],14:[function(require,module,exports){
-var generationService = require('./admin/generationService');
-var pokemonService    = require('./admin/pokemonService');
-var typeService       = require('./admin/typeService');
-var abilityService    = require('./admin/abilityService');
-var itemService       = require('./admin/itemService');
+},{}],16:[function(require,module,exports){
+var generationService     = require('./admin/generationService');
+var pokemonService        = require('./admin/pokemonService');
+var typeService           = require('./admin/typeService');
+var effectivenessService  = require('./admin/effectivenessService');
+var abilityService        = require('./admin/abilityService');
+var itemService           = require('./admin/itemService');
 
 // create factories
 var srvc = angular.module('services', []);
-srvc.factory('Generations', ['$http', generationService]);
-srvc.factory('Pokemon',     ['$http', pokemonService]);
-srvc.factory('Types',       ['$http', typeService]);
-srvc.factory('Abilities',   ['$http', abilityService]);
-srvc.factory('Items',       ['$http', itemService]);
+srvc.factory('Generations',   ['$http', generationService]);
+srvc.factory('Pokemon',       ['$http', pokemonService]);
+srvc.factory('Types',         ['$http', typeService]);
+srvc.factory('Effectiveness', ['$http', effectivenessService]);
+srvc.factory('Abilities',     ['$http', abilityService]);
+srvc.factory('Items',         ['$http', itemService]);
 
-},{"./admin/abilityService":9,"./admin/generationService":10,"./admin/itemService":11,"./admin/pokemonService":12,"./admin/typeService":13}],15:[function(require,module,exports){
+},{"./admin/abilityService":10,"./admin/effectivenessService":11,"./admin/generationService":12,"./admin/itemService":13,"./admin/pokemonService":14,"./admin/typeService":15}],17:[function(require,module,exports){
 require('./controllers/controllers');
 require('./services/services');
 
@@ -411,6 +522,10 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
       templateUrl : '/views/admin/types.html',
       controller  : 'typeController'
     })
+    .when('/admin/effectiveness', {
+      templateUrl : '/views/admin/effectiveness.html',
+      controller  : 'effectivenessController'
+    })
     .when('/admin/abilities', {
       templateUrl : '/views/admin/abilities.html',
       controller  : 'abilityController'
@@ -423,4 +538,4 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
   $locationProvider.html5Mode(true);
 }]);
 
-},{"./controllers/controllers":6,"./services/services":14}]},{},[15]);
+},{"./controllers/controllers":7,"./services/services":16}]},{},[17]);

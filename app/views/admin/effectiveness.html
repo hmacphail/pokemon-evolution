@@ -1,0 +1,50 @@
+<div id="admin-effectiveness" class="container">
+  <div class="row">
+
+    <div class="col-sm-3">
+      <h2>Effectiveness</h2>
+    </div>
+
+    <div class="col-sm-9">
+      <form>
+        <div class="form-group">
+          <label>Generation Range:</label>
+          <select id="select-from-gen" class="form-control pull-right" ng-model="formData.fromGen">
+            <option ng-repeat="g in generations" value="{{ g.id }}">{{ g.name }}</option>
+          </select>
+          <select id="select-to-gen" class="form-control pull-right" ng-model="formData.toGen">
+            <option ng-repeat="g in generations" value="{{ g.id }}">{{ g.name }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <textarea class="form-control" rows="5" ng-model="formData.bulk"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" ng-click="createEffectivenessBulk()">Add</button>
+      </form>
+      <br />
+      <table class="table table-condensed">
+        <tr>
+          <th>Attacking</th>
+          <th>Defending</th>
+          <th>Comparison</th>
+          <th>Gen Introduced</th>
+          <th>Gen Completed</th>
+          <th></th>
+        </tr>
+        <tr ng-repeat="effect in effectiveness">
+          <td> {{ effect.attackingTypeId }} </td>
+          <td> {{ effect.defendingTypeId }} </td>
+          <td> {{ effect.comparison }} </td>
+          <td> {{ effect.genIntroducedId }} </td>
+          <td> {{ effect.genCompletedId }} </td>
+          <td>
+            <a href="#" class="lnk-danger pull-right" ng-click="deleteEffectiveness(effect.id)">
+              <i class="fa fa-times"></i>
+            </a>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+  </div>
+</div>

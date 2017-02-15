@@ -34,6 +34,20 @@ module.exports = {
       });
   },
 
+  //Create multiple new effectiveness using model.bulkCreate()
+  bulkCreate(req, res) {
+    Effectiveness.bulkCreate(req.body)
+      .then(function() {
+        return Effectiveness.findAll();
+      })
+      .then(function(effectiveness) {
+        res.status(200).json(effectiveness)
+      })
+      .catch(function (error) {
+        res.status(500).json(error);
+      });
+  },
+
   //Delete an existing effectiveness by the unique ID using model.destroy()
   delete(req, res) {
     Effectiveness.destroy({
