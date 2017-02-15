@@ -10,12 +10,7 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     freezeTableName: true,
-    timestamps: false,
-    classMethods: {
-      associate: function(db) {
-        Ability.hasMany(db.Abilityset, {foreignKey: 'abilityId'});
-      }
-    }
+    timestamps: false
   });
   return Ability;
 }

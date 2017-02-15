@@ -9,12 +9,7 @@ module.exports = function(sequelize, DataTypes) {
       type: Sequelize.BOOLEAN
     }
   }, {
-    timestamps: false,
-    classMethods: {
-      associate: function(db) {
-        Move.hasMany(db.Learnset);
-      }
-    }
+    timestamps: false
   });
   return Move;
 }

@@ -9,12 +9,7 @@ module.exports = function(sequelize, DataTypes) {
       type: Sequelize.STRING(255)
     }
   }, {
-    timestamps: false,
-    classMethods: {
-      associate: function(db) {
-        Item.hasMany(db.Evolution);
-      }
-    }
+    timestamps: false
   });
   return Item;
 }

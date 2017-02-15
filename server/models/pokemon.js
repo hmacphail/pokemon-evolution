@@ -14,15 +14,7 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     freezeTableName: true,
-    timestamps: false,
-    classMethods: {
-      associate: function(db) {
-        Pokemon.hasMany(db.Evolution, {as: 'FromPokemon', foreignKey: 'fromPokemonId'});
-        Pokemon.hasMany(db.Evolution, {as: 'ToPokemon', foreignKey: 'toPokemonId'});
-        Pokemon.hasMany(db.Abilityset);
-        Pokemon.hasMany(db.Learnset);
-      }
-    }
+    timestamps: false
   });
   return Pokemon;
 }

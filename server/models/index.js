@@ -41,6 +41,33 @@ if (!global.hasOwnProperty('db')) {
     Item: sequelize.import(__dirname + '/item'),
     User: sequelize.import(__dirname + '/user')
   }
+
+  // global table associations
+  db.Generation.hasMany(db.Pokemon, {as: 'GenIntroduced', foreignKey: 'genIntroducedId'});
+  db.Generation.hasMany(db.Effectiveness, {as: 'GenIntroduced', foreignKey: 'genIntroducedId'});
+  db.Generation.hasMany(db.Effectiveness, {as: 'GenCompleted', foreignKey: 'genCompletedId'});
+  db.Generation.hasMany(db.Ability, {as: 'GenIntroduced', foreignKey: 'genIntroducedId'});
+  db.Generation.hasMany(db.Abilityset);
+  db.Generation.hasMany(db.Move);
+  db.Generation.hasMany(db.Learnset, {as: 'GenIntroduced', foreignKey: 'genIntroducedId'});
+  db.Generation.hasMany(db.Learnset, {as: 'GenCompleted', foreignKey: 'genCompletedId'});
+
+  db.Pokemon.hasMany(db.Evolution, {as: 'FromPokemon', foreignKey: 'fromPokemonId'});
+  db.Pokemon.hasMany(db.Evolution, {as: 'ToPokemon', foreignKey: 'toPokemonId'});
+  db.Pokemon.hasMany(db.Abilityset);
+  db.Pokemon.hasMany(db.Learnset);
+
+  db.Type.hasMany(db.Pokemon, {as: 'PrimaryType', foreignKey: 'primaryTypeId'});
+  db.Type.hasMany(db.Pokemon, {as: 'SecondaryType', foreignKey: 'secondaryTypeId'});
+  db.Type.hasMany(db.Effectiveness, {as: 'AttackingType', foreignKey: 'attackingTypeId'});
+  db.Type.hasMany(db.Effectiveness, {as: 'DefendingType', foreignKey: 'defendingTypeId'});
+  db.Type.hasMany(db.Move);
+
+  db.Ability.hasMany(db.Abilityset, {foreignKey: 'abilityId'});
+
+  db.Move.hasMany(db.Learnset);
+
+  db.Item.hasMany(db.Evolution);
 }
 
 module.exports = db;
