@@ -10,7 +10,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     form: {
       type: Sequelize.ENUM,
-      values: ['original', 'alola']
+      values: ['original', 'alolan']
     }
   }, {
     freezeTableName: true,

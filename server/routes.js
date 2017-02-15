@@ -38,6 +38,7 @@ router.get(   '/effectiveness',       effectiveness.index);
 router.get(   '/effectiveness/:id',   effectiveness.show);
 router.post(  '/effectiveness',       effectiveness.create);
 router.post(  '/effectiveness/bulk',  effectiveness.bulkCreate);
+router.put(   '/effectiveness/:id',   effectiveness.update);
 router.delete('/effectiveness/:id',   effectiveness.delete);
 
 router.get(   '/abilities',           abilities.index);

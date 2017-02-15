@@ -5,7 +5,10 @@ module.exports = function ($scope, Effectiveness, Types, Generations) {
   getGenAndTypeData();
 
   $scope.createEffectivenessBulk = function() {
-    Effectiveness.bulkCreate(parseBulkData($scope.formData))
+    // prep data to send
+    var effectiveness = checkBulkForDuplicates(parseBulkData($scope.formData));
+
+    Effectiveness.bulkCreate(effectiveness)
       .then(function(res) {
         if (res.status == 200) {
           $scope.formData = {};
@@ -51,22 +54,54 @@ module.exports = function ($scope, Effectiveness, Types, Generations) {
 
       for (var jj = 0; jj < effects.length; jj++) {
 
-        var defType = effects[jj].substr(0, effects[jj].indexOf('\t'));
+        var defType = typeIdByName(effects[jj].substr(0, effects[jj].indexOf('\t')));
         try {
           effectiveness.push({
             "comparison" : getComparisonEnum(e[jj+1]),
             "attackingTypeId" : attType,
             "defendingTypeId" : defType,
-            "genIntroducedId" : inputData.fromGen,
-            "genCompletedId" : inputData.toGen
+            "genIntroducedId" : parseInt(inputData.fromGen),
+            "genCompletedId" : parseInt(inputData.toGen)
           });
-        } catch(error) {
+        }
+        catch(error) {
           console.log(error);
           return [];
         }
       }
     }
     return effectiveness;
+  }
+
+  function checkBulkForDuplicates(dataToCheck) {
+    // check against existing data for matches
+    var bulkDataToSend = [];
+    dataToCheck.forEach(function(newEffect) {
+      // add every object to send array
+      bulkDataToSend.push(newEffect);
+
+      for(var i = 0; i< $scope.effectiveness.length; i++) {
+        var oldEffect = $scope.effectiveness[i];
+
+        // skip if old & new generation ranges are equivalent
+        if (newEffect.genIntroducedId != oldEffect.genIntroducedId
+          && newEffect.genCompletedId != oldEffect.genCompletedId) {
+
+          // if this effectiveness is equal to a previous generation (or another entry in DB)
+          if (newEffect.attackingTypeId == oldEffect.attackingTypeId
+            && newEffect.defendingTypeId == oldEffect.defendingTypeId
+            && newEffect.comparison == oldEffect.comparison
+            && newEffect.genIntroducedId == oldEffect.genCompletedId + 1) {
+
+            bulkDataToSend.pop(); // remove from send array if just updating
+            newEffect.genIntroducedId = oldEffect.genIntroducedId;
+            Effectiveness.update(oldEffect.id, newEffect); // send update data
+            break;
+          }
+        }
+      }
+    });
+    return bulkDataToSend;
   }
 
   function typeIdByName(name) {

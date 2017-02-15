@@ -48,7 +48,7 @@ module.exports = function ($scope, Pokemon, Generations, Types) {
       pokemon.push({
         "pokedexId" : pkmn[1].substr(1),
         "name" : pkmn[3],
-        "form" : (pkmn[0] == " " ? "alola" : "original"),
+        "form" : (pkmn[0] == " " && inputData.gen == "1" ? "alolan" : "original"),
         "genIntroducedId" : inputData.gen,
         "primaryTypeId" : typeIdByName(pkmn[4]),
         "secondaryTypeId" : (pkmn.length == 6 ? typeIdByName(pkmn[5]) : null)
