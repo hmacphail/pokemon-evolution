@@ -1,0 +1,60 @@
+<div id="admin-moves" class="container">
+  <div class="row">
+
+    <div class="col-sm-3">
+      <h2>Moves</h2>
+    </div>
+
+    <div class="col-sm-9">
+      <form class="row">
+        <div class="form-group col-sm-10">
+          <input type="text" class="form-control" ng-model="formData.text">
+        </div>
+        <div class="col-sm-2">
+          <button type="submit" class="btn btn-primary pull-right" ng-click="createMove()">Add One</button>
+        </div>
+      </form>
+
+      <hr />
+
+      <form>
+        <div class="form-group">
+          <textarea class="form-control" rows="5" ng-model="formData.bulk"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" ng-click="createMovesBulk()">Add Multiple</button>
+      </form>
+
+      <hr />
+
+      <table class="table table-condensed">
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Category</th>
+          <th>PP</th>
+          <th>Power</th>
+          <th>Accuracy</th>
+          <th>Gen Introduced</th>
+          <th>Gen Completed</th>
+          <th></th>
+        </tr>
+        <tr ng-repeat="move in moves">
+          <td> {{ move.name }} </td>
+          <td> {{ move.typeId }} </td>
+          <td> {{ move.category }} </td>
+          <td> {{ move.pp }} </td>
+          <td> {{ move.power }} </td>
+          <td> {{ move.accuracy }} </td>
+          <td> {{ move.genIntroducedId }} </td>
+          <td> {{ move.genCompletedId }} </td>
+          <td>
+            <a href="#" class="lnk-danger pull-right" ng-click="deleteMove(move.id)">
+              <i class="fa fa-times"></i>
+            </a>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+  </div>
+</div>

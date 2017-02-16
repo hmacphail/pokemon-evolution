@@ -48,7 +48,8 @@ if (!global.hasOwnProperty('db')) {
   db.Generation.hasMany(db.Effectiveness, {as: 'GenCompleted', foreignKey: 'genCompletedId'});
   db.Generation.hasMany(db.Ability, {as: 'GenIntroduced', foreignKey: 'genIntroducedId'});
   db.Generation.hasMany(db.Abilityset);
-  db.Generation.hasMany(db.Move);
+  db.Generation.hasMany(db.Move, {as: 'GenIntroduced', foreignKey: 'genIntroducedId'});
+  db.Generation.hasMany(db.Move, {as: 'GenCompleted', foreignKey: 'genCompletedId'});
   db.Generation.hasMany(db.Learnset, {as: 'GenIntroduced', foreignKey: 'genIntroducedId'});
   db.Generation.hasMany(db.Learnset, {as: 'GenCompleted', foreignKey: 'genCompletedId'});
 

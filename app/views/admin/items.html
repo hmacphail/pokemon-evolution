@@ -6,23 +6,29 @@
     </div>
 
     <div class="col-sm-9">
-      <form class="form-inline">
-        <div class="form-group">
+      <form class="row">
+        <div class="form-group col-sm-3">
           <input type="text" class="form-control" ng-model="formData.name">
         </div>
-        <div class="form-group">
+        <div class="form-group col-sm-7">
           <input type="text" class="form-control" ng-model="formData.description">
         </div>
-        <button type="submit" class="btn btn-primary" ng-click="createItem()">Add One</button>
+        <div class="col-sm-2">
+          <button type="submit" class="btn btn-primary pull-right" ng-click="createItem()">Add One</button>
+        </div>
       </form>
-      <br />
+
+      <hr />
+
       <form>
         <div class="form-group">
           <textarea class="form-control" rows="5" ng-model="formData.bulk"></textarea>
         </div>
         <button type="submit" class="btn btn-primary" ng-click="createItemsBulk()">Add Multiple</button>
       </form>
-      <br />
+
+      <hr />
+
       <table class="table table-condensed">
         <tr>
           <th>Name</th>

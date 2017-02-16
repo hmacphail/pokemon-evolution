@@ -34,6 +34,20 @@ module.exports = {
       });
   },
 
+  //Create multiple new moves using model.bulkCreate()
+  bulkCreate(req, res) {
+    Move.bulkCreate(req.body)
+      .then(function() {
+        return Move.findAll();
+      })
+      .then(function(moves) {
+        res.status(200).json(moves)
+      })
+      .catch(function (error) {
+        res.status(500).json(error);
+      });
+  },
+
   //Delete an existing move by the unique ID using model.destroy()
   delete(req, res) {
     Move.destroy({

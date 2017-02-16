@@ -63,7 +63,7 @@ module.exports = function ($scope, Abilities, Generations) {
 };
 
 },{}],2:[function(require,module,exports){
-module.exports = function ($scope, Effectiveness, Types, Generations) {
+module.exports = function ($scope, Effectiveness, Generations, Types) {
 
   $scope.formData = {};
   getAllEffectiveness();
@@ -282,6 +282,137 @@ module.exports = function ($scope, Items) {
 };
 
 },{}],5:[function(require,module,exports){
+module.exports = function ($scope, Moves, Generations, Types) {
+
+  $scope.formData = {};
+  $scope.movesDisplay = [];
+  getAllMoves();
+  getGenAndTypeData();
+
+  $scope.createMove = function() {
+    Moves.create(parseSingleData($scope.formData))
+      .then(function(res) {
+        if (res.status == 200) {
+          $scope.formData = {};
+          getAllMoves();
+        }
+      });
+  };
+
+  $scope.createMovesBulk = function() {
+    $scope.movesDisplay = [];
+    parseBulkData($scope.formData)
+    /*Moves.bulkCreate(parseBulkData($scope.formData))
+      .then(function(res) {
+        if (res.status == 200) {
+          $scope.formData = {};
+          getAllMoves();
+        }
+      });*/
+  }
+
+  $scope.deleteMove = function(id) {
+    Moves.delete(id)
+      .then(function(res) {
+        getAllMoves();
+      });
+  };
+
+
+  // --- helper functions ---
+
+  function getAllMoves() {
+    Moves.get().then(function(res){
+      $scope.moves = res.data;
+    });
+  };
+
+  function getGenAndTypeData() {
+    Generations.get().then(function(res){
+      $scope.generations = res.data;
+    });
+    Types.get().then(function(res){
+      $scope.types = res.data;
+    });
+  }
+
+  function parseSingleData(inputData) {
+    var move = inputData.text.replace('*', '').split('\t');
+    var gens = move[8].split('-');
+    return {
+      "name" : move[1],
+      "typeId" : typeIdByName(move[2]),
+      "category" : move[3].toLowerCase(),
+      "pp" : move[5],
+      "power" : isNumber(move[6]) ? move[6] : null,
+      "accuracy" : isNumber(move[7]) ? move[7].substr(0, move[7].indexOf('%')) : null,
+      "genIntroducedId" : genIdByName(gens[0]),
+      "genCompletedId" : genIdByName(gens[1]),
+      "isTM": "false"
+    };
+  }
+
+  function parseBulkData(inputData) {
+    // parse pasted data from bulbapedia
+    // http://bulbapedia.bulbagarden.net/wiki/List_of_moves
+    var moves = [];
+    inputData.bulk.split('\n').forEach(function(m) {
+
+      if (m.indexOf('*') >= 0) { // moves with generation-based conditions
+        $scope.movesDisplay.push(m.toString());
+        console.log(m);
+      }
+      else {
+        var move = m.split('\t');
+        moves.push({
+          "name" : move[1],
+          "typeId" : typeIdByName(move[2]),
+          "category" : move[3].toLowerCase(),
+          "pp" : move[5],
+          "power" : isNumber(move[6]) ? move[6] : null,
+          "accuracy" : isNumber(move[7]) ? move[7].substr(0, move[7].indexOf('%')) : null,
+          "genIntroducedId" : genIdByName(move[8]),
+          "genCompletedId" : mostRecentGen(),
+          "isTM": "false"
+        });
+      }
+    });
+    console.log(moves);
+    return moves;
+  }
+
+  function mostRecentGen() {
+    var gen = $scope.generations[$scope.generations.length-1].id;
+    for (var i = 0; i < $scope.generations.length; i++){
+      if (gen < $scope.generations[i].id)
+        gen = $scope.generations[i].id;
+    }
+    return gen;
+  }
+
+  function genIdByName(name) {
+    for (var i = 0; i < $scope.generations.length; i++){
+      if ($scope.generations[i].name == name){
+        return $scope.generations[i].id
+      }
+    }
+  }
+
+  function typeIdByName(name) {
+    for (var i = 0; i < $scope.types.length; i++){
+      if ($scope.types[i].name == name){
+        return $scope.types[i].id
+      }
+    }
+  }
+
+  function isNumber(data) {
+    return !isNaN(parseInt(data));
+  }
+
+};
+
+},{}],6:[function(require,module,exports){
 module.exports = function ($scope, Pokemon, Generations, Types) {
 
   $scope.formData = {};
@@ -351,7 +482,7 @@ module.exports = function ($scope, Pokemon, Generations, Types) {
 
 };
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 module.exports = function ($scope, Types) {
 
   $scope.formData = {};
@@ -385,7 +516,7 @@ module.exports = function ($scope, Types) {
 
 };
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 var homeController          = require('./homeController');
 var errorController         = require('./errorController');
 var generationController    = require('./admin/generationController');
@@ -393,6 +524,7 @@ var pokemonController       = require('./admin/pokemonController');
 var typeController          = require('./admin/typeController');
 var effectivenessController = require('./admin/effectivenessController');
 var abilityController       = require('./admin/abilityController');
+var moveController          = require('./admin/moveController');
 var itemController          = require('./admin/itemController');
 
 // create controllers
@@ -403,23 +535,24 @@ ctrl.controller('errorController', ['$scope', errorController]);
 ctrl.controller('generationController', ['$scope', 'Generations', generationController]);
 ctrl.controller('pokemonController', ['$scope', 'Pokemon', 'Generations', 'Types', pokemonController]);
 ctrl.controller('typeController', ['$scope', 'Types', typeController]);
-ctrl.controller('effectivenessController', ['$scope', 'Effectiveness', 'Types', 'Generations', effectivenessController]);
+ctrl.controller('effectivenessController', ['$scope', 'Effectiveness', 'Generations', 'Types', effectivenessController]);
 ctrl.controller('abilityController', ['$scope', 'Abilities', 'Generations', abilityController]);
+ctrl.controller('moveController', ['$scope', 'Moves', 'Generations', 'Types', moveController]);
 ctrl.controller('itemController', ['$scope', 'Items', itemController]);
 
-},{"./admin/abilityController":1,"./admin/effectivenessController":2,"./admin/generationController":3,"./admin/itemController":4,"./admin/pokemonController":5,"./admin/typeController":6,"./errorController":8,"./homeController":9}],8:[function(require,module,exports){
+},{"./admin/abilityController":1,"./admin/effectivenessController":2,"./admin/generationController":3,"./admin/itemController":4,"./admin/moveController":5,"./admin/pokemonController":6,"./admin/typeController":7,"./errorController":9,"./homeController":10}],9:[function(require,module,exports){
 module.exports = function ($scope) {
     $scope.message = 'Page not found!';
   };
 
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 module.exports = function ($scope) {
     $scope.message = 'Everyone come and see how good I look!';
   };
 
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -434,7 +567,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -455,7 +588,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -470,7 +603,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -488,7 +621,25 @@ module.exports = function($http) {
   }
 };
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
+module.exports = function($http) {
+  return {
+    get: function() {
+      return $http.get('/api/moves');
+    },
+    create: function(data) {
+      return $http.post('/api/moves', data);
+    },
+    bulkCreate: function(data) {
+      return $http.post('/api/moves/bulk', data);
+    },
+    delete: function(id) {
+      return $http.delete('/api/moves/' + id);
+    }
+  }
+};
+
+},{}],16:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -503,7 +654,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -518,12 +669,13 @@ module.exports = function($http) {
   }
 };
 
-},{}],16:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var generationService     = require('./admin/generationService');
 var pokemonService        = require('./admin/pokemonService');
 var typeService           = require('./admin/typeService');
 var effectivenessService  = require('./admin/effectivenessService');
 var abilityService        = require('./admin/abilityService');
+var moveService           = require('./admin/moveService');
 var itemService           = require('./admin/itemService');
 
 // create factories
@@ -533,9 +685,10 @@ srvc.factory('Pokemon',       ['$http', pokemonService]);
 srvc.factory('Types',         ['$http', typeService]);
 srvc.factory('Effectiveness', ['$http', effectivenessService]);
 srvc.factory('Abilities',     ['$http', abilityService]);
+srvc.factory('Moves',         ['$http', moveService]);
 srvc.factory('Items',         ['$http', itemService]);
 
-},{"./admin/abilityService":10,"./admin/effectivenessService":11,"./admin/generationService":12,"./admin/itemService":13,"./admin/pokemonService":14,"./admin/typeService":15}],17:[function(require,module,exports){
+},{"./admin/abilityService":11,"./admin/effectivenessService":12,"./admin/generationService":13,"./admin/itemService":14,"./admin/moveService":15,"./admin/pokemonService":16,"./admin/typeService":17}],19:[function(require,module,exports){
 require('./controllers/controllers');
 require('./services/services');
 
@@ -571,6 +724,10 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
       templateUrl : '/views/admin/abilities.html',
       controller  : 'abilityController'
     })
+    .when('/admin/moves', {
+      templateUrl : '/views/admin/moves.html',
+      controller  : 'moveController'
+    })
     .when('/admin/items', {
       templateUrl : '/views/admin/items.html',
       controller  : 'itemController'
@@ -579,4 +736,4 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
   $locationProvider.html5Mode(true);
 }]);
 
-},{"./controllers/controllers":7,"./services/services":16}]},{},[17]);
+},{"./controllers/controllers":8,"./services/services":18}]},{},[19]);

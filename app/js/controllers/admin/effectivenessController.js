@@ -1,4 +1,4 @@
-module.exports = function ($scope, Effectiveness, Types, Generations) {
+module.exports = function ($scope, Effectiveness, Generations, Types) {
 
   $scope.formData = {};
   getAllEffectiveness();

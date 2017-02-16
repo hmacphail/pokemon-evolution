@@ -55,6 +55,7 @@ router.delete('/abilitysets/:id',     abilitysets.delete);
 router.get(   '/moves',               moves.index);
 router.get(   '/moves/:id',           moves.show);
 router.post(  '/moves',               moves.create);
+router.post(  '/moves/bulk',          moves.bulkCreate);
 router.delete('/moves/:id',           moves.delete);
 
 router.get(   '/learnsets',           learnsets.index);

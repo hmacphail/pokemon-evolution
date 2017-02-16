@@ -33,6 +33,10 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
       templateUrl : '/views/admin/abilities.html',
       controller  : 'abilityController'
     })
+    .when('/admin/moves', {
+      templateUrl : '/views/admin/moves.html',
+      controller  : 'moveController'
+    })
     .when('/admin/items', {
       templateUrl : '/views/admin/items.html',
       controller  : 'itemController'
