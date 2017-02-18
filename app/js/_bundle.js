@@ -285,12 +285,11 @@ module.exports = function ($scope, Items) {
 module.exports = function ($scope, Moves, Generations, Types) {
 
   $scope.formData = {};
-  $scope.movesDisplay = [];
   getAllMoves();
   getGenAndTypeData();
 
   $scope.createMove = function() {
-    Moves.create(parseSingleData($scope.formData))
+    Moves.create(createMoveObj($scope.formData.text))
       .then(function(res) {
         if (res.status == 200) {
           $scope.formData = {};
@@ -300,15 +299,13 @@ module.exports = function ($scope, Moves, Generations, Types) {
   };
 
   $scope.createMovesBulk = function() {
-    $scope.movesDisplay = [];
-    parseBulkData($scope.formData)
-    /*Moves.bulkCreate(parseBulkData($scope.formData))
+    Moves.bulkCreate(parseBulkData($scope.formData))
       .then(function(res) {
         if (res.status == 200) {
           $scope.formData = {};
           getAllMoves();
         }
-      });*/
+      });
   }
 
   $scope.deleteMove = function(id) {
@@ -336,9 +333,33 @@ module.exports = function ($scope, Moves, Generations, Types) {
     });
   }
 
-  function parseSingleData(inputData) {
-    var move = inputData.text.replace('*', '').split('\t');
+  function parseBulkData(inputData) {
+    // parse pasted data from bulbapedia
+    // http://bulbapedia.bulbagarden.net/wiki/List_of_moves
+    var moves = [];
+    inputData.bulk.split('\n').forEach(function(m) {
+
+      // check if including moves with generation-based conditions
+      if (inputData.includeStarred || m.indexOf('*') < 0) {
+        moves.push(createMoveObj(m));
+      }
+
+    });
+    //console.log(moves);
+    return moves;
+  }
+
+  function createMoveObj(data) {
+    var move = data.replace(/\*/g, '').split('\t');
+    // if spaces instead of tab character
+    if (move.length == 1) {
+      move = move[0].split('   ');
+      move.forEach(function(m, i){
+        move[i] = m.trim();
+      });
+    }
     var gens = move[8].split('-');
+    console.log(move);
     return {
       "name" : move[1],
       "typeId" : typeIdByName(move[2]),
@@ -347,38 +368,11 @@ module.exports = function ($scope, Moves, Generations, Types) {
       "power" : isNumber(move[6]) ? move[6] : null,
       "accuracy" : isNumber(move[7]) ? move[7].substr(0, move[7].indexOf('%')) : null,
       "genIntroducedId" : genIdByName(gens[0]),
-      "genCompletedId" : genIdByName(gens[1]),
-      "isTM": "false"
+      "genCompletedId" : gens.length > 1 ? genIdByName(gens[1]) : mostRecentGen(),
+      "isTM" : "false",
+      "extraInfoColumn" : move.length > 9 ? move[9] : null,
+      "extraInfo" : move.length > 9 ? move[10] : null
     };
-  }
-
-  function parseBulkData(inputData) {
-    // parse pasted data from bulbapedia
-    // http://bulbapedia.bulbagarden.net/wiki/List_of_moves
-    var moves = [];
-    inputData.bulk.split('\n').forEach(function(m) {
-
-      if (m.indexOf('*') >= 0) { // moves with generation-based conditions
-        $scope.movesDisplay.push(m.toString());
-        console.log(m);
-      }
-      else {
-        var move = m.split('\t');
-        moves.push({
-          "name" : move[1],
-          "typeId" : typeIdByName(move[2]),
-          "category" : move[3].toLowerCase(),
-          "pp" : move[5],
-          "power" : isNumber(move[6]) ? move[6] : null,
-          "accuracy" : isNumber(move[7]) ? move[7].substr(0, move[7].indexOf('%')) : null,
-          "genIntroducedId" : genIdByName(move[8]),
-          "genCompletedId" : mostRecentGen(),
-          "isTM": "false"
-        });
-      }
-    });
-    console.log(moves);
-    return moves;
   }
 
   function mostRecentGen() {

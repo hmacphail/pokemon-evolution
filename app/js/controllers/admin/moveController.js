@@ -55,18 +55,27 @@ module.exports = function ($scope, Moves, Generations, Types) {
     var moves = [];
     inputData.bulk.split('\n').forEach(function(m) {
 
-      if (m.indexOf('*') < 0) { // moves without generation-based conditions
+      // check if including moves with generation-based conditions
+      if (inputData.includeStarred || m.indexOf('*') < 0) {
         moves.push(createMoveObj(m));
       }
 
     });
-    //console.log(moves);
+
     return moves;
   }
 
   function createMoveObj(data) {
-    var move = data.replace('*', '').split('\t');
+    var move = data.replace(/\*/g, '').split('\t');
+    // if spaces instead of tab character
+    if (move.length == 1) {
+      move = move[0].split('   ');
+      move.forEach(function(m, i){
+        move[i] = m.trim();
+      });
+    }
     var gens = move[8].split('-');
+
     return {
       "name" : move[1],
       "typeId" : typeIdByName(move[2]),
@@ -76,7 +85,9 @@ module.exports = function ($scope, Moves, Generations, Types) {
       "accuracy" : isNumber(move[7]) ? move[7].substr(0, move[7].indexOf('%')) : null,
       "genIntroducedId" : genIdByName(gens[0]),
       "genCompletedId" : gens.length > 1 ? genIdByName(gens[1]) : mostRecentGen(),
-      "isTM": "false"
+      "isTM" : "false",
+      "extraInfoColumn" : move.length > 9 ? move[9] : null,
+      "extraInfo" : move.length > 9 ? move[10] : null
     };
   }
 
