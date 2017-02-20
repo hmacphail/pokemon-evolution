@@ -1,5 +1,6 @@
 var generationService     = require('./admin/generationService');
 var pokemonService        = require('./admin/pokemonService');
+var evolutionService      = require('./admin/evolutionService');
 var typeService           = require('./admin/typeService');
 var effectivenessService  = require('./admin/effectivenessService');
 var abilityService        = require('./admin/abilityService');
@@ -10,6 +11,7 @@ var itemService           = require('./admin/itemService');
 var srvc = angular.module('services', []);
 srvc.factory('Generations',   ['$http', generationService]);
 srvc.factory('Pokemon',       ['$http', pokemonService]);
+srvc.factory('Evolutions',    ['$http', evolutionService]);
 srvc.factory('Types',         ['$http', typeService]);
 srvc.factory('Effectiveness', ['$http', effectivenessService]);
 srvc.factory('Abilities',     ['$http', abilityService]);

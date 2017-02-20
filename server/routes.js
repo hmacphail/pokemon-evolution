@@ -27,6 +27,7 @@ router.delete('/pokemon/:id',         pokemon.delete);
 router.get(   '/evolutions',          evolutions.index);
 router.get(   '/evolutions/:id',      evolutions.show);
 router.post(  '/evolutions',          evolutions.create);
+router.post(  '/evolutions/bulk',     evolutions.bulkCreate);
 router.delete('/evolutions/:id',      evolutions.delete);
 
 router.get(   '/types',               types.index);

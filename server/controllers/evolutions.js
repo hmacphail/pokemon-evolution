@@ -34,6 +34,20 @@ module.exports = {
       });
   },
 
+  //Create multiple new evolutions using model.bulkCreate()
+  bulkCreate(req, res) {
+    Evolution.bulkCreate(req.body)
+      .then(function() {
+        return Evolution.findAll();
+      })
+      .then(function(evolution) {
+        res.status(200).json(evolution)
+      })
+      .catch(function (error) {
+        res.status(500).json(error);
+      });
+  },
+
   //Delete an existing evolution by the unique ID using model.destroy()
   delete(req, res) {
     Evolution.destroy({
