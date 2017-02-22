@@ -198,12 +198,7 @@ module.exports = function ($scope, Evolution, Pokemon, Item) {
   getPokemonAndItemData();
 
   $scope.createEvolutionsBulk = function() {
-    var evolutions = [];
-    if ($scope.formData.trigger == 'level') {
-      var evolutions = parseBulkData($scope.formData);
-    }
-
-    Evolution.bulkCreate(evolutions)
+    Evolution.bulkCreate(parseBulkData($scope.formData))
       .then(function(res) {
         if (res.status == 200) {
           $scope.formData = {};
@@ -229,8 +224,17 @@ module.exports = function ($scope, Evolution, Pokemon, Item) {
     }
   };
 
-  // --- helper functions ---
+  $scope.itemName = function(itemId) {
+    if ($scope.items) {
+      for (var i = 0; i < $scope.items.length; i++){
+        if ($scope.items[i].id == [itemId]){
+          return $scope.items[i].name;
+        }
+      }
+    }
+  }
 
+  //====== remote data retrieval ========
   function getAllEvolutions() {
     Evolution.get().then(function(res){
       $scope.evolutions = res.data;
@@ -244,8 +248,9 @@ module.exports = function ($scope, Evolution, Pokemon, Item) {
     Item.get().then(function(res){
       $scope.items = res.data;
     });
-  }
+  };
 
+  //======= main parser functions ========
   function parseBulkData(inputData) {
     // parse pasted data from evolutions tables
     // https://pokemondb.net/evolution/level
@@ -263,28 +268,62 @@ module.exports = function ($scope, Evolution, Pokemon, Item) {
           prev = evo;
         }
         else { // second row
-          var frmPoke = checkAlolan(prev[0])
-            ? pokemonIdByName(splitPokemonNameString(prev[0].split(' ')[1]), true)
-            : pokemonIdByName(splitPokemonNameString(prev[0]), false);
-          var toPoke = checkAlolan(prev[2])
-            ? pokemonIdByName(splitPokemonNameString(prev[2].split(' ')[1]), true)
-            : pokemonIdByName(splitPokemonNameString(prev[2].split(' ')[0]), false);
-          var specialForm = checkSpecialForm(prev[2]) ? evo[0] : null;
-
-          evolutions.push(createEvolutionObj(frmPoke, toPoke, evo[2], evo[1], null, specialForm));
+          evolutions.push(parseDataRow(inputData.trigger, prev, evo));
           prev = [];
         }
       }
       else { // regular data row
-        var frmPoke = pokemonIdByName(splitPokemonNameString(evo[0]));
-        var toPoke = pokemonIdByName(splitPokemonNameString(evo[2]));
-        evolutions.push(createEvolutionObj(frmPoke, toPoke, evo[4], evo[3], null, null));
+        evolutions.push(parseDataRow(inputData.trigger, evo));
       }
     });
-    //console.log(evolutions);
     return evolutions;
+  };
+
+  function parseDataRow(trigger, row1, row2) {
+    if (row2) { // dual row data entry
+      if (trigger == 'level') { // level trigger
+        var frmPoke = checkAlolan(row1[0])
+          ? pokemonIdByName(splitPokemonNameString(row1[0].split(' ')[1]), true)
+          : pokemonIdByName(splitPokemonNameString(row1[0]), false);
+        var toPoke = checkAlolan(row1[2])
+          ? pokemonIdByName(splitPokemonNameString(row1[2].split(' ')[1]), true)
+          : pokemonIdByName(splitPokemonNameString(row1[2].split(' ')[0]), false);
+        var specialForm = checkSpecialCondition(row1[2]) ? row2[0] : null;
+
+        return createEvolutionObj(frmPoke, toPoke, row2[2], row2[1], null, specialForm);
+      }
+      else if (trigger = 'item') { // item trigger
+        var frmPoke = checkAlolan(row1[0])
+          ? pokemonIdByName(splitPokemonNameString(row1[0].split(' ')[1]), true)
+          : pokemonIdByName(splitPokemonNameString(row1[0]), false);
+        var toPoke = checkAlolan(row1[2])
+          ? pokemonIdByName(splitPokemonNameString(row1[2].split(' ')[1]), true)
+          : pokemonIdByName(splitPokemonNameString(row1[2].split(' ')[0]), false);
+        var specialForm = checkSpecialCondition(row1[2]) ? row2[0] : null;
+        var itemCond = splitItemConditionString(row2[1]);
+
+        return createEvolutionObj(frmPoke, toPoke, itemCond[1], null, itemIdByName(itemCond[0]), specialForm);
+      }
+
+    } else { // regular data row
+      if (trigger == 'level') { // level trigger
+        var frmPoke = pokemonIdByName(splitPokemonNameString(row1[0]));
+        var toPoke = pokemonIdByName(splitPokemonNameString(row1[2]));
+
+        return createEvolutionObj(frmPoke, toPoke, row1[4], row1[3], null, null);
+      }
+      else if (trigger == 'item') { // item trigger
+        var frmPoke = pokemonIdByName(splitPokemonNameString(row1[0]));
+        var toPoke = pokemonIdByName(splitPokemonNameString(row1[2]));
+        var itemCond = splitItemConditionString(row1[3]);
+
+        return createEvolutionObj(frmPoke, toPoke, itemCond[1], null, itemIdByName(itemCond[0]), null);
+      }
+    }
   }
 
+
+  //======= data preparation ==========
   function createEvolutionObj(fromPokemon, toPokemon, condition, level, item, form) {
     return {
       "fromPokemonId" : fromPokemon,
@@ -295,7 +334,7 @@ module.exports = function ($scope, Evolution, Pokemon, Item) {
       "itemId" : item,
       "form" : form
     };
-  }
+  };
 
   function splitPokemonNameString(inputStr) {
     var len = inputStr.length;
@@ -306,16 +345,29 @@ module.exports = function ($scope, Evolution, Pokemon, Item) {
       return firstHalf;
     else
       return inputStr;
-  }
+  };
 
+  function checkSpecialCondition(inputStr) {
+    return inputStr.indexOf('(') >= 0;
+  };
+
+  //---- data parsing for level trigger ----
   function checkAlolan(inputStr) {
     return inputStr.split(' ')[0] === "Alolan";
+  };
+
+  //---- data parsing for item trigger ----
+  function splitItemConditionString(inputStr) {
+    var bracketInd = inputStr.indexOf('(');
+    if (bracketInd >= 0) {
+      var item = inputStr.substring(0, bracketInd).trim();
+      var condition = inputStr.substring(bracketInd + 1, inputStr.indexOf(')'));
+      return [item, condition];
+    }
+    return [inputStr];
   }
 
-  function checkSpecialForm(inputStr) {
-    return inputStr.indexOf('(') >= 0;
-  }
-
+  //======= find entries by name string ========
   function pokemonIdByName(name, isAlolan) {
     for (var i = 0; i < $scope.pokemon.length; i++){
       if ($scope.pokemon[i].name == name){
@@ -324,7 +376,7 @@ module.exports = function ($scope, Evolution, Pokemon, Item) {
         return $scope.pokemon[i].id
       }
     }
-  }
+  };
 
   function itemIdByName(name) {
     for (var i = 0; i < $scope.items.length; i++){
@@ -332,7 +384,7 @@ module.exports = function ($scope, Evolution, Pokemon, Item) {
         return $scope.items[i].id
       }
     }
-  }
+  };
 
 };
 
