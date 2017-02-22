@@ -34,6 +34,20 @@ module.exports = {
       });
   },
 
+  //Create multiple new learnsets using model.bulkCreate()
+  bulkCreate(req, res) {
+    Learnset.bulkCreate(req.body)
+      .then(function() {
+        return Learnset.findAll();
+      })
+      .then(function(learnset) {
+        res.status(200).json(learnset)
+      })
+      .catch(function (error) {
+        res.status(500).json(error);
+      });
+  },
+
   //Delete an existing learnset by the unique ID using model.destroy()
   delete(req, res) {
     Learnset.destroy({

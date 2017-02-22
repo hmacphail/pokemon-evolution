@@ -6,7 +6,9 @@ var evolutionController     = require('./admin/evolutionController');
 var typeController          = require('./admin/typeController');
 var effectivenessController = require('./admin/effectivenessController');
 var abilityController       = require('./admin/abilityController');
+var abilitysetController    = require('./admin/abilitysetController');
 var moveController          = require('./admin/moveController');
+var learnsetController      = require('./admin/learnsetController');
 var itemController          = require('./admin/itemController');
 
 // create controllers
@@ -20,5 +22,7 @@ ctrl.controller('evolutionController', ['$scope', 'Evolutions', 'Pokemon', 'Item
 ctrl.controller('typeController', ['$scope', 'Types', typeController]);
 ctrl.controller('effectivenessController', ['$scope', 'Effectiveness', 'Generations', 'Types', effectivenessController]);
 ctrl.controller('abilityController', ['$scope', 'Abilities', 'Generations', abilityController]);
+ctrl.controller('abilitysetController', ['$scope', 'Abilitysets', 'Generations', 'Pokemon', 'Abilities', abilitysetController]);
 ctrl.controller('moveController', ['$scope', 'Moves', 'Generations', 'Types', moveController]);
+ctrl.controller('learnsetController', ['$scope', 'Learnsets', 'Generations', 'Pokemon', 'Moves', learnsetController]);
 ctrl.controller('itemController', ['$scope', 'Items', itemController]);

@@ -1,0 +1,44 @@
+<div id="admin-abilitysets" class="container">
+  <div class="row">
+
+    <div class="col-sm-3">
+      <h2>Abilitysets</h2>
+    </div>
+
+    <div class="col-sm-9">
+      <form>
+        <div class="form-group row">
+          <div class="col-sm-3">
+            <label for="select-gen">Generation:</label>
+          </div>
+          <div class="col-sm-9">
+            <select id="select-gen" class="form-control pull-right" ng-model="formData.gen">
+              <option ng-repeat="g in generations" value="{{ g.id }}">{{ g.name }}</option>
+            </select>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary" ng-click="createAbilitysetsBulk()">Run YML Scripts</button>
+      </form>
+      <br />
+      <table class="table table-condensed">
+        <tr>
+          <th>Pokémon</th>
+          <th>Ability</th>
+          <th>Generation</th>
+          <th></th>
+        </tr>
+        <tr ng-repeat="as in abilitysets">
+          <td> {{ as.pokemonId }} </td>
+          <td> {{ as.abilityId }} </td>
+          <td> {{ as.generationId }} </td>
+          <td>
+            <a href="#" class="lnk-danger pull-right" ng-click="deleteAbilityset(as.id)">
+              <i class="fa fa-times"></i>
+            </a>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+  </div>
+</div>

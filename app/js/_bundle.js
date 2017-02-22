@@ -63,6 +63,87 @@ module.exports = function ($scope, Abilities, Generations) {
 };
 
 },{}],2:[function(require,module,exports){
+module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities) {
+
+  $scope.formData = {};
+  getAllAbilitysets();
+  getAssociatedData();
+
+  $scope.createAbilitysetsBulk = function() {
+    Abilitysets.bulkCreate(parseBulkData($scope.formData))
+      .then(function(res) {
+        if (res.status == 200) {
+          $scope.formData = {};
+          getAllAbilitysets();
+        }
+      });
+  }
+
+  $scope.deleteAbilityset = function(id) {
+    Abilitysets.delete(id)
+      .then(function(res) {
+        getAllAbilitysets();
+      });
+  };
+
+
+  // --- helper functions ---
+
+  function getAllAbilitysets() {
+    Abilitysets.get().then(function(res){
+      $scope.abilitysets = res.data;
+    });
+  };
+
+  function getAssociatedData() {
+    Generations.get().then(function(res){
+      $scope.generations = res.data;
+    });
+    Pokemon.get().then(function(res){
+      $scope.pokemon = res.data;
+    });
+    Abilities.get().then(function(res){
+      $scope.abilities = res.data;
+    });
+  }
+
+  function parseBulkData(inputData) {
+    // parse pasted data from bulbapedia table
+    // http://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_National_Pok%C3%A9dex_number
+    /*var pokemon = [];
+    inputData.bulk.split('\n').forEach(function(p){
+      var pkmn = p.split('\t');
+      pokemon.push({
+        "pokedexId" : pkmn[1].substr(1),
+        "name" : pkmn[3],
+        "form" : (pkmn[0] == " " && inputData.gen == "1" ? "alolan" : "original"),
+        "genIntroducedId" : inputData.gen,
+        "primaryTypeId" : typeIdByName(pkmn[4]),
+        "secondaryTypeId" : (pkmn.length == 6 ? typeIdByName(pkmn[5]) : null)
+      });
+    });
+    return pokemon;*/
+  }
+
+  function pokemonIdByName(name) {
+    for (var i = 0; i < $scope.pokemon.length; i++){
+      if ($scope.pokemon[i].name == name){
+        return $scope.pokemon[i].id
+      }
+    }
+  }
+
+  function abilityIdByName(name) {
+    for (var i = 0; i < $scope.abilities.length; i++){
+      if ($scope.abilities[i].name == name){
+        return $scope.abilities[i].id
+      }
+    }
+  }
+
+};
+
+},{}],3:[function(require,module,exports){
 module.exports = function ($scope, Effectiveness, Generations, Types) {
 
   $scope.formData = {};
@@ -189,7 +270,7 @@ module.exports = function ($scope, Effectiveness, Generations, Types) {
 
 };
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 module.exports = function ($scope, Evolution, Pokemon, Item) {
 
   $scope.formData = {};
@@ -292,100 +373,55 @@ module.exports = function ($scope, Evolution, Pokemon, Item) {
 
   function parseDataRow(trigger, row1, row2) {
     if (row2) { // dual row data entry
-      if (trigger == 'level') { // level trigger
-        var frmPoke = checkAlolan(row1[0])
-          ? pokemonIdByName(splitPokemonNameString(row1[0].split(' ')[1]), true)
-          : pokemonIdByName(splitPokemonNameString(row1[0]), false);
-        var toPoke = checkAlolan(row1[2])
-          ? pokemonIdByName(splitPokemonNameString(row1[2].split(' ')[1]), true)
-          : pokemonIdByName(splitPokemonNameString(row1[2].split(' ')[0]), false);
-        var specialForm = checkSpecialCondition(row1[2]) ? row2[0] : null;
-
-        return createEvolutionObj(frmPoke, toPoke, row2[2], row2[1], null, specialForm);
-      }
-      else if (trigger == 'item') { // item trigger
-        var frmPoke = checkAlolan(row1[0])
-          ? pokemonIdByName(splitPokemonNameString(row1[0].split(' ')[1]), true)
-          : pokemonIdByName(splitPokemonNameString(row1[0]), false);
-        var toPoke = checkAlolan(row1[2])
-          ? pokemonIdByName(splitPokemonNameString(row1[2].split(' ')[1]), true)
-          : pokemonIdByName(splitPokemonNameString(row1[2].split(' ')[0]), false);
-        var specialForm = checkSpecialCondition(row1[2]) ? row2[0] : null;
-        var itemCond = splitItemConditionString(row2[1]);
-
-        return createEvolutionObj(frmPoke, toPoke, itemCond[1], null, itemIdByName(itemCond[0]), specialForm);
-      }
-      else if (trigger == 'trade') { // trade trigger
-        var frmPoke = checkAlolan(row1[0])
+      var frmPoke = checkAlolan(row1[0])
           ? pokemonIdByName(splitPokemonNameString(row1[0].split(' ')[1]), true)
           : pokemonIdByName(splitPokemonNameString(row1[0]), false);
         var toPoke = checkAlolan(row1[2])
           ? pokemonIdByName(splitPokemonNameString(row1[2].split(' ')[1]), true)
           : pokemonIdByName(splitPokemonNameString(row1[2].split(' ')[0]), false);
 
-        return createEvolutionObj(frmPoke, toPoke, row2[1], null, null, null);
-      }
-      else if (trigger == 'happiness') { // happiness trigger
-        var frmPoke = checkAlolan(row1[0])
-          ? pokemonIdByName(splitPokemonNameString(row1[0].split(' ')[1]), true)
-          : pokemonIdByName(splitPokemonNameString(row1[0]), false);
-        var toPoke = checkAlolan(row1[2])
-          ? pokemonIdByName(splitPokemonNameString(row1[2].split(' ')[1]), true)
-          : pokemonIdByName(splitPokemonNameString(row1[2].split(' ')[0]), false);
-
-        return createEvolutionObj(frmPoke, toPoke, row2[1], null, null, null);
-      }
-      else if (trigger == 'other') { // other trigger
-        if (row2[1] || row2[2].indexOf('Trade') >= 0) { // duplicate from other triggers
-          return null;
-        }
-        var frmPoke = checkAlolan(row1[0])
-          ? pokemonIdByName(splitPokemonNameString(row1[0].split(' ')[1]), true)
-          : pokemonIdByName(splitPokemonNameString(row1[0]), false);
-        var toPoke = checkAlolan(row1[2])
-          ? pokemonIdByName(splitPokemonNameString(row1[2].split(' ')[1]), true)
-          : pokemonIdByName(splitPokemonNameString(row1[2].split(' ')[0]), false);
-
-        return createEvolutionObj(frmPoke, toPoke, row2[2], null, null, null);
+      switch (trigger) {
+        case 'level' :
+          var specialForm = checkSpecialCondition(row1[2]) ? row2[0] : null;
+          return createEvolutionObj(frmPoke, toPoke, row2[2], row2[1], null, specialForm);
+        case 'item' :
+          var specialForm = checkSpecialCondition(row1[2]) ? row2[0] : null;
+          var itemCond = splitItemConditionString(row2[1]);
+          return createEvolutionObj(frmPoke, toPoke, itemCond[1], null, itemIdByName(itemCond[0]), specialForm);
+        case 'trade' :
+          return createEvolutionObj(frmPoke, toPoke, row2[1], null, null, null);
+        case 'happiness' :
+          return createEvolutionObj(frmPoke, toPoke, row2[1], null, null, null);
+        case 'other' :
+          if (row2[1] || row2[2].indexOf('Trade') >= 0) { // duplicate from other triggers
+            return null;
+          }
+          return createEvolutionObj(frmPoke, toPoke, row2[2], null, null, null);
       }
 
     } else { // regular data row
-      if (trigger == 'level') { // level trigger
-        var frmPoke = pokemonIdByName(splitPokemonNameString(row1[0]));
-        var toPoke = pokemonIdByName(splitPokemonNameString(row1[2]));
+      var frmPoke = pokemonIdByName(splitPokemonNameString(row1[0]));
+      var toPoke = pokemonIdByName(splitPokemonNameString(row1[2]));
 
-        return createEvolutionObj(frmPoke, toPoke, row1[4], row1[3], null, null);
+      switch (trigger) {
+        case 'level' :
+          return createEvolutionObj(frmPoke, toPoke, row1[4], row1[3], null, null);
+        case 'item' :
+          var itemCond = splitItemConditionString(row1[3]);
+          return createEvolutionObj(frmPoke, toPoke, itemCond[1], null, itemIdByName(itemCond[0]), null);
+        case 'trade' :
+          var item = itemIdByName(row1[3]);
+          var cond = item ? null : row1[3];
+          return createEvolutionObj(frmPoke, toPoke, cond, null, item, null);
+        case 'happiness' :
+          return createEvolutionObj(frmPoke, toPoke, row1[3], null, null, null);
+        case 'other' :
+          if (row1[3] || row1[4].indexOf('Trade') >= 0) { // duplicate from other triggers
+            return null;
+          }
+          return createEvolutionObj(frmPoke, toPoke, row1[4], null, null, null);
       }
-      else if (trigger == 'item') { // item trigger
-        var frmPoke = pokemonIdByName(splitPokemonNameString(row1[0]));
-        var toPoke = pokemonIdByName(splitPokemonNameString(row1[2]));
-        var itemCond = splitItemConditionString(row1[3]);
 
-        return createEvolutionObj(frmPoke, toPoke, itemCond[1], null, itemIdByName(itemCond[0]), null);
-      }
-      else if (trigger == 'trade') { // trade trigger
-        var frmPoke = pokemonIdByName(splitPokemonNameString(row1[0]));
-        var toPoke = pokemonIdByName(splitPokemonNameString(row1[2]));
-        var item = itemIdByName(row1[3]);
-        var cond = item ? null : row1[3];
-
-        return createEvolutionObj(frmPoke, toPoke, cond, null, item, null);
-      }
-      else if (trigger == 'happiness') { // happiness trigger
-        var frmPoke = pokemonIdByName(splitPokemonNameString(row1[0]));
-        var toPoke = pokemonIdByName(splitPokemonNameString(row1[2]));
-
-        return createEvolutionObj(frmPoke, toPoke, row1[3], null, null, null);
-      }
-      else if (trigger == 'other') { // other trigger
-        if (row1[3] || row1[4].indexOf('Trade') >= 0) { // duplicate from other triggers
-          return null;
-        }
-        var frmPoke = pokemonIdByName(splitPokemonNameString(row1[0]));
-        var toPoke = pokemonIdByName(splitPokemonNameString(row1[2]));
-
-        return createEvolutionObj(frmPoke, toPoke, row1[4], null, null, null);
-      }
     }
   }
 
@@ -457,7 +493,7 @@ module.exports = function ($scope, Evolution, Pokemon, Item) {
 
 };
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 module.exports = function ($scope, Generations) {
 
   $scope.formData = {};
@@ -491,7 +527,7 @@ module.exports = function ($scope, Generations) {
 
 };
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 module.exports = function ($scope, Items) {
 
   $scope.formData = {};
@@ -549,7 +585,88 @@ module.exports = function ($scope, Items) {
 
 };
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
+module.exports = function ($scope, Learnsets, Generations, Pokemon, Moves) {
+
+  $scope.formData = {};
+  getAllLearnsets();
+  getAssociatedData();
+
+  $scope.createLearnsetsBulk = function() {
+    Learnsets.bulkCreate(parseBulkData($scope.formData))
+      .then(function(res) {
+        if (res.status == 200) {
+          $scope.formData = {};
+          getAllLearnsets();
+        }
+      });
+  }
+
+  $scope.deleteLearnset = function(id) {
+    Learnsets.delete(id)
+      .then(function(res) {
+        getAllLearnsets();
+      });
+  };
+
+
+  // --- helper functions ---
+
+  function getAllLearnsets() {
+    Learnsets.get().then(function(res){
+      $scope.learnsets = res.data;
+    });
+  };
+
+  function getAssociatedData() {
+    Generations.get().then(function(res){
+      $scope.generations = res.data;
+    });
+    Pokemon.get().then(function(res){
+      $scope.pokemon = res.data;
+    });
+    Moves.get().then(function(res){
+      $scope.moves = res.data;
+    });
+  }
+
+  function parseBulkData(inputData) {
+    // parse pasted data from bulbapedia table
+    // http://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_National_Pok%C3%A9dex_number
+    /*var pokemon = [];
+    inputData.bulk.split('\n').forEach(function(p){
+      var pkmn = p.split('\t');
+      pokemon.push({
+        "pokedexId" : pkmn[1].substr(1),
+        "name" : pkmn[3],
+        "form" : (pkmn[0] == " " && inputData.gen == "1" ? "alolan" : "original"),
+        "genIntroducedId" : inputData.gen,
+        "primaryTypeId" : typeIdByName(pkmn[4]),
+        "secondaryTypeId" : (pkmn.length == 6 ? typeIdByName(pkmn[5]) : null)
+      });
+    });
+    return pokemon;*/
+  }
+
+  function pokemonIdByName(name) {
+    for (var i = 0; i < $scope.pokemon.length; i++){
+      if ($scope.pokemon[i].name == name){
+        return $scope.pokemon[i].id
+      }
+    }
+  }
+
+  function moveIdByName(name) {
+    for (var i = 0; i < $scope.moves.length; i++){
+      if ($scope.moves[i].name == name){
+        return $scope.moves[i].id
+      }
+    }
+  }
+
+};
+
+},{}],8:[function(require,module,exports){
 module.exports = function ($scope, Moves, Generations, Types) {
 
   $scope.formData = {};
@@ -674,7 +791,7 @@ module.exports = function ($scope, Moves, Generations, Types) {
 
 };
 
-},{}],7:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 module.exports = function ($scope, Pokemon, Generations, Types) {
 
   $scope.formData = {};
@@ -744,7 +861,7 @@ module.exports = function ($scope, Pokemon, Generations, Types) {
 
 };
 
-},{}],8:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 module.exports = function ($scope, Types) {
 
   $scope.formData = {};
@@ -778,7 +895,7 @@ module.exports = function ($scope, Types) {
 
 };
 
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var homeController          = require('./homeController');
 var errorController         = require('./errorController');
 var generationController    = require('./admin/generationController');
@@ -787,7 +904,9 @@ var evolutionController     = require('./admin/evolutionController');
 var typeController          = require('./admin/typeController');
 var effectivenessController = require('./admin/effectivenessController');
 var abilityController       = require('./admin/abilityController');
+var abilitysetController    = require('./admin/abilitysetController');
 var moveController          = require('./admin/moveController');
+var learnsetController      = require('./admin/learnsetController');
 var itemController          = require('./admin/itemController');
 
 // create controllers
@@ -801,22 +920,24 @@ ctrl.controller('evolutionController', ['$scope', 'Evolutions', 'Pokemon', 'Item
 ctrl.controller('typeController', ['$scope', 'Types', typeController]);
 ctrl.controller('effectivenessController', ['$scope', 'Effectiveness', 'Generations', 'Types', effectivenessController]);
 ctrl.controller('abilityController', ['$scope', 'Abilities', 'Generations', abilityController]);
+ctrl.controller('abilitysetController', ['$scope', 'Abilitysets', 'Generations', 'Pokemon', 'Abilities', abilitysetController]);
 ctrl.controller('moveController', ['$scope', 'Moves', 'Generations', 'Types', moveController]);
+ctrl.controller('learnsetController', ['$scope', 'Learnsets', 'Generations', 'Pokemon', 'Moves', learnsetController]);
 ctrl.controller('itemController', ['$scope', 'Items', itemController]);
 
-},{"./admin/abilityController":1,"./admin/effectivenessController":2,"./admin/evolutionController":3,"./admin/generationController":4,"./admin/itemController":5,"./admin/moveController":6,"./admin/pokemonController":7,"./admin/typeController":8,"./errorController":10,"./homeController":11}],10:[function(require,module,exports){
+},{"./admin/abilityController":1,"./admin/abilitysetController":2,"./admin/effectivenessController":3,"./admin/evolutionController":4,"./admin/generationController":5,"./admin/itemController":6,"./admin/learnsetController":7,"./admin/moveController":8,"./admin/pokemonController":9,"./admin/typeController":10,"./errorController":12,"./homeController":13}],12:[function(require,module,exports){
 module.exports = function ($scope) {
     $scope.message = 'Page not found!';
   };
 
 
-},{}],11:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 module.exports = function ($scope) {
     $scope.message = 'Everyone come and see how good I look!';
   };
 
 
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -831,7 +952,22 @@ module.exports = function($http) {
   }
 };
 
-},{}],13:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
+module.exports = function($http) {
+  return {
+    get: function() {
+      return $http.get('/api/abilitysets');
+    },
+    bulkCreate: function(data) {
+      return $http.post('/api/abilitysets/bulk', data);
+    },
+    delete: function(id) {
+      return $http.delete('/api/abilitysets/' + id);
+    }
+  }
+};
+
+},{}],16:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -852,7 +988,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],14:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -867,7 +1003,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],15:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -882,7 +1018,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],16:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -900,7 +1036,22 @@ module.exports = function($http) {
   }
 };
 
-},{}],17:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
+module.exports = function($http) {
+  return {
+    get: function() {
+      return $http.get('/api/learnsets');
+    },
+    bulkCreate: function(data) {
+      return $http.post('/api/learnsets/bulk', data);
+    },
+    delete: function(id) {
+      return $http.delete('/api/learnsets/' + id);
+    }
+  }
+};
+
+},{}],21:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -918,7 +1069,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],18:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -933,7 +1084,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],19:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -948,14 +1099,16 @@ module.exports = function($http) {
   }
 };
 
-},{}],20:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 var generationService     = require('./admin/generationService');
 var pokemonService        = require('./admin/pokemonService');
 var evolutionService      = require('./admin/evolutionService');
 var typeService           = require('./admin/typeService');
 var effectivenessService  = require('./admin/effectivenessService');
 var abilityService        = require('./admin/abilityService');
+var abilitysetService     = require('./admin/abilitysetService');
 var moveService           = require('./admin/moveService');
+var learnsetService       = require('./admin/learnsetService');
 var itemService           = require('./admin/itemService');
 
 // create factories
@@ -966,10 +1119,12 @@ srvc.factory('Evolutions',    ['$http', evolutionService]);
 srvc.factory('Types',         ['$http', typeService]);
 srvc.factory('Effectiveness', ['$http', effectivenessService]);
 srvc.factory('Abilities',     ['$http', abilityService]);
+srvc.factory('Abilitysets',   ['$http', abilitysetService]);
 srvc.factory('Moves',         ['$http', moveService]);
+srvc.factory('Learnsets',     ['$http', learnsetService]);
 srvc.factory('Items',         ['$http', itemService]);
 
-},{"./admin/abilityService":12,"./admin/effectivenessService":13,"./admin/evolutionService":14,"./admin/generationService":15,"./admin/itemService":16,"./admin/moveService":17,"./admin/pokemonService":18,"./admin/typeService":19}],21:[function(require,module,exports){
+},{"./admin/abilityService":14,"./admin/abilitysetService":15,"./admin/effectivenessService":16,"./admin/evolutionService":17,"./admin/generationService":18,"./admin/itemService":19,"./admin/learnsetService":20,"./admin/moveService":21,"./admin/pokemonService":22,"./admin/typeService":23}],25:[function(require,module,exports){
 require('./controllers/controllers');
 require('./services/services');
 
@@ -1009,9 +1164,17 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
       templateUrl : '/views/admin/abilities.html',
       controller  : 'abilityController'
     })
+    .when('/admin/abilitysets', {
+      templateUrl : '/views/admin/abilitysets.html',
+      controller  : 'abilitysetController'
+    })
     .when('/admin/moves', {
       templateUrl : '/views/admin/moves.html',
       controller  : 'moveController'
+    })
+    .when('/admin/learnsets', {
+      templateUrl : '/views/admin/learnsets.html',
+      controller  : 'learnsetController'
     })
     .when('/admin/items', {
       templateUrl : '/views/admin/items.html',
@@ -1021,4 +1184,4 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
   $locationProvider.html5Mode(true);
 }]);
 
-},{"./controllers/controllers":9,"./services/services":20}]},{},[21]);
+},{"./controllers/controllers":11,"./services/services":24}]},{},[25]);
