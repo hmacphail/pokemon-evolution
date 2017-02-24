@@ -181,7 +181,6 @@ module.exports = function ($scope, Evolution, Pokemon, Item) {
     return inputStr.indexOf('(') >= 0;
   };
 
-  //---- data parsing for level trigger ----
   function checkAlolan(inputStr) {
     return inputStr.split(' ')[0] === "Alolan";
   };

@@ -3,6 +3,9 @@
 
     <div class="col-sm-3">
       <h2>Learnsets</h2>
+      <div>
+        Num of Pokemon: <span>{{ entryCount }}</span>
+      </div>
     </div>
 
     <div class="col-sm-9">
@@ -13,13 +16,13 @@
           </div>
           <div class="col-sm-9">
             <select id="select-gen" class="form-control pull-right" ng-model="formData.gen">
-              <option ng-repeat="g in generations" value="{{ g.id }}">{{ g.name }}</option>
+              <option ng-repeat="g in generations">{{ g.name }}</option>
             </select>
           </div>
         </div>
-        <button type="button" class="btn btn-primary" ng-click="createLearnsetsBulk()">Run YML Scripts</button>
+        <button type="button" class="btn btn-primary" ng-click="runYqlScript()">Run YQL Scripts</button>
       </form>
-      <br />
+      <!--<br />
       <table class="table table-condensed">
         <tr>
           <th>Pokémon</th>
@@ -30,8 +33,8 @@
           <th></th>
         </tr>
         <tr ng-repeat="ls in learnsets">
-          <td> {{ ls.pokemonId }} </td>
-          <td> {{ ls.moveId }} </td>
+          <td> {{ pokemonName(ls.pokemonId) }} </td>
+          <td> {{ moveName(ls.moveId) }} </td>
           <td> {{ ls.level }} </td>
           <td> {{ ls.genIntroducedId }} </td>
           <td> {{ ls.genCompletedId }} </td>
@@ -41,7 +44,7 @@
             </a>
           </td>
         </tr>
-      </table>
+      </table>-->
     </div>
 
   </div>
