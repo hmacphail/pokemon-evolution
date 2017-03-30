@@ -5,14 +5,14 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
   getAssociatedData();
 
   $scope.createAbilitysetsBulk = function() {
-    //parseBulkData($scope.formData);
-    Abilitysets.bulkCreate(parseBulkData($scope.formData))
+    parseBulkData($scope.formData);
+    /*Abilitysets.bulkCreate(parseBulkData($scope.formData))
       .then(function(res) {
         if (res.status == 200) {
           $scope.formData = {};
           getAllAbilitysets();
         }
-      });
+      });*/
   }
 
   $scope.deleteAbilityset = function(id) {
@@ -70,26 +70,33 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
     var abilitysets = [];
     inputData.bulk.split('\n').forEach(function(a){
       var as = a.split('\t');
+      // if spaces instead of tab character
+      if (as.length == 1) {
+        as = as[0].split('   ');
+        as.forEach(function(a, i){
+          as[i] = a.trim();
+        });
+      }
 
-      // if this pokemon is not a Mega Evolution
-      if (as[2].indexOf('Mega') < 0 && as[2].indexOf('*') < 0) {
+      // check if including abilitysets with generation-based conditions
+      if (inputData.includeStarred) {
+        console.log(as);
 
-        var pokeId = pokemonIdByName(as[2]);
-        var genId = generationByPokemonId(pokeId);
+      } else {
+        // skip Mega Evolutions and all starred rows
+        if (as[2].indexOf('Mega') < 0 || as[2].indexOf('*') < 0) {
+          var pokeId = pokemonIdByName(as[2]);
+          var genId = generationByPokemonId(pokeId);
 
-        // check if including moves with generation-based conditions
-        /*if (inputData.includeStarred || m.indexOf('*') < 0) {
-          moves.push(createMoveObj(m));
-        }*/
-
-        if (as[3] && as[3].indexOf('*') < 0) { // primary ability
-          abilitysets.push(createAbilitysetObj(pokeId, genId, abilityIdByName(as[3]), "primary"));
-        }
-        if (as[4] && as[4].indexOf('*') < 0) { // secondary ability
-          abilitysets.push(createAbilitysetObj(pokeId, genId, abilityIdByName(as[4]), "secondary"));
-        }
-        if (as[5] && as[5].indexOf('*') < 0) { // hidden ability
-          abilitysets.push(createAbilitysetObj(pokeId, genId, abilityIdByName(as[5]), "hidden"));
+          if (as[3] && as[3].indexOf('*') < 0) { // primary ability
+            abilitysets.push(createAbilitysetObj(pokeId, genId, abilityIdByName(as[3]), "primary"));
+          }
+          if (as[4] && as[4].indexOf('*') < 0) { // secondary ability
+            abilitysets.push(createAbilitysetObj(pokeId, genId, abilityIdByName(as[4]), "secondary"));
+          }
+          if (as[5] && as[5].indexOf('*') < 0) { // hidden ability
+            abilitysets.push(createAbilitysetObj(pokeId, genId, abilityIdByName(as[5]), "hidden"));
+          }
         }
       }
 
@@ -101,10 +108,17 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
   }
 
   function createAbilitysetObj(pokemonId, generationId, abilityId, trait) {
+    // gen introduced is generation of pokemon
+    // exception: abilities introduced in Gen III, hidden abilities introduced in Gen V
+    var genIntroducedId =
+      trait == "hidden" ?
+      (generationId < 5 ? 5 : generationId) :
+      (generationId < 3 ? 3 : generationId);
+
     return {
         "pokemonId" : pokemonId,
         "abilityId" : abilityId,
-        "genIntroducedId" : generationId < 3 ? 3 : generationId, // gen is generation of pokemon (excluding I and II)
+        "genIntroducedId" : genIntroducedId,
         "trait" : trait
       };
   }
