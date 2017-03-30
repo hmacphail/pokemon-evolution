@@ -7,30 +7,25 @@
 
     <div class="col-sm-9">
       <form>
-        <div class="form-group row">
-          <div class="col-sm-3">
-            <label for="select-gen">Generation:</label>
-          </div>
-          <div class="col-sm-9">
-            <select id="select-gen" class="form-control pull-right" ng-model="formData.gen">
-              <option ng-repeat="g in generations" value="{{ g.id }}">{{ g.name }}</option>
-            </select>
-          </div>
+        <div class="form-group">
+          <textarea class="form-control" rows="5" ng-model="formData.bulk"></textarea>
         </div>
-        <button type="button" class="btn btn-primary" ng-click="createAbilitysetsBulk()">Run YML Scripts</button>
+        <button type="submit" class="btn btn-primary" ng-click="createAbilitysetsBulk()">Add</button>
       </form>
       <br />
       <table class="table table-condensed">
         <tr>
           <th>Pokémon</th>
           <th>Ability</th>
+          <th>Trait</th>
           <th>Generation</th>
           <th></th>
         </tr>
         <tr ng-repeat="as in abilitysets">
-          <td> {{ as.pokemonId }} </td>
-          <td> {{ as.abilityId }} </td>
-          <td> {{ as.generationId }} </td>
+          <td> {{ pokemonName(as.pokemonId) }} </td>
+          <td> {{ abilityName(as.abilityId) }} </td>
+          <td> {{ as.trait }} </td>
+          <td> {{ as.genIntroducedId }} </td>
           <td>
             <a href="#" class="lnk-danger pull-right" ng-click="deleteAbilityset(as.id)">
               <i class="fa fa-times"></i>

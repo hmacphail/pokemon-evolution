@@ -5,6 +5,7 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
   getAssociatedData();
 
   $scope.createAbilitysetsBulk = function() {
+    //parseBulkData($scope.formData);
     Abilitysets.bulkCreate(parseBulkData($scope.formData))
       .then(function(res) {
         if (res.status == 200) {
@@ -20,6 +21,26 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
         getAllAbilitysets();
       });
   };
+
+  $scope.pokemonName = function(pokemonId) {
+    if ($scope.pokemon) {
+      for (var i = 0; i < $scope.pokemon.length; i++){
+        if ($scope.pokemon[i].id == [pokemonId]){
+          return $scope.pokemon[i].name + ($scope.pokemon[i].form == 'alolan' ? '*' : '');
+        }
+      }
+    }
+  };
+
+  $scope.abilityName = function(abilityId) {
+    if ($scope.abilities) {
+      for (var i = 0; i < $scope.abilities.length; i++){
+        if ($scope.abilities[i].id == [abilityId]){
+          return $scope.abilities[i].name;
+        }
+      }
+    }
+  }
 
 
   // --- helper functions ---
@@ -44,26 +65,69 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
 
   function parseBulkData(inputData) {
     // parse pasted data from bulbapedia table
-    // http://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_National_Pok%C3%A9dex_number
-    /*var pokemon = [];
-    inputData.bulk.split('\n').forEach(function(p){
-      var pkmn = p.split('\t');
-      pokemon.push({
-        "pokedexId" : pkmn[1].substr(1),
-        "name" : pkmn[3],
-        "form" : (pkmn[0] == " " && inputData.gen == "1" ? "alolan" : "original"),
-        "genIntroducedId" : inputData.gen,
-        "primaryTypeId" : typeIdByName(pkmn[4]),
-        "secondaryTypeId" : (pkmn.length == 6 ? typeIdByName(pkmn[5]) : null)
-      });
+    // http://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_Ability
+    //console.log(inputData.bulk);
+    var abilitysets = [];
+    inputData.bulk.split('\n').forEach(function(a){
+      var as = a.split('\t');
+
+      // if this pokemon is not a Mega Evolution
+      if (as[2].indexOf('Mega') < 0 && as[2].indexOf('*') < 0) {
+
+        var pokeId = pokemonIdByName(as[2]);
+        var genId = generationByPokemonId(pokeId);
+
+        // check if including moves with generation-based conditions
+        /*if (inputData.includeStarred || m.indexOf('*') < 0) {
+          moves.push(createMoveObj(m));
+        }*/
+
+        if (as[3] && as[3].indexOf('*') < 0) { // primary ability
+          abilitysets.push(createAbilitysetObj(pokeId, genId, abilityIdByName(as[3]), "primary"));
+        }
+        if (as[4] && as[4].indexOf('*') < 0) { // secondary ability
+          abilitysets.push(createAbilitysetObj(pokeId, genId, abilityIdByName(as[4]), "secondary"));
+        }
+        if (as[5] && as[5].indexOf('*') < 0) { // hidden ability
+          abilitysets.push(createAbilitysetObj(pokeId, genId, abilityIdByName(as[5]), "hidden"));
+        }
+      }
+
+      //gen is generation of pokemon (excluding I and II) unless conditional * is present
     });
-    return pokemon;*/
+
+    console.log(abilitysets);
+    return abilitysets;
+  }
+
+  function createAbilitysetObj(pokemonId, generationId, abilityId, trait) {
+    return {
+        "pokemonId" : pokemonId,
+        "abilityId" : abilityId,
+        "genIntroducedId" : generationId < 3 ? 3 : generationId, // gen is generation of pokemon (excluding I and II)
+        "trait" : trait
+      };
   }
 
   function pokemonIdByName(name) {
+    var isAlolan = (name.indexOf('Alolan') >= 0);
+    if (isAlolan) {
+      name = name.split(' ')[1];
+    }
     for (var i = 0; i < $scope.pokemon.length; i++){
       if ($scope.pokemon[i].name == name){
-        return $scope.pokemon[i].id
+        if ((!isAlolan && $scope.pokemon[i].form == 'original') ||
+          (isAlolan && $scope.pokemon[i].form == 'alolan')) {
+          return $scope.pokemon[i].id;
+        }
+      }
+    }
+  }
+
+  function generationByPokemonId(pokemonId) {
+    for (var i = 0; i < $scope.pokemon.length; i++){
+      if ($scope.pokemon[i].id == pokemonId){
+        return $scope.pokemon[i].genIntroducedId;
       }
     }
   }
@@ -71,7 +135,7 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
   function abilityIdByName(name) {
     for (var i = 0; i < $scope.abilities.length; i++){
       if ($scope.abilities[i].name == name){
-        return $scope.abilities[i].id
+        return $scope.abilities[i].id;
       }
     }
   }
