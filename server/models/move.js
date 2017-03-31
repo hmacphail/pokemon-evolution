@@ -14,12 +14,10 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     power: {
-      type: Sequelize.INTEGER,
-      allowNull: false
+      type: Sequelize.INTEGER
     },
     accuracy: {
-      type: Sequelize.FLOAT,
-      allowNull: false
+      type: Sequelize.FLOAT
     },
     category: {
       type: Sequelize.ENUM,
