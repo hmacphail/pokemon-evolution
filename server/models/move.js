@@ -3,23 +3,28 @@ var Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   var Move = sequelize.define('move', {
     name: {
-      type: Sequelize.STRING(50)
+      type: Sequelize.STRING(50),
+      allowNull: false
     },
     isTM: {
       type: Sequelize.BOOLEAN
     },
     pp: {
-      type: Sequelize.INTEGER
+      type: Sequelize.INTEGER,
+      allowNull: false
     },
     power: {
-      type: Sequelize.INTEGER
+      type: Sequelize.INTEGER,
+      allowNull: false
     },
     accuracy: {
-      type: Sequelize.FLOAT
+      type: Sequelize.FLOAT,
+      allowNull: false
     },
     category: {
       type: Sequelize.ENUM,
-      values: ['physical', 'special', 'status']
+      values: ['physical', 'special', 'status'],
+      allowNull: false
     },
     extraInfo: {
       type: Sequelize.STRING(50)

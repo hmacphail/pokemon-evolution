@@ -3,7 +3,8 @@ var Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   var Learnset = sequelize.define('learnset', {
     level: {
-      type: Sequelize.INTEGER
+      type: Sequelize.INTEGER,
+      allowNull: false
     },
     byTM: {
       type: Sequelize.BOOLEAN
