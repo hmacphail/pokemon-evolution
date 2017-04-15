@@ -39,6 +39,7 @@ if (!global.hasOwnProperty('db')) {
     Move: sequelize.import(__dirname + '/move'),
     Learnset: sequelize.import(__dirname + '/learnset'),
     Item: sequelize.import(__dirname + '/item'),
+    PokemonTypes: sequelize.import(__dirname + '/pokemonTypes'),
     PokemonLearnset: sequelize.import(__dirname + '/pokemonLearnset'),
     User: sequelize.import(__dirname + '/user')
   }
@@ -98,6 +99,17 @@ if (!global.hasOwnProperty('db')) {
     as: 'GenCompleted',
     foreignKey: 'genCompletedId'
   });
+  db.Generation.hasMany(db.PokemonTypes, {
+    as: 'GenIntroduced',
+    foreignKey: {
+      name: 'genIntroducedId',
+      allowNull: false
+    }
+  });
+  db.Generation.hasMany(db.PokemonTypes, {
+    as: 'GenCompleted',
+    foreignKey: 'genCompletedId'
+  });
 
   db.Pokemon.hasMany(db.Evolution, {
     as: 'FromPokemon',
@@ -118,7 +130,11 @@ if (!global.hasOwnProperty('db')) {
       allowNull: false
     }
   });
-
+  db.Pokemon.hasMany(db.PokemonTypes, {
+    foreignKey: {
+      allowNull: false
+    }
+  });
   db.Pokemon.belongsToMany(db.Learnset, {
     through: db.PokemonLearnset
   });
@@ -126,14 +142,14 @@ if (!global.hasOwnProperty('db')) {
     through: db.PokemonLearnset
   });
 
-  db.Type.hasMany(db.Pokemon, {
+  db.Type.hasMany(db.PokemonTypes, {
     as: 'PrimaryType',
     foreignKey: {
       name: 'primaryTypeId',
       allowNull: false
     }
   });
-  db.Type.hasMany(db.Pokemon, {
+  db.Type.hasMany(db.PokemonTypes, {
     as: 'SecondaryType',
     foreignKey: 'secondaryTypeId'
   });
