@@ -1,1 +1,1 @@
-# pokemon-evolution
+A node.js / angular app hosted on heroku. It will display pokemon evolution data in an interactive format to help players decide what Pokemon to evolve and when. In development.

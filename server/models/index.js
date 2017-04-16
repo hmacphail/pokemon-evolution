@@ -187,9 +187,7 @@ if (!global.hasOwnProperty('db')) {
   });
 
   db.Item.hasMany(db.Evolution, {
-    foreignKey: {
-      allowNull: false
-    }
+    foreignKey: 'itemId'
   });
 
 }

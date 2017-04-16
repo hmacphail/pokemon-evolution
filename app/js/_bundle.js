@@ -429,75 +429,79 @@ module.exports = function ($scope, Evolution, Pokemon, Item) {
           prev = evo;
         }
         else { // second row
-          var evolution = parseDataRow(inputData.trigger, prev, evo);
-          if (evolution) {
-            evolutions.push(evolution);
-          }
+          var evs = parseDataRow(inputData.trigger, prev, evo);
+          evs.forEach(function(e) {
+            evolutions.push(e);
+          });
           prev = [];
         }
       }
       else { // regular data row
-        var evolution = parseDataRow(inputData.trigger, evo);
-        if (evolution) {
-          evolutions.push(evolution);
-        }
+        var evs = parseDataRow(inputData.trigger, evo);
+        evs.forEach(function(e) {
+          evolutions.push(e);
+        });
       }
     });
     if (prev.length != 0) { // missed last entry
-      evolutions.push(parseDataRow(inputData.trigger, prev));
+      var evs = parseDataRow(inputData.trigger, prev);
+      evs.forEach(function(e) {
+        evolutions.push(e);
+      });
     }
+
     return evolutions;
   };
 
   function parseDataRow(trigger, row1, row2) {
     if (row2) { // dual row data entry
+      var variation = checkSpecialCondition(row1[2]) ? row2[0] : null;
+
       var frmPoke = checkAlolan(row1[0])
-          ? pokemonIdByName(splitPokemonNameString(row1[0].split(' ')[1]), true)
-          : pokemonIdByName(splitPokemonNameString(row1[0]), false);
-        var toPoke = checkAlolan(row1[2])
-          ? pokemonIdByName(splitPokemonNameString(row1[2].split(' ')[1]), true)
-          : pokemonIdByName(splitPokemonNameString(row1[2].split(' ')[0]), false);
+          ? pokemonObjsByName(splitPokemonNameString(row1[0].split(' ')[1]), variation, true)
+          : pokemonObjsByName(splitPokemonNameString(row1[0]), variation, false);
+      var toPoke = checkAlolan(row1[2])
+          ? pokemonObjsByName(splitPokemonNameString(row1[2].split(' ')[1]), variation, true)
+          : pokemonObjsByName(splitPokemonNameString(row1[2].split(' ')[0]), variation, false);
 
       switch (trigger) {
         case 'level' :
-          var specialForm = checkSpecialCondition(row1[2]) ? row2[0] : null;
-          return createEvolutionObj(frmPoke, toPoke, row2[2], row2[1], null, specialForm);
+          return createEvolutionObjs(frmPoke, toPoke, row2[2], row2[1], null);
         case 'item' :
-          var specialForm = checkSpecialCondition(row1[2]) ? row2[0] : null;
           var itemCond = splitItemConditionString(row2[1]);
-          return createEvolutionObj(frmPoke, toPoke, itemCond[1], null, itemIdByName(itemCond[0]), specialForm);
+          return createEvolutionObjs(frmPoke, toPoke, itemCond[1], null, itemIdByName(itemCond[0]));
         case 'trade' :
-          return createEvolutionObj(frmPoke, toPoke, row2[1], null, null, null);
+          return createEvolutionObjs(frmPoke, toPoke, row2[1], null, null);
         case 'happiness' :
-          return createEvolutionObj(frmPoke, toPoke, row2[1], null, null, null);
+          return createEvolutionObjs(frmPoke, toPoke, row2[1], null, null);
         case 'other' :
           if (row2[1] || row2[2].indexOf('Trade') >= 0) { // duplicate from other triggers
-            return null;
+            return [];
           }
-          return createEvolutionObj(frmPoke, toPoke, row2[2], null, null, null);
+          return createEvolutionObjs(frmPoke, toPoke, row2[2], null, null);
       }
 
     } else { // regular data row
-      var frmPoke = pokemonIdByName(splitPokemonNameString(row1[0]));
-      var toPoke = pokemonIdByName(splitPokemonNameString(row1[2]));
+      var frmPoke = pokemonObjsByName(splitPokemonNameString(row1[0]));
+      var toPoke = pokemonObjsByName(splitPokemonNameString(row1[2]));
 
       switch (trigger) {
         case 'level' :
-          return createEvolutionObj(frmPoke, toPoke, row1[4], row1[3], null, null);
+          return createEvolutionObjs(frmPoke, toPoke, row1[4], row1[3], null);
         case 'item' :
           var itemCond = splitItemConditionString(row1[3]);
-          return createEvolutionObj(frmPoke, toPoke, itemCond[1], null, itemIdByName(itemCond[0]), null);
+          return createEvolutionObjs(frmPoke, toPoke, itemCond[1], null, itemIdByName(itemCond[0]));
         case 'trade' :
           var item = itemIdByName(row1[3]);
           var cond = item ? null : row1[3];
-          return createEvolutionObj(frmPoke, toPoke, cond, null, item, null);
+          return createEvolutionObjs(frmPoke, toPoke, cond, null, item);
         case 'happiness' :
-          return createEvolutionObj(frmPoke, toPoke, row1[3], null, null, null);
+          return createEvolutionObjs(frmPoke, toPoke, row1[3], null, null);
         case 'other' :
           if (row1[3] || row1[4].indexOf('Trade') >= 0) { // duplicate from other triggers
             return null;
           }
-          return createEvolutionObj(frmPoke, toPoke, row1[4], null, null, null);
+          return createEvolutionObjs(frmPoke, toPoke, row1[4], null, null);
       }
 
     }
@@ -505,16 +509,27 @@ module.exports = function ($scope, Evolution, Pokemon, Item) {
 
 
   //======= data preparation ==========
-  function createEvolutionObj(fromPokemon, toPokemon, condition, level, item, form) {
-    return {
-      "fromPokemonId" : fromPokemon,
-      "toPokemonId" : toPokemon,
-      "trigger" : $scope.formData.trigger,
-      "condition" : condition ? condition : null,
-      "atLevel" : level,
-      "itemId" : item,
-      "form" : form
-    };
+  function createEvolutionObjs(fromPokemon, toPokemon, condition, level, item) {
+    var evs = [];
+    for (var f = 0; f < fromPokemon.length; f++) {
+      for (var t = 0; t < toPokemon.length; t++) {
+        var from = fromPokemon[f];
+        var to = toPokemon[t];
+        // if both from and to pokemon have variations, only include when variations match
+        if (from.variation != null && to.variation != null && from.variation != to.variation) {
+          continue;
+        }
+        evs.push({
+          "fromPokemonId" : from.id,
+          "toPokemonId" : to.id,
+          "trigger" : $scope.formData.trigger,
+          "condition" : condition ? condition : null,
+          "atLevel" : level,
+          "itemId" : item
+        });
+      }
+    }
+    return evs;
   };
 
   function splitPokemonNameString(inputStr) {
@@ -548,15 +563,26 @@ module.exports = function ($scope, Evolution, Pokemon, Item) {
   }
 
   //======= find entries by name string ========
-  function pokemonIdByName(name, isAlolan) {
+  function pokemonObjsByName(name, variation, isAlolan) {
+    var pm = [];
     for (var i = 0; i < $scope.pokemon.length; i++){
-      if ($scope.pokemon[i].name == name){
-        if ((isAlolan && $scope.pokemon[i].form == 'alolan')
-          || (!isAlolan && $scope.pokemon[i].form == 'original'))
-        return $scope.pokemon[i].id
+      var p = $scope.pokemon[i];
+
+      // check that name matches
+      if (p.name == name) {
+
+        // check that isAlolan if required
+        if ((isAlolan && p.form == 'alolan')
+          || (!isAlolan && p.form == 'original')) {
+
+          // check that variation matches if required
+          if (variation == null || p.variation == null || p.variation == variation) {
+            pm.push(p);
+          }
+        }
       }
     }
-    return null;
+    return pm;
   };
 
   function itemIdByName(name) {

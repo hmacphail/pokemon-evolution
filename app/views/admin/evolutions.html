@@ -27,7 +27,6 @@
           <th>Condition</th>
           <th>Level</th>
           <th>Item</th>
-          <th>Form</th>
           <th></th>
         </tr>
         <tr ng-repeat="evo in evolutions">
@@ -37,7 +36,6 @@
           <td> {{ evo.condition }} </td>
           <td> {{ evo.atLevel }} </td>
           <td> {{ itemName(evo.itemId) }} </td>
-          <td> {{ evo.form }} </td>
           <td>
             <a href="#" class="lnk-danger pull-right" ng-click="deleteEvolution(evo.id)">
               <i class="fa fa-times"></i>
