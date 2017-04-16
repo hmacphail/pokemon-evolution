@@ -99,6 +99,7 @@ module.exports = function ($scope, Evolution, Pokemon, Item) {
       });
     }
 
+    console.log(evolutions);
     return evolutions;
   };
 
@@ -148,7 +149,7 @@ module.exports = function ($scope, Evolution, Pokemon, Item) {
           return createEvolutionObjs(frmPoke, toPoke, row1[3], null, null);
         case 'other' :
           if (row1[3] || row1[4].indexOf('Trade') >= 0) { // duplicate from other triggers
-            return null;
+            return [];
           }
           return createEvolutionObjs(frmPoke, toPoke, row1[4], null, null);
       }
