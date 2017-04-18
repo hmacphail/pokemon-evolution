@@ -7,7 +7,8 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     isTM: {
-      type: Sequelize.BOOLEAN
+      type: Sequelize.BOOLEAN,
+      allowNull: false
     },
     pp: {
       type: Sequelize.INTEGER,

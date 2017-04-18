@@ -5,7 +5,6 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
   getAssociatedData();
 
   $scope.createAbilitysetsBulk = function() {
-    //parseBulkData($scope.formData);
     Abilitysets.bulkCreate(parseBulkData($scope.formData))
       .then(function(res) {
         if (res.status == 200) {
@@ -115,7 +114,7 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
       //prevName = as[2];
 
     });
-    //console.log(abilitysets);
+
     return abilitysets;
   }
 
