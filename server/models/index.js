@@ -77,6 +77,10 @@ if (!global.hasOwnProperty('db')) {
       allowNull: false
     }
   });
+  db.Generation.hasMany(db.Abilityset, {
+    as: 'GenCompleted',
+    foreignKey: 'genCompletedId'
+  });
   db.Generation.hasMany(db.Move, {
     as: 'GenIntroduced',
     foreignKey: {

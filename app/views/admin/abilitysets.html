@@ -21,7 +21,8 @@
           <th>Pokémon</th>
           <th>Ability</th>
           <th>Trait</th>
-          <th>Generation</th>
+          <th>Gen Introduced</th>
+          <th>Gen Completed</th>
           <th></th>
         </tr>
         <tr ng-repeat="as in abilitysets">
@@ -29,6 +30,7 @@
           <td> {{ abilityName(as.abilityId) }} </td>
           <td> {{ as.trait }} </td>
           <td> {{ as.genIntroducedId }} </td>
+          <td> {{ as.genCompletedId }} </td>
           <td>
             <a href="#" class="lnk-danger pull-right" ng-click="deleteAbilityset(as.id)">
               <i class="fa fa-times"></i>

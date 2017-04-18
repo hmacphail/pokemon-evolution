@@ -70,14 +70,14 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
   getAssociatedData();
 
   $scope.createAbilitysetsBulk = function() {
-    parseBulkData($scope.formData);
-    /*Abilitysets.bulkCreate(parseBulkData($scope.formData))
+    //parseBulkData($scope.formData);
+    Abilitysets.bulkCreate(parseBulkData($scope.formData))
       .then(function(res) {
         if (res.status == 200) {
           $scope.formData = {};
           getAllAbilitysets();
         }
-      });*/
+      });
   }
 
   $scope.deleteAbilityset = function(id) {
@@ -131,8 +131,8 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
   function parseBulkData(inputData) {
     // parse pasted data from bulbapedia table
     // http://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_Ability
-    //console.log(inputData.bulk);
     var abilitysets = [];
+    //var prevName = "";
     inputData.bulk.split('\n').forEach(function(a){
       var as = a.split('\t');
       // if spaces instead of tab character
@@ -143,64 +143,96 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
         });
       }
 
-      // check if including abilitysets with generation-based conditions
-      if (inputData.includeStarred) {
-        console.log(as);
+      // find duplicate rows of the same pokemon
+      //if (as[2].replace('*', '').includes(prevName.replace('*', ''))) {
+      //  console.log(as[2]);
+      //}
+      //else {
+      var pokeIds = pokemonIdsByName(as[2], as[1]);
 
-      } else {
-        // skip Mega Evolutions and all starred rows
-        if (as[2].indexOf('Mega') < 0 || as[2].indexOf('*') < 0) {
-          var pokeId = pokemonIdByName(as[2]);
-          var genId = generationByPokemonId(pokeId);
+      // use pokemon's gen if no gen provided
+      // only need to check first pokemonId as should all be same gen
+      var genIntro = as[6] || generationByPokemonId(pokeIds[0]);
+      var genCompl = as[7] || null;
 
-          if (as[3] && as[3].indexOf('*') < 0) { // primary ability
-            abilitysets.push(createAbilitysetObj(pokeId, genId, abilityIdByName(as[3]), "primary"));
-          }
-          if (as[4] && as[4].indexOf('*') < 0) { // secondary ability
-            abilitysets.push(createAbilitysetObj(pokeId, genId, abilityIdByName(as[4]), "secondary"));
-          }
-          if (as[5] && as[5].indexOf('*') < 0) { // hidden ability
-            abilitysets.push(createAbilitysetObj(pokeId, genId, abilityIdByName(as[5]), "hidden"));
-          }
-        }
+      if (as[3] && (!inputData.includeStarred && as[3].indexOf('*') < 0 ||
+        inputData.includeStarred && as[3].indexOf('*') >= 0)) {
+        // primary ability
+        createAbilitysetObjs(pokeIds, abilityIdByName(as[3]), "primary", genIntro, genCompl).forEach(function(as) {
+          abilitysets.push(as);
+        });
       }
+      if (as[4] && (!inputData.includeStarred && as[4].indexOf('*') < 0 ||
+        inputData.includeStarred && as[4].indexOf('*') >= 0)) {
+        // secondary ability
+        createAbilitysetObjs(pokeIds, abilityIdByName(as[4]), "secondary", genIntro, genCompl).forEach(function(as) {
+          abilitysets.push(as);
+        });
+      }
+      if (as[5] && (!inputData.includeStarred && as[5].indexOf('*') < 0 ||
+        inputData.includeStarred && as[5].indexOf('*') >= 0)) {
+        // hidden ability
+        createAbilitysetObjs(pokeIds, abilityIdByName(as[5]), "hidden", genIntro, genCompl).forEach(function(as) {
+          abilitysets.push(as);
+        });
+      }
+      //}
+      //prevName = as[2];
 
-      //gen is generation of pokemon (excluding I and II) unless conditional * is present
     });
-
-    console.log(abilitysets);
+    //console.log(abilitysets);
     return abilitysets;
   }
 
-  function createAbilitysetObj(pokemonId, generationId, abilityId, trait) {
+  function createAbilitysetObjs(pokemonIds, abilityId, trait, genIntroducedId, genCompletedId) {
     // gen introduced is generation of pokemon
     // exception: abilities introduced in Gen III, hidden abilities introduced in Gen V
-    var genIntroducedId =
-      trait == "hidden" ?
-      (generationId < 5 ? 5 : generationId) :
-      (generationId < 3 ? 3 : generationId);
+    if (trait == "hidden" && genIntroducedId < 5) {
+      genIntroducedId = 5;
+    }
+    if (genIntroducedId < 3) {
+      genIntroducedId = 3;
+    }
 
-    return {
-        "pokemonId" : pokemonId,
+    var as = [];
+    for (var i = 0; i < pokemonIds.length; i++) {
+      as.push({
+        "pokemonId" : pokemonIds[i],
         "abilityId" : abilityId,
         "genIntroducedId" : genIntroducedId,
+        "genCompletedId" : genCompletedId,
         "trait" : trait
-      };
+      });
+    }
+    return as;
   }
 
-  function pokemonIdByName(name) {
+  function pokemonIdsByName(name, variation) {
+    name = name.replace('*', '');
+    var pm = [];
     var isAlolan = (name.indexOf('Alolan') >= 0);
     if (isAlolan) {
       name = name.split(' ')[1];
     }
     for (var i = 0; i < $scope.pokemon.length; i++){
-      if ($scope.pokemon[i].name == name){
-        if ((!isAlolan && $scope.pokemon[i].form == 'original') ||
-          (isAlolan && $scope.pokemon[i].form == 'alolan')) {
-          return $scope.pokemon[i].id;
+      var p = $scope.pokemon[i];
+
+      // check that name matches
+      if (p.name == name){
+
+        // check that isAlolan if required
+        if ((!isAlolan && p.form != 'alolan') ||
+          (isAlolan && p.form == 'alolan')) {
+
+          // check that variation matches if required (unless mega)
+          if (variation == name || p.form == 'mega' || p.variation == variation) {
+            pm.push(p.id);
+          }
         }
       }
     }
+
+    return pm;
   }
 
   function generationByPokemonId(pokemonId) {
@@ -212,6 +244,7 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
   }
 
   function abilityIdByName(name) {
+    name = name.replace('*', '');
     for (var i = 0; i < $scope.abilities.length; i++){
       if ($scope.abilities[i].name == name){
         return $scope.abilities[i].id;
