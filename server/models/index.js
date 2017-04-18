@@ -13,7 +13,7 @@ if (!global.hasOwnProperty('db')) {
     });
   } else {
     // application is executed locally ... connect to remote database with temporary credentials
-    sequelize = new Sequelize('d8dvbdrannbitc', 'cganvxfjtvuhcn', '6924217d33a6155b7efcd96c287668377e1da08bf29148f593f1f4ef2644de8c', {
+    /*sequelize = new Sequelize('d8dvbdrannbitc', 'cganvxfjtvuhcn', '6924217d33a6155b7efcd96c287668377e1da08bf29148f593f1f4ef2644de8c', {
       host: 'ec2-54-83-194-208.compute-1.amazonaws.com',
       port: 5432,
       protocol: 'postgres',
@@ -21,6 +21,13 @@ if (!global.hasOwnProperty('db')) {
       dialectOptions: {
         ssl: true
       }
+    });*/
+
+    // jaws db connection string
+    sequelize = new Sequelize('jp41rk8gc3x9jb7h', 'xfxbjt9ip3wfij77', 'kbdyuxmcr3xx3knk', {
+      host: 'wftuqljwesiffol6.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',
+      port: 3306,
+      dialect: 'mysql'
     });
   }
 
