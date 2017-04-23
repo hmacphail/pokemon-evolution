@@ -1,4 +1,4 @@
-module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
+module.exports = function ($scope, Learnset, Generation, Pokemon, Move,) {
 
   $scope.entryCount = 0;
   $scope.formData = {};
@@ -23,7 +23,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
   };
 
   $scope.deleteLearnset = function(id) {
-    Learnsets.delete(id)
+    Learnset.delete(id)
       .then(function(res) {
         getAllLearnsets();
       });
@@ -51,14 +51,19 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
 
   function createLearnsetObj(moveByLevel, pokemon) {
     var gen = generationIdByName($scope.formData.gen);
-    return {
+    //var newObj = new Learnset();
+    //console.log(newObj);
+    var newObj = {
       "level" : moveByLevel.level,
+      "onEvo" : moveByLevel.onEvo,
       "byTM" : false,
       "moveId" : moveIdByName(moveByLevel.move),
       "pokemonId" : pokemon.id,
       "genIntroducedId" : gen,
       "genCompletedId" : gen,
     };
+    //newObj.setPokemon([pokemon]);
+    return newObj;
   };
 
   //====== main parser functions =======
@@ -87,16 +92,19 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
       else if (rowData[moveInd].i) {
         move = rowData[moveInd].i.a.span.content;
       }
-      if (isNaN(parseInt(level))) {
-        // check if "on evolution" move
-        console.log(level.trim());
-      }
-      else {
+
+      // check if "on evolution" move
+      var onEvo = (level == "Evo");
+
+      // level is a number or onEvo (not N/A)
+      if (!isNaN(parseInt(level)) || onEvo) {
         movesByLevel.push({
           "move" : move,
-          "level" : parseInt(level)
+          "level" : onEvo ? null : parseInt(level),
+          "onEvo" : onEvo
         });
       }
+
     });
 
     return movesByLevel;
@@ -107,28 +115,31 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
    * update duplicates with new genCompletedId
    * @return {bool} returns true if duplicate was found
    */
-  function checkForDuplicates(learnset) {
+  function checkForDuplicates(newLearnset) {
     $scope.learnsets;
     for (var i = 0; i < $scope.learnsets.length; i++) {
-      var oldLearnset = $scope.learnsets[i];
+      var ls = $scope.learnsets[i];
 
       // skip if old & new generation ranges are equivalent
-      if (learnset.genIntroducedId != oldLearnset.genIntroducedId
-        && learnset.genCompletedId != oldLearnset.genCompletedId) {
+      if (newLearnset.genIntroducedId != ls.genIntroducedId
+        && newLearnset.genCompletedId != ls.genCompletedId) {
 
-        // if this learnset is equal to a previous generation (or another entry in DB)
-        if (learnset.level == oldLearnset.level
-          && learnset.moveId == oldLearnset.moveId
-          && learnset.pokemonId == oldLearnset.pokemonId
-          && learnset.genIntroducedId == oldLearnset.genCompletedId + 1) {
+        // if newLearnset is equal to a previous generation (or another entry in DB)
+        if (newLearnset.level == ls.level
+          && newLearnset.onEvo == ls.onEvo
+          && newLearnset.moveId == ls.moveId
+          && newLearnset.pokemonId == ls.pokemonId
+          && newLearnset.genIntroducedId == ls.genCompletedId + 1) {
 
-          learnset.genIntroducedId = oldLearnset.genIntroducedId;
-          //Learnset.update(oldLearnset.id, learnset); // send update data
-          //console.log(learnset);
+          newLearnset.genIntroducedId = ls.genIntroducedId;
+          //Learnset.update(ls.id, newLearnset); // send update data
+          //console.log(newLearnset);
           return true;
         }
       }
     }
+
+
     return false;
   }
 
@@ -147,9 +158,9 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
         learnsets.push(newLearnset);
       }
     });
-    //console.log(learnsets);
+    console.log(learnsets);
     // send data
-    //Learnset.bulkCreate(learnsets);
+    Learnset.bulkCreate(learnsets);
   };
 
   function pokemonByGeneration(genString) {
