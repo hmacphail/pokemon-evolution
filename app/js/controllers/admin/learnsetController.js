@@ -1,4 +1,4 @@
-module.exports = function ($scope, Learnset, Generation, Pokemon, Move,) {
+module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
 
   $scope.entryCount = 0;
   $scope.formData = {};
@@ -8,7 +8,8 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move,) {
   $scope.runYqlScript = function() {
     // get list of all pokemon names for selected gen and down
     var pokemon = pokemonByGeneration($scope.formData.gen);
-    pokemon.forEach(function(p) {
+    var p = pokemon[0];
+    //pokemon.forEach(function(p) {
       // create urls to yql query
       var pokeUrl = createYqlQueryUrl(p.name, $scope.formData.gen);
       $.ajax({
@@ -19,7 +20,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move,) {
       .done(function(res) {
         prepAndSendLearnsets(res, p);
       });
-    });
+    //});
   };
 
   $scope.deleteLearnset = function(id) {
@@ -158,9 +159,16 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move,) {
         learnsets.push(newLearnset);
       }
     });
-    console.log(learnsets);
+    //console.log(learnsets);
     // send data
-    Learnset.bulkCreate(learnsets);
+    Learnset.bulkCreate({ learnsets: learnsets, pokemon: [pokemon] })
+      .then(function(res){
+        res.data.forEach(function(ls) {
+
+          //console.log(ls);
+          ls.setPokemon([pokemon]);
+        });
+      });
   };
 
   function pokemonByGeneration(genString) {

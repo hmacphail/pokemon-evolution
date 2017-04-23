@@ -37,11 +37,8 @@ module.exports = {
   //Create multiple new pokemon using model.bulkCreate()
   bulkCreate(req, res) {
     Pokemon.bulkCreate(req.body)
-      .then(function() {
-        return Pokemon.findAll();
-      })
       .then(function(pokemon) {
-        res.status(200).json(pokemon)
+        res.status(200).json(pokemon);
       })
       .catch(function (error) {
         res.status(500).json(error);

@@ -37,11 +37,8 @@ module.exports = {
   //Create multiple new abilities using model.bulkCreate()
   bulkCreate(req, res) {
     Ability.bulkCreate(req.body)
-      .then(function() {
-        return Ability.findAll();
-      })
       .then(function(abilities) {
-        res.status(200).json(abilities)
+        res.status(200).json(abilities);
       })
       .catch(function (error) {
         res.status(500).json(error);

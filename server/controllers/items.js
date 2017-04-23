@@ -37,11 +37,8 @@ module.exports = {
   //Create multiple new items using model.bulkCreate()
   bulkCreate(req, res) {
     Item.bulkCreate(req.body)
-      .then(function() {
-        return Item.findAll();
-      })
       .then(function(item) {
-        res.status(200).json(item)
+        res.status(200).json(item);
       })
       .catch(function (error) {
         res.status(500).json(error);

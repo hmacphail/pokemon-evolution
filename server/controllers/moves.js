@@ -37,11 +37,8 @@ module.exports = {
   //Create multiple new moves using model.bulkCreate()
   bulkCreate(req, res) {
     Move.bulkCreate(req.body)
-      .then(function() {
-        return Move.findAll();
-      })
       .then(function(moves) {
-        res.status(200).json(moves)
+        res.status(200).json(moves);
       })
       .catch(function (error) {
         res.status(500).json(error);

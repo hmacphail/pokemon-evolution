@@ -36,12 +36,10 @@ module.exports = {
 
   //Create multiple new learnsets using model.bulkCreate()
   bulkCreate(req, res) {
-    Learnset.bulkCreate(req.body)
-      .then(function() {
-        return Learnset.findAll();
-      })
-      .then(function(learnset) {
-        res.status(200).json(learnset)
+    //console.log(req.body);
+    Learnset.bulkCreate(req.body.learnsets)
+      .then(function(learnsets) {
+        res.status(200).json(learnsets)
       })
       .catch(function (error) {
         res.status(500).json(error);

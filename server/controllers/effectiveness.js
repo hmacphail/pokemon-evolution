@@ -37,11 +37,8 @@ module.exports = {
   //Create multiple new effectiveness using model.bulkCreate()
   bulkCreate(req, res) {
     Effectiveness.bulkCreate(req.body)
-      .then(function() {
-        return Effectiveness.findAll();
-      })
       .then(function(effectiveness) {
-        res.status(200).json(effectiveness)
+        res.status(200).json(effectiveness);
       })
       .catch(function (error) {
         res.status(500).json(error);

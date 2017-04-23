@@ -147,9 +147,11 @@ if (!global.hasOwnProperty('db')) {
     }
   });
   db.Pokemon.belongsToMany(db.Learnset, {
+    as: 'Learnsets',
     through: db.PokemonLearnset
   });
   db.Learnset.belongsToMany(db.Pokemon, {
+    as: 'Pokemon',
     through: db.PokemonLearnset
   });
 
