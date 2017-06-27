@@ -736,6 +736,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
     //pokemon.forEach(function(p) {
       // create urls to yql query
       var pokeUrl = createYqlQueryUrl(p.name, $scope.formData.gen);
+      console.log(pokeUrl);
       $.ajax({
         url: pokeUrl,
         type: 'GET',
@@ -874,6 +875,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
     $scope.entryCount++;
 
     console.log(pokemon.name);
+    console.log(res.query.results);
 
     var results = res.query.results.tbody;
     var movesByLevel = parseLearnsetJson(results); // parse JSON
@@ -890,7 +892,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
         res.data.forEach(function(ls) {
 
           //console.log(ls);
-          ls.setPokemon([pokemon]);
+          //ls.setPokemon([pokemon]);
         });
       });
   };
@@ -909,13 +911,14 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
   function createYqlQueryUrl(pokemonName, genString) {
     // for generations excluding most recent
     var source = 'https://query.yahooapis.com/v1/public/';
-    var query = 'select tr from html where url="http://bulbapedia.bulbagarden.net/wiki/'
+    var query = 'select * from htmlstring where url="http://bulbapedia.bulbagarden.net/wiki/'
       + pokemonName.replace(' ', '_')
       + '_(Pokémon)/Generation_'
       + genString
-      + '_learnset" and xpath=\'//*[@id="mw-content-text"]/table[1]/tbody/tr[2]/td/table/tbody\'';
+      + '_learnset" and xpath=\'//*[@id="mw-content-text"]/table[1]/tbody/tr[2]/td/table\'';
+    var env = "&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
 
-    return encodeURI(source + 'yql?q=' + query + '&format=json');
+    return source + 'yql?q=' + encodeURI(query) + '&format=json' + env + '&callback=';
   };
 
   //====== remote data retrieval ========

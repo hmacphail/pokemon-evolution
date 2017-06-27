@@ -39,7 +39,11 @@ module.exports = {
     //console.log(req.body);
     Learnset.bulkCreate(req.body.learnsets)
       .then(function(learnsets) {
-        res.status(200).json(learnsets)
+        res.status(200).json(learnsets);
+        //console.log(Learnset.Instance.prototype);
+        console.log(learnsets[0]);
+        console.log(req.body.pokemon);
+        learnsets[0].addPokemon(req.body.pokemon);
       })
       .catch(function (error) {
         res.status(500).json(error);
