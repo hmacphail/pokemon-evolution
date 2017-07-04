@@ -1,3 +1,5 @@
+require('../../lib/tableToJson');
+
 module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
 
   $scope.entryCount = 0;
@@ -70,33 +72,12 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
 
   //====== main parser functions =======
   function parseLearnsetJson(results) {
-    var headerRow = results[0].tr.th;
-    var moveInd = 0;
-    for (var i = 0; i < headerRow.length; i++) {
-      if (headerRow[i].a && headerRow[i].a.title == 'Move') {
-        moveInd = i;
-        break;
-      }
-    }
-
     var movesByLevel = [];
-    results.splice(0,1);
-    results.forEach(function(row) {
-      var rowData = row.tr.td;
-      var level = rowData[0].content;
-      var move;
-      if (rowData[moveInd].a) {
-        move = rowData[moveInd].a.span.content;
-      }
-      else if (rowData[moveInd].b) {
-        move = rowData[moveInd].b.a.span.content;
-      }
-      else if (rowData[moveInd].i) {
-        move = rowData[moveInd].i.a.span.content;
-      }
 
-      // check if "on evolution" move
-      var onEvo = (level == "Evo");
+    results.forEach(function(rowObj) {
+      var move = rowObj["Move"];
+      var level = rowObj["Level"].split("\n")[0];
+      var onEvo = (level == "Evo"); // check if "on evolution" move
 
       // level is a number or onEvo (not N/A)
       if (!isNaN(parseInt(level)) || onEvo) {
@@ -151,9 +132,11 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
     $scope.entryCount++;
 
     console.log(pokemon.name);
-    console.log(res.query.results);
+    var results = $(res.query.results.result)
+      .tableToJSON(
+        { ignoreHiddenRows: false }
+      );
 
-    var results = res.query.results.tbody;
     var movesByLevel = parseLearnsetJson(results); // parse JSON
     movesByLevel.forEach(function(row) { // create objects to send
       var newLearnset = createLearnsetObj(row, pokemon);

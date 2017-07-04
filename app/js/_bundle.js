@@ -722,6 +722,8 @@ module.exports = function ($scope, Items) {
 };
 
 },{}],7:[function(require,module,exports){
+require('../../lib/tableToJson');
+
 module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
 
   $scope.entryCount = 0;
@@ -794,22 +796,24 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
 
   //====== main parser functions =======
   function parseLearnsetJson(results) {
-    var headerRow = results[0].tr.th;
+    console.log(results);
+
+    /*var headerRow = results[0].tr.th;
     var moveInd = 0;
     for (var i = 0; i < headerRow.length; i++) {
       if (headerRow[i].a && headerRow[i].a.title == 'Move') {
         moveInd = i;
         break;
       }
-    }
+    }*/
 
     var movesByLevel = [];
-    results.splice(0,1);
-    results.forEach(function(row) {
-      var rowData = row.tr.td;
-      var level = rowData[0].content;
-      var move;
-      if (rowData[moveInd].a) {
+    //results.splice(0,1);
+    results.forEach(function(rowObj) {
+      //var rowData = row.tr.td;
+      var level = rowObj["Level"].split("\n")[0];
+      var move = rowObj["Move"];
+      /*if (rowData[moveInd].a) {
         move = rowData[moveInd].a.span.content;
       }
       else if (rowData[moveInd].b) {
@@ -817,7 +821,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
       }
       else if (rowData[moveInd].i) {
         move = rowData[moveInd].i.a.span.content;
-      }
+      }*/
 
       // check if "on evolution" move
       var onEvo = (level == "Evo");
@@ -875,9 +879,11 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
     $scope.entryCount++;
 
     console.log(pokemon.name);
-    console.log(res.query.results);
+    var results = $(res.query.results.result)
+      .tableToJSON(
+        { ignoreHiddenRows: false }
+      );
 
-    var results = res.query.results.tbody;
     var movesByLevel = parseLearnsetJson(results); // parse JSON
     movesByLevel.forEach(function(row) { // create objects to send
       var newLearnset = createLearnsetObj(row, pokemon);
@@ -885,16 +891,16 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
         learnsets.push(newLearnset);
       }
     });
-    //console.log(learnsets);
+    console.log(learnsets);
     // send data
-    Learnset.bulkCreate({ learnsets: learnsets, pokemon: [pokemon] })
+    /*Learnset.bulkCreate({ learnsets: learnsets, pokemon: [pokemon] })
       .then(function(res){
         res.data.forEach(function(ls) {
 
           //console.log(ls);
           //ls.setPokemon([pokemon]);
         });
-      });
+      });*/
   };
 
   function pokemonByGeneration(genString) {
@@ -977,9 +983,11 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
     }
   };
 
+  //=================================
+
 };
 
-},{}],8:[function(require,module,exports){
+},{"../../lib/tableToJson":14}],8:[function(require,module,exports){
 module.exports = function ($scope, Moves, Generations, Types) {
 
   $scope.formData = {};
@@ -1251,6 +1259,194 @@ module.exports = function ($scope) {
 
 
 },{}],14:[function(require,module,exports){
+/**
+ * table-to-json
+ * jQuery plugin that reads an HTML table and returns a javascript object representing the values and columns of the table
+ *
+ * @author Daniel White
+ * @copyright Daniel White 2017
+ * @license MIT <https://github.com/lightswitch05/table-to-json/blob/master/MIT-LICENSE>
+ * @link https://github.com/lightswitch05/table-to-json
+ * @module table-to-json
+ * @version 0.11.1
+ */
+(function( $ ) {
+  'use strict';
+
+  $.fn.tableToJSON = function(opts) {
+
+    // Set options
+    var defaults = {
+      ignoreColumns: [],
+      onlyColumns: null,
+      ignoreHiddenRows: true,
+      ignoreEmptyRows: false,
+      headings: null,
+      allowHTML: false,
+      includeRowId: false,
+      textDataOverride: 'data-override',
+      extractor: null,
+      textExtractor: null
+    };
+    opts = $.extend(defaults, opts);
+
+    var notNull = function(value) {
+      return value !== undefined && value !== null;
+    };
+
+    var ignoredColumn = function(index) {
+      if( notNull(opts.onlyColumns) ) {
+        return $.inArray(index, opts.onlyColumns) === -1;
+      }
+      return $.inArray(index, opts.ignoreColumns) !== -1;
+    };
+
+    var arraysToHash = function(keys, values) {
+      var result = {}, index = 0;
+      $.each(values, function(i, value) {
+        // when ignoring columns, the header option still starts
+        // with the first defined column
+        if ( index < keys.length && notNull(value) ) {
+          result[ keys[index] ] = value;
+          index++;
+        }
+      });
+      return result;
+    };
+
+    var cellValues = function(cellIndex, cell, isHeader) {
+      var $cell = $(cell),
+        // extractor
+        extractor = opts.extractor || opts.textExtractor,
+        override = $cell.attr(opts.textDataOverride),
+        value;
+      // don't use extractor for header cells
+      if ( extractor === null || isHeader ) {
+        return $.trim( override || ( opts.allowHTML ? $cell.html() : cell.textContent || $cell.text() ) || '' );
+      } else {
+        // overall extractor function
+        if ( $.isFunction(extractor) ) {
+          value = override || extractor(cellIndex, $cell);
+          return typeof value === 'string' ? $.trim( value ) : value;
+        } else if ( typeof extractor === 'object' && $.isFunction( extractor[cellIndex] ) ) {
+          value = override || extractor[cellIndex](cellIndex, $cell);
+          return typeof value === 'string' ? $.trim( value ) : value;
+        }
+      }
+      // fallback
+      return $.trim( override || ( opts.allowHTML ? $cell.html() : cell.textContent || $cell.text() ) || '' );
+    };
+
+    var rowValues = function(row, isHeader) {
+      var result = [];
+      var includeRowId = opts.includeRowId;
+      var useRowId = (typeof includeRowId === 'boolean') ? includeRowId : (typeof includeRowId === 'string') ? true : false;
+      var rowIdName = (typeof includeRowId === 'string') === true ? includeRowId : 'rowId';
+      if (useRowId) {
+        if (typeof $(row).attr('id') === 'undefined') {
+          result.push(rowIdName);
+        }
+      }
+      $(row).children('td,th').each(function(cellIndex, cell) {
+        result.push( cellValues(cellIndex, cell, isHeader) );
+      });
+      return result;
+    };
+
+    var getHeadings = function(table) {
+      var firstRow = table.find('tr:first').first();
+      return notNull(opts.headings) ? opts.headings : rowValues(firstRow, true);
+    };
+
+    var construct = function(table, headings) {
+      var i, j, len, len2, txt, $row, $cell,
+        tmpArray = [], cellIndex = 0, result = [];
+      table.children('tbody,*').children('tr').each(function(rowIndex, row) {
+        if( rowIndex > 0 || notNull(opts.headings) ) {
+          var includeRowId = opts.includeRowId;
+          var useRowId = (typeof includeRowId === 'boolean') ? includeRowId : (typeof includeRowId === 'string') ? true : false;
+
+          $row = $(row);
+
+          var isEmpty = ($row.find('td').length === $row.find('td:empty').length) ? true : false;
+
+          if( ( $row.is(':visible') || !opts.ignoreHiddenRows ) && ( !isEmpty || !opts.ignoreEmptyRows ) && ( !$row.data('ignore') || $row.data('ignore') === 'false' ) ) {
+            cellIndex = 0;
+            if (!tmpArray[rowIndex]) {
+              tmpArray[rowIndex] = [];
+            }
+            if (useRowId) {
+              cellIndex = cellIndex + 1;
+              if (typeof $row.attr('id') !== 'undefined') {
+                tmpArray[rowIndex].push($row.attr('id'));
+              } else {
+                tmpArray[rowIndex].push('');
+              }
+            }
+
+            $row.children().each(function(){
+              $cell = $(this);
+              // skip column if already defined
+              while (tmpArray[rowIndex][cellIndex]) { cellIndex++; }
+
+              // process rowspans
+              if ($cell.filter('[rowspan]').length) {
+                len = parseInt( $cell.attr('rowspan'), 10) - 1;
+                txt = cellValues(cellIndex, $cell);
+                for (i = 1; i <= len; i++) {
+                  if (!tmpArray[rowIndex + i]) { tmpArray[rowIndex + i] = []; }
+                  tmpArray[rowIndex + i][cellIndex] = txt;
+                }
+              }
+              // process colspans
+              if ($cell.filter('[colspan]').length) {
+                len = parseInt( $cell.attr('colspan'), 10) - 1;
+                txt = cellValues(cellIndex, $cell);
+                for (i = 1; i <= len; i++) {
+                  // cell has both col and row spans
+                  if ($cell.filter('[rowspan]').length) {
+                    len2 = parseInt( $cell.attr('rowspan'), 10);
+                    for (j = 0; j < len2; j++) {
+                      tmpArray[rowIndex + j][cellIndex + i] = txt;
+                    }
+                  } else {
+                    tmpArray[rowIndex][cellIndex + i] = txt;
+                  }
+                }
+              }
+
+              txt = tmpArray[rowIndex][cellIndex] || cellValues(cellIndex, $cell);
+              if (notNull(txt)) {
+                tmpArray[rowIndex][cellIndex] = txt;
+              }
+              cellIndex++;
+            });
+          }
+        }
+      });
+      $.each(tmpArray, function( i, row ){
+        if (notNull(row)) {
+          // remove ignoredColumns / add onlyColumns
+          var newRow = notNull(opts.onlyColumns) || opts.ignoreColumns.length ?
+            $.grep(row, function(v, index){ return !ignoredColumn(index); }) : row,
+
+            // remove ignoredColumns / add onlyColumns if headings is not defined
+            newHeadings = notNull(opts.headings) ? headings :
+              $.grep(headings, function(v, index){ return !ignoredColumn(index); });
+
+          txt = arraysToHash(newHeadings, newRow);
+          result[result.length] = txt;
+        }
+      });
+      return result;
+    };
+
+    // Run
+    var headings = getHeadings(this);
+    return construct(this, headings);
+  };
+})( jQuery );
+},{}],15:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1265,7 +1461,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1280,7 +1476,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1301,7 +1497,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1316,7 +1512,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1331,7 +1527,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1349,7 +1545,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1370,7 +1566,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1388,7 +1584,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1403,7 +1599,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1418,7 +1614,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 var generationService     = require('./admin/generationService');
 var pokemonService        = require('./admin/pokemonService');
 var evolutionService      = require('./admin/evolutionService');
@@ -1443,7 +1639,7 @@ srvc.factory('Moves',         ['$http', moveService]);
 srvc.factory('Learnsets',     ['$http', learnsetService]);
 srvc.factory('Items',         ['$http', itemService]);
 
-},{"./admin/abilityService":14,"./admin/abilitysetService":15,"./admin/effectivenessService":16,"./admin/evolutionService":17,"./admin/generationService":18,"./admin/itemService":19,"./admin/learnsetService":20,"./admin/moveService":21,"./admin/pokemonService":22,"./admin/typeService":23}],25:[function(require,module,exports){
+},{"./admin/abilityService":15,"./admin/abilitysetService":16,"./admin/effectivenessService":17,"./admin/evolutionService":18,"./admin/generationService":19,"./admin/itemService":20,"./admin/learnsetService":21,"./admin/moveService":22,"./admin/pokemonService":23,"./admin/typeService":24}],26:[function(require,module,exports){
 require('./controllers/controllers');
 require('./services/services');
 
@@ -1503,4 +1699,4 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
   $locationProvider.html5Mode(true);
 }]);
 
-},{"./controllers/controllers":11,"./services/services":24}]},{},[25]);
+},{"./controllers/controllers":11,"./services/services":25}]},{},[26]);
