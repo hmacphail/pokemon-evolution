@@ -10,11 +10,11 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
   $scope.runYqlScript = function() {
     // get list of all pokemon names for selected gen and down
     var pokemon = pokemonByGeneration($scope.formData.gen);
-    var p = pokemon[0];
-    //pokemon.forEach(function(p) {
+    //var p = pokemon[0];
+    pokemon.forEach(function(p) {
       // create urls to yql query
       var pokeUrl = createYqlQueryUrl(p.name, $scope.formData.gen);
-      console.log(pokeUrl);
+      //console.log(pokeUrl);
       $.ajax({
         url: pokeUrl,
         type: 'GET',
@@ -23,7 +23,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
       .done(function(res) {
         prepAndSendLearnsets(res, p);
       });
-    //});
+    });
   };
 
   $scope.deleteLearnset = function(id) {
@@ -75,8 +75,9 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
     var movesByLevel = [];
 
     results.forEach(function(rowObj) {
+      //console.log(rowObj);
       var move = rowObj["Move"];
-      var level = rowObj["Level"].split("\n")[0];
+      var level = (rowObj["Level"]) ? rowObj["Level"].split("\n")[0] : rowObj["RGB"];
       var onEvo = (level == "Evo"); // check if "on evolution" move
 
       // level is a number or onEvo (not N/A)
@@ -115,8 +116,8 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
           && newLearnset.genIntroducedId == ls.genCompletedId + 1) {
 
           newLearnset.genIntroducedId = ls.genIntroducedId;
-          //Learnset.update(ls.id, newLearnset); // send update data
-          //console.log(newLearnset);
+          Learnset.update(ls.id, newLearnset); // send update data
+          console.log(newLearnset);
           return true;
         }
       }
@@ -146,16 +147,27 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
     });
     //console.log(learnsets);
     // send data
-    Learnset.bulkCreate({ learnsets: learnsets, pokemon: [pokemon] })
+    learnsets.forEach(function(ls) {
+      Learnset.create({ learnset: ls, pokemon: [pokemon.id] });
+      // creating array like this only good for Gen 1
+      // or maybe only for things with no variation (or form..?)
+    });
+    /*Learnset.bulkCreate({ learnsets: learnsets, pokemon: [pokemon] })
       .then(function(res){
         res.data.forEach(function(ls) {
 
           //console.log(ls);
-          //ls.setPokemon([pokemon]);
+          ls.setPokemon([pokemon]);
         });
       });
+    console.log(learnsets);*/
   };
 
+  /**
+   * Produces an array containing pokemon that were introduced on or before the given level
+   * @param  string genString    Name of Generation
+   * @return Pokemon[]           Array of Pokemon introduced on or before Generation given by genString
+   */
   function pokemonByGeneration(genString) {
     var pokemon = [];
     var gen = generationIdByName(genString);
@@ -219,8 +231,8 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
   /**
    * Find move within moves table by name
    * Check move names without differences in spacing/punctuation/capitalization
-   * @param  {string} name Name to find in existing moves table
-   * @return {string}      ID of move
+   * @param  string name Name to find in existing moves table
+   * @return string      ID of move
    */
   function moveIdByName(name) {
     name = name.replace(/[^a-zA-Z0-9]*/g, '').toLowerCase();

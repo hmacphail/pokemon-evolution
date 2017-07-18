@@ -734,11 +734,11 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
   $scope.runYqlScript = function() {
     // get list of all pokemon names for selected gen and down
     var pokemon = pokemonByGeneration($scope.formData.gen);
-    var p = pokemon[0];
-    //pokemon.forEach(function(p) {
+    //var p = pokemon[0];
+    pokemon.forEach(function(p) {
       // create urls to yql query
       var pokeUrl = createYqlQueryUrl(p.name, $scope.formData.gen);
-      console.log(pokeUrl);
+      //console.log(pokeUrl);
       $.ajax({
         url: pokeUrl,
         type: 'GET',
@@ -747,7 +747,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
       .done(function(res) {
         prepAndSendLearnsets(res, p);
       });
-    //});
+    });
   };
 
   $scope.deleteLearnset = function(id) {
@@ -796,35 +796,13 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
 
   //====== main parser functions =======
   function parseLearnsetJson(results) {
-    console.log(results);
-
-    /*var headerRow = results[0].tr.th;
-    var moveInd = 0;
-    for (var i = 0; i < headerRow.length; i++) {
-      if (headerRow[i].a && headerRow[i].a.title == 'Move') {
-        moveInd = i;
-        break;
-      }
-    }*/
-
     var movesByLevel = [];
-    //results.splice(0,1);
-    results.forEach(function(rowObj) {
-      //var rowData = row.tr.td;
-      var level = rowObj["Level"].split("\n")[0];
-      var move = rowObj["Move"];
-      /*if (rowData[moveInd].a) {
-        move = rowData[moveInd].a.span.content;
-      }
-      else if (rowData[moveInd].b) {
-        move = rowData[moveInd].b.a.span.content;
-      }
-      else if (rowData[moveInd].i) {
-        move = rowData[moveInd].i.a.span.content;
-      }*/
 
-      // check if "on evolution" move
-      var onEvo = (level == "Evo");
+    results.forEach(function(rowObj) {
+      //console.log(rowObj);
+      var move = rowObj["Move"];
+      var level = (rowObj["Level"]) ? rowObj["Level"].split("\n")[0] : rowObj["RGB"];
+      var onEvo = (level == "Evo"); // check if "on evolution" move
 
       // level is a number or onEvo (not N/A)
       if (!isNaN(parseInt(level)) || onEvo) {
@@ -862,8 +840,8 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
           && newLearnset.genIntroducedId == ls.genCompletedId + 1) {
 
           newLearnset.genIntroducedId = ls.genIntroducedId;
-          //Learnset.update(ls.id, newLearnset); // send update data
-          //console.log(newLearnset);
+          Learnset.update(ls.id, newLearnset); // send update data
+          console.log(newLearnset);
           return true;
         }
       }
@@ -891,16 +869,22 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
         learnsets.push(newLearnset);
       }
     });
-    console.log(learnsets);
+    //console.log(learnsets);
     // send data
+    learnsets.forEach(function(ls) {
+      Learnset.create({ learnset: ls, pokemon: [pokemon.id] });
+      // creating array like this only good for Gen 1
+      // or maybe only for things with no variation (or form..?)
+    });
     /*Learnset.bulkCreate({ learnsets: learnsets, pokemon: [pokemon] })
       .then(function(res){
         res.data.forEach(function(ls) {
 
           //console.log(ls);
-          //ls.setPokemon([pokemon]);
+          ls.setPokemon([pokemon]);
         });
-      });*/
+      });
+    console.log(learnsets);*/
   };
 
   function pokemonByGeneration(genString) {
@@ -982,8 +966,6 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
       }
     }
   };
-
-  //=================================
 
 };
 

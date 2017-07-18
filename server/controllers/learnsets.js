@@ -25,9 +25,10 @@ module.exports = {
 
   //Create a new learnset using model.create()
   create(req, res) {
-    Learnset.create(req.body)
+    Learnset.create(req.body.learnset)
       .then(function (newLearnset) {
         res.status(200).json(newLearnset);
+        newLearnset.addPokemon(req.body.pokemon);
       })
       .catch(function (error){
         res.status(500).json(error);
@@ -36,13 +37,9 @@ module.exports = {
 
   //Create multiple new learnsets using model.bulkCreate()
   bulkCreate(req, res) {
-    //console.log(req.body);
     Learnset.bulkCreate(req.body.learnsets)
       .then(function(learnsets) {
         res.status(200).json(learnsets);
-        //console.log(Learnset.Instance.prototype);
-        console.log(learnsets[0]);
-        console.log(req.body.pokemon);
         learnsets[0].addPokemon(req.body.pokemon);
       })
       .catch(function (error) {
