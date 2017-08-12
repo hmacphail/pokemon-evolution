@@ -53,84 +53,84 @@ if (!global.hasOwnProperty('db')) {
 
   // global table associations
   db.Generation.hasMany(db.Pokemon, {
-    as: 'GenIntroduced',
-    foreignKey: {
-      name:'genIntroducedId',
-      allowNull: false
-    }
-  });
-  db.Generation.hasMany(db.Effectiveness, {
-    as: 'GenIntroduced',
+    as: 'genIntroduced',
     foreignKey: {
       name: 'genIntroducedId',
       allowNull: false
     }
   });
   db.Generation.hasMany(db.Effectiveness, {
-    as: 'GenCompleted',
+    as: 'genIntroduced',
+    foreignKey: {
+      name: 'genIntroducedId',
+      allowNull: false
+    }
+  });
+  db.Generation.hasMany(db.Effectiveness, {
+    as: 'genCompleted',
     foreignKey: 'genCompletedId'
   });
   db.Generation.hasMany(db.Ability, {
-    as: 'GenIntroduced',
+    as: 'genIntroduced',
     foreignKey: {
       name: 'genIntroducedId',
       allowNull: false
     }
   });
   db.Generation.hasMany(db.Abilityset, {
-    as: 'GenIntroduced',
+    as: 'genIntroduced',
     foreignKey: {
       name: 'genIntroducedId',
       allowNull: false
     }
   });
   db.Generation.hasMany(db.Abilityset, {
-    as: 'GenCompleted',
+    as: 'genCompleted',
     foreignKey: 'genCompletedId'
   });
   db.Generation.hasMany(db.Move, {
-    as: 'GenIntroduced',
+    as: 'genIntroduced',
     foreignKey: {
       name: 'genIntroducedId',
       allowNull: false
     }
   });
   db.Generation.hasMany(db.Move, {
-    as: 'GenCompleted',
+    as: 'genCompleted',
     foreignKey: 'genCompletedId'
   });
   db.Generation.hasMany(db.Learnset, {
-    as: 'GenIntroduced',
+    as: 'genIntroduced',
     foreignKey: {
       name: 'genIntroducedId',
       allowNull: false
     }
   });
   db.Generation.hasMany(db.Learnset, {
-    as: 'GenCompleted',
+    as: 'genCompleted',
     foreignKey: 'genCompletedId'
   });
   db.Generation.hasMany(db.PokemonTypes, {
-    as: 'GenIntroduced',
+    as: 'genIntroduced',
     foreignKey: {
       name: 'genIntroducedId',
       allowNull: false
     }
   });
   db.Generation.hasMany(db.PokemonTypes, {
-    as: 'GenCompleted',
+    as: 'genCompleted',
     foreignKey: 'genCompletedId'
   });
 
   db.Pokemon.hasMany(db.Evolution, {
-    as: 'FromPokemon',
+    as: 'fromPokemon',
     foreignKey: {
       name: 'fromPokemonId',
       allowNull: false
     }
   });
   db.Pokemon.hasMany(db.Evolution, {
-    as: 'ToPokemon',
+    as: 'toPokemon',
     foreignKey: {
       name: 'toPokemonId',
       allowNull: false
@@ -147,34 +147,34 @@ if (!global.hasOwnProperty('db')) {
     }
   });
   db.Pokemon.belongsToMany(db.Learnset, {
-    as: 'Learnsets',
+    as: 'learnsets',
     through: db.PokemonLearnset
   });
   db.Learnset.belongsToMany(db.Pokemon, {
-    as: 'Pokemon',
+    as: 'pokemon',
     through: db.PokemonLearnset
   });
 
   db.Type.hasMany(db.PokemonTypes, {
-    as: 'PrimaryType',
+    as: 'primaryType',
     foreignKey: {
       name: 'primaryTypeId',
       allowNull: false
     }
   });
   db.Type.hasMany(db.PokemonTypes, {
-    as: 'SecondaryType',
+    as: 'secondaryType',
     foreignKey: 'secondaryTypeId'
   });
   db.Type.hasMany(db.Effectiveness, {
-    as: 'AttackingType',
+    as: 'attackingType',
     foreignKey: {
       name: 'attackingTypeId',
       allowNull: false
     }
   });
   db.Type.hasMany(db.Effectiveness, {
-    as: 'DefendingType',
+    as: 'defendingType',
     foreignKey: {
       name: 'defendingTypeId',
       allowNull: false

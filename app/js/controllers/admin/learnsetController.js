@@ -53,7 +53,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
     }
   }*/
 
-  function createLearnsetObj(moveByLevel, pokemon) {
+  function createLearnsetObj(moveByLevel) {
     var gen = generationIdByName($scope.formData.gen);
     //var newObj = new Learnset();
     //console.log(newObj);
@@ -62,7 +62,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
       "onEvo" : moveByLevel.onEvo,
       "byTM" : false,
       "moveId" : moveIdByName(moveByLevel.move, gen),
-      "pokemonId" : pokemon.id,
+      //"pokemonId" : pokemon.id,
       "genIntroducedId" : gen,
       "genCompletedId" : gen,
     };
@@ -99,10 +99,8 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
    * update duplicates with new genCompletedId
    * @return {bool} returns true if duplicate was found
    */
-  function checkForDuplicates(newLearnset) {
-    // IS THE POKEMON ID HERE OR DO WE NEED TO CHECK POKEMON LEARNSETS TABLE SPECIFICALY?
-    console.log(newLearnset);
-    $scope.learnsets;
+  function checkForDuplicates(newLearnset, pokemonId) {
+    // loop through all learnsets looking for duplicates on level/move/etc. association
     for (var i = 0; i < $scope.learnsets.length; i++) {
       var ls = $scope.learnsets[i];
 
@@ -114,17 +112,23 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
         if (newLearnset.level == ls.level
           && newLearnset.onEvo == ls.onEvo
           && newLearnset.moveId == ls.moveId
-          && newLearnset.pokemonId == ls.pokemonId
           && newLearnset.genIntroducedId == ls.genCompletedId + 1) {
+console.log("hi");
+          // loop through learnset's pokemon array to match given pokemonId
+          for (var j = 0; j < ls.pokemon.length; j++) {
+            var p = ls.pokemon[j];
+            if (p.id == pokemonId) {
+              newLearnset.genIntroducedId = ls.genIntroducedId;
+              Learnset.update(ls.id, newLearnset); // send update data
+              console.log(newLearnset);
+              return true;
+            }
+          }
 
-          newLearnset.genIntroducedId = ls.genIntroducedId;
-          Learnset.update(ls.id, newLearnset); // send update data
-          console.log(newLearnset);
-          return true;
         }
+
       }
     }
-
 
     return false;
   }
@@ -142,8 +146,8 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
 
     var movesByLevel = parseLearnsetJson(results); // parse JSON
     movesByLevel.forEach(function(row) { // create objects to send
-      var newLearnset = createLearnsetObj(row, pokemon);
-      if (!checkForDuplicates(newLearnset)) {
+      var newLearnset = createLearnsetObj(row);
+      if (!checkForDuplicates(newLearnset, pokemon.id)) {
         learnsets.push(newLearnset);
       }
     });
@@ -151,23 +155,22 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
     // send data
     learnsets.forEach(function(ls) {
       Learnset.create({ learnset: ls, pokemon: [pokemon.id] });
-      // since going thru all pokemon in db not by number or name,
-      // create array with one pokemon for creating learnset, but only if form == 'original'
+
+
+
+
+      // since we are going thru all pokemon in db not by number or name,
+      // create array with one pokemon for creating learnset, but only if form == 'original' or variation == null (??)
       // otherwise, check for existing entry. if not found, create as array like above,
       // if found, create single entry in pokemonLearnset (manually?)
 
       // creating array like this only good for Gen 1
       // or maybe only for things with no variation (or form..?)
-    });
-    /*Learnset.bulkCreate({ learnsets: learnsets, pokemon: [pokemon] })
-      .then(function(res){
-        res.data.forEach(function(ls) {
 
-          //console.log(ls);
-          ls.setPokemon([pokemon]);
-        });
-      });
-    console.log(learnsets);*/
+
+
+
+    });
   };
 
   /**
@@ -249,7 +252,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
       var move = $scope.moves[i];
       var n = move.name.replace(/[^a-zA-Z0-9]*/g, '').toLowerCase();
       // check generation range
-      if (genId >= move.genIntroducedId && genId <= move.genCompletedId) {
+      if (genId >= move.genIntroducedId && (genId <= move.genCompletedId || move.genCompletedId == null)) {
         if (n == name){
           return $scope.moves[i].id;
         }

@@ -4,7 +4,7 @@
     <div class="col-sm-3">
       <h2>Learnsets</h2>
       <div>
-        Num of Pokemon: <span>{{ entryCount }}</span>
+        Refresh page between adding each generation
       </div>
     </div>
 
@@ -19,8 +19,14 @@
               <option ng-repeat="g in generations">{{ g.name }}</option>
             </select>
           </div>
+          <div class="col-sm-3">
+            <button type="button" class="btn btn-primary" ng-click="runYqlScript()">Run YQL Scripts</button>
+          </div>
+          <div class="col-sm-9">
+            Num of Pokemon: <span>{{ entryCount }}</span>
+          </div>
         </div>
-        <button type="button" class="btn btn-primary" ng-click="runYqlScript()">Run YQL Scripts</button>
+
       </form>
       <!--<br />
       <table class="table table-condensed">

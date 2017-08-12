@@ -1,9 +1,15 @@
 Learnset = require('../models/').Learnset;
+Pokemon = require('../models').Pokemon;
 
 module.exports = {
   //Get a list of all learnsets using model.findAll()
   index(req, res) {
-    Learnset.findAll()
+    Learnset.findAll({
+      include: [{
+        model: Pokemon,
+        as: 'pokemon',
+      }]
+    })
       .then(function (learnsets) {
         res.status(200).json(learnsets);
       })
