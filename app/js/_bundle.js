@@ -58,7 +58,9 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
   $locationProvider.html5Mode(true);
 }]);
 
-},{"./controllers/controllers":12,"./services/services":26}],2:[function(require,module,exports){
+},{"./controllers/controllers":12,"./services/services":27}],2:[function(require,module,exports){
+DataStore = require('../../lib/dataStore');
+
 module.exports = function ($scope, Abilities, Generations) {
 
   $scope.formData = {};
@@ -122,7 +124,7 @@ module.exports = function ($scope, Abilities, Generations) {
 
 };
 
-},{}],3:[function(require,module,exports){
+},{"../../lib/dataStore":15}],3:[function(require,module,exports){
 module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities) {
 
   $scope.formData = {};
@@ -690,17 +692,20 @@ module.exports = function ($scope, Evolution, Pokemon, Item) {
 };
 
 },{}],6:[function(require,module,exports){
+DataStore = require('../../lib/dataStore');
+
 module.exports = function ($scope, Generations) {
 
   $scope.formData = {};
-  getAllGens();
+  getAllGenerations();
+  //DataStore.getAllGenerations($scope.generations, Generations);
 
   $scope.createGen = function() {
     Generations.create($scope.formData)
       .then(function(res) {
         if (res.status == 200) {
           $scope.formData = {};
-          getAllGens();
+          getAllGenerations();
         }
       });
   };
@@ -708,22 +713,21 @@ module.exports = function ($scope, Generations) {
   $scope.deleteGen = function(id) {
     Generations.delete(id)
       .then(function(res) {
-        getAllGens();
+        getAllGenerations();
       });
   };
 
 
   // --- helper functions ---
-
-  function getAllGens() {
-    Generations.get().then(function(res){
-      $scope.generations = res.data;
+  function getAllGenerations() {
+    DataStore.getAllGenerations(Generations).then(function(res) {
+      $scope.generations = res;
     });
   };
 
 };
 
-},{}],7:[function(require,module,exports){
+},{"../../lib/dataStore":15}],7:[function(require,module,exports){
 module.exports = function ($scope, Items) {
 
   $scope.formData = {};
@@ -793,7 +797,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
 
   $scope.runYqlScript = function() {
     // get list of all pokemon names for selected gen and down
-    var pokemon = pokemonByGeneration($scope.formData.gen);
+    var pokemon = allPokemonByGeneration($scope.formData.gen);
     var p = pokemon[0];
     //pokemon.forEach(function(p) {
       // create urls to yql query
@@ -845,7 +849,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
       "level" : moveByLevel.level,
       "onEvo" : moveByLevel.onEvo,
       "byTM" : false,
-      "moveId" : moveIdByName(moveByLevel.move),
+      "moveId" : moveIdByName(moveByLevel.move, gen),
       "pokemonId" : pokemon.id,
       "genIntroducedId" : gen,
       "genCompletedId" : gen,
@@ -884,6 +888,8 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
    * @return {bool} returns true if duplicate was found
    */
   function checkForDuplicates(newLearnset) {
+    // IS THE POKEMON ID HERE OR DO WE NEED TO CHECK POKEMON LEARNSETS TABLE SPECIFICALY?
+    console.log(newLearnset);
     $scope.learnsets;
     for (var i = 0; i < $scope.learnsets.length; i++) {
       var ls = $scope.learnsets[i];
@@ -957,7 +963,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
    * @param  string genString    Name of Generation
    * @return Pokemon[]           Array of Pokemon introduced on or before Generation given by genString
    */
-  function pokemonByGeneration(genString) {
+  function allPokemonByGeneration(genString) {
     var pokemon = [];
     var gen = generationIdByName(genString);
     $scope.pokemon.forEach(function(p){
@@ -1007,6 +1013,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
         return $scope.generations[i].id
       }
     }
+    return null;
   };
 
   function pokemonIdByName(name) {
@@ -1015,6 +1022,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
         return $scope.pokemon[i].id
       }
     }
+    return null;
   };
 
   /**
@@ -1023,23 +1031,28 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
    * @param  string name Name to find in existing moves table
    * @return string      ID of move
    */
-  function moveIdByName(name) {
+  function moveIdByName(name, genId) {
     name = name.replace(/[^a-zA-Z0-9]*/g, '').toLowerCase();
     for (var i = 0; i < $scope.moves.length; i++){
-      var n = $scope.moves[i].name.replace(/[^a-zA-Z0-9]*/g, '').toLowerCase();
-      if (n == name){
-        return $scope.moves[i].id;
-      }
-      // special conditions
-      else if (n == 'highjumpkick' && name == 'hijumpkick') {
-        return $scope.moves[i].id;
+      var move = $scope.moves[i];
+      var n = move.name.replace(/[^a-zA-Z0-9]*/g, '').toLowerCase();
+      // check generation range
+      if (genId >= move.genIntroducedId && genId <= move.genCompletedId) {
+        if (n == name){
+          return $scope.moves[i].id;
+        }
+        // special conditions
+        else if (n == 'highjumpkick' && name == 'hijumpkick') {
+          return $scope.moves[i].id;
+        }
       }
     }
+    return null;
   };
 
 };
 
-},{"../../lib/tableToJson":15}],9:[function(require,module,exports){
+},{"../../lib/tableToJson":16}],9:[function(require,module,exports){
 module.exports = function ($scope, Moves, Generations, Types) {
 
   $scope.formData = {};
@@ -1311,6 +1324,19 @@ module.exports = function ($scope) {
 
 
 },{}],15:[function(require,module,exports){
+var DataStore = {
+
+  getAllGenerations(Generations) {
+    return Generations.get().then(function(res){
+      return res.data;
+    });
+  },
+
+
+}
+
+module.exports = DataStore;
+},{}],16:[function(require,module,exports){
 /**
  * table-to-json
  * jQuery plugin that reads an HTML table and returns a javascript object representing the values and columns of the table
@@ -1498,7 +1524,7 @@ module.exports = function ($scope) {
     return construct(this, headings);
   };
 })( jQuery );
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1513,7 +1539,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1528,7 +1554,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1549,7 +1575,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1564,7 +1590,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1579,7 +1605,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1597,7 +1623,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1618,7 +1644,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1636,7 +1662,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1651,7 +1677,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1666,7 +1692,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 var generationService     = require('./admin/generationService');
 var pokemonService        = require('./admin/pokemonService');
 var evolutionService      = require('./admin/evolutionService');
@@ -1691,4 +1717,4 @@ srvc.factory('Moves',         ['$http', moveService]);
 srvc.factory('Learnsets',     ['$http', learnsetService]);
 srvc.factory('Items',         ['$http', itemService]);
 
-},{"./admin/abilityService":16,"./admin/abilitysetService":17,"./admin/effectivenessService":18,"./admin/evolutionService":19,"./admin/generationService":20,"./admin/itemService":21,"./admin/learnsetService":22,"./admin/moveService":23,"./admin/pokemonService":24,"./admin/typeService":25}]},{},[1]);
+},{"./admin/abilityService":17,"./admin/abilitysetService":18,"./admin/effectivenessService":19,"./admin/evolutionService":20,"./admin/generationService":21,"./admin/itemService":22,"./admin/learnsetService":23,"./admin/moveService":24,"./admin/pokemonService":25,"./admin/typeService":26}]},{},[1]);

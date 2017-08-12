@@ -1,3 +1,5 @@
+DataStore = require('../../lib/dataStore');
+
 module.exports = function ($scope, Abilities, Generations) {
 
   $scope.formData = {};

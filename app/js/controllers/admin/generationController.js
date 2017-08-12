@@ -1,14 +1,17 @@
+DataStore = require('../../lib/dataStore');
+
 module.exports = function ($scope, Generations) {
 
   $scope.formData = {};
-  getAllGens();
+  getAllGenerations();
+  //DataStore.getAllGenerations($scope.generations, Generations);
 
   $scope.createGen = function() {
     Generations.create($scope.formData)
       .then(function(res) {
         if (res.status == 200) {
           $scope.formData = {};
-          getAllGens();
+          getAllGenerations();
         }
       });
   };
@@ -16,16 +19,15 @@ module.exports = function ($scope, Generations) {
   $scope.deleteGen = function(id) {
     Generations.delete(id)
       .then(function(res) {
-        getAllGens();
+        getAllGenerations();
       });
   };
 
 
   // --- helper functions ---
-
-  function getAllGens() {
-    Generations.get().then(function(res){
-      $scope.generations = res.data;
+  function getAllGenerations() {
+    DataStore.getAllGenerations(Generations).then(function(res) {
+      $scope.generations = res;
     });
   };
 
