@@ -9,7 +9,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
 
   $scope.runYqlScript = function() {
     // get list of all pokemon names for selected gen and down
-    var pokemon = pokemonByGeneration($scope.formData.gen);
+    var pokemon = allPokemonByGeneration($scope.formData.gen);
     var p = pokemon[0];
     //pokemon.forEach(function(p) {
       // create urls to yql query
@@ -61,7 +61,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
       "level" : moveByLevel.level,
       "onEvo" : moveByLevel.onEvo,
       "byTM" : false,
-      "moveId" : moveIdByName(moveByLevel.move),
+      "moveId" : moveIdByName(moveByLevel.move, gen),
       "pokemonId" : pokemon.id,
       "genIntroducedId" : gen,
       "genCompletedId" : gen,
@@ -100,6 +100,8 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
    * @return {bool} returns true if duplicate was found
    */
   function checkForDuplicates(newLearnset) {
+    // IS THE POKEMON ID HERE OR DO WE NEED TO CHECK POKEMON LEARNSETS TABLE SPECIFICALY?
+    console.log(newLearnset);
     $scope.learnsets;
     for (var i = 0; i < $scope.learnsets.length; i++) {
       var ls = $scope.learnsets[i];
@@ -173,7 +175,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
    * @param  string genString    Name of Generation
    * @return Pokemon[]           Array of Pokemon introduced on or before Generation given by genString
    */
-  function pokemonByGeneration(genString) {
+  function allPokemonByGeneration(genString) {
     var pokemon = [];
     var gen = generationIdByName(genString);
     $scope.pokemon.forEach(function(p){
@@ -223,6 +225,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
         return $scope.generations[i].id
       }
     }
+    return null;
   };
 
   function pokemonIdByName(name) {
@@ -231,6 +234,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
         return $scope.pokemon[i].id
       }
     }
+    return null;
   };
 
   /**
@@ -239,18 +243,23 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
    * @param  string name Name to find in existing moves table
    * @return string      ID of move
    */
-  function moveIdByName(name) {
+  function moveIdByName(name, genId) {
     name = name.replace(/[^a-zA-Z0-9]*/g, '').toLowerCase();
     for (var i = 0; i < $scope.moves.length; i++){
-      var n = $scope.moves[i].name.replace(/[^a-zA-Z0-9]*/g, '').toLowerCase();
-      if (n == name){
-        return $scope.moves[i].id;
-      }
-      // special conditions
-      else if (n == 'highjumpkick' && name == 'hijumpkick') {
-        return $scope.moves[i].id;
+      var move = $scope.moves[i];
+      var n = move.name.replace(/[^a-zA-Z0-9]*/g, '').toLowerCase();
+      // check generation range
+      if (genId >= move.genIntroducedId && genId <= move.genCompletedId) {
+        if (n == name){
+          return $scope.moves[i].id;
+        }
+        // special conditions
+        else if (n == 'highjumpkick' && name == 'hijumpkick') {
+          return $scope.moves[i].id;
+        }
       }
     }
+    return null;
   };
 
 };
