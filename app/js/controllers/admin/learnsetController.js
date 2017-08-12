@@ -10,8 +10,8 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
   $scope.runYqlScript = function() {
     // get list of all pokemon names for selected gen and down
     var pokemon = pokemonByGeneration($scope.formData.gen);
-    //var p = pokemon[0];
-    pokemon.forEach(function(p) {
+    var p = pokemon[0];
+    //pokemon.forEach(function(p) {
       // create urls to yql query
       var pokeUrl = createYqlQueryUrl(p.name, $scope.formData.gen);
       //console.log(pokeUrl);
@@ -23,7 +23,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
       .done(function(res) {
         prepAndSendLearnsets(res, p);
       });
-    });
+    //});
   };
 
   $scope.deleteLearnset = function(id) {
@@ -149,6 +149,11 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
     // send data
     learnsets.forEach(function(ls) {
       Learnset.create({ learnset: ls, pokemon: [pokemon.id] });
+      // since going thru all pokemon in db not by number or name,
+      // create array with one pokemon for creating learnset, but only if form == 'original'
+      // otherwise, check for existing entry. if not found, create as array like above,
+      // if found, create single entry in pokemonLearnset (manually?)
+
       // creating array like this only good for Gen 1
       // or maybe only for things with no variation (or form..?)
     });
