@@ -4,7 +4,7 @@
     <div class="col-sm-3">
       <h2>Learnsets</h2>
       <div>
-        Refresh page between adding each generation
+        <i class="fa fa-warning"></i> Refresh page between adding each generation.
       </div>
     </div>
 
@@ -19,15 +19,53 @@
               <option ng-repeat="g in generations">{{ g.name }}</option>
             </select>
           </div>
+        </div>
+        <div class="form-group row">
           <div class="col-sm-3">
             <button type="button" class="btn btn-primary" ng-click="runYqlScript()">Run YQL Scripts</button>
           </div>
           <div class="col-sm-9">
-            Num of Pokemon: <span>{{ entryCount }}</span>
+            Num of Pokemon added: <span>{{ entryCount }}</span>
           </div>
         </div>
-
       </form>
+
+      <hr />
+
+      <div>
+        Create individual entries for Pokemon with different forms and variations. Requires selecting generation from dropdown above.
+      </div>
+      <br />
+      <form>
+        <div class="form-group row">
+          <div class="col-sm-3">
+            <label for="input-pokemon-id">Pokemon ID:</label>
+          </div>
+          <div class="col-sm-9">
+            <input id="input-pokemon-id" type="text" class="form-control" ng-model="formData.individualPokemonId">
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-3">
+            <label for="input-bulba-url">Bulbapedia URL:</label>
+          </div>
+          <div class="col-sm-9">
+            <input id="input-bulba-url" type="text" class="form-control" ng-model="formData.individualUrl">
+
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-3">
+            <label for="input-table-xpath">Table XPath:</label>
+          </div>
+          <div class="col-sm-9">
+            <input id="input-table-xpath" type="text" class="form-control" ng-model="formData.individualTableXPath">
+            <span>Example: //*[@id="mw-content-text"]/table[1]/tbody/tr[2]/td/table</span>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" ng-click="createIndividualLearnset()">Add Individual</button>
+      </form>
+
       <!--<br />
       <table class="table table-condensed">
         <tr>

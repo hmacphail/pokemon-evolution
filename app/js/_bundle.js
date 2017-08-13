@@ -795,19 +795,23 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
     // get list of all pokemon names for selected gen and down
     var pokemon = allPokemonByGeneration($scope.formData.gen);
     var p = pokemon[0];
-    //pokemon.forEach(function(p) {
-      // create urls to yql query
-      var pokeUrl = createYqlQueryUrl(p.name, $scope.formData.gen);
-      //console.log(pokeUrl);
-      $.ajax({
-        url: pokeUrl,
-        type: 'GET',
-        dataType: 'json'
-      })
-      .done(function(res) {
-        prepAndSendLearnsets(res, p);
-      });
+    //pokemon.forEach(function(pm) {
+      ajaxRequestLearnsetTable(
+        createYqlQueryUrl(p.name, $scope.formData.gen),
+        pm
+      );
     //});
+
+  };
+
+  $scope.createIndividualLearnset = function() {
+    Pokemon.getById($scope.formData.individualPokemonId).then(function(res) {
+      ajaxRequestLearnsetTable(
+        createIndQueryUrl($scope.formData.individualUrl, $scope.formData.individualTableXPath),
+        res.data
+      );
+    });
+
   };
 
   $scope.deleteLearnset = function(id) {
@@ -839,19 +843,16 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
 
   function createLearnsetObj(moveByLevel) {
     var gen = generationIdByName($scope.formData.gen);
-    //var newObj = new Learnset();
-    //console.log(newObj);
     var newObj = {
       "level" : moveByLevel.level,
       "onEvo" : moveByLevel.onEvo,
       "byTM" : false,
       "moveId" : moveIdByName(moveByLevel.move, gen),
-      //"pokemonId" : pokemon.id,
       "genIntroducedId" : gen,
       "genCompletedId" : gen,
     };
-    //newObj.setPokemon([pokemon]);
     return newObj;
+
   };
 
   //====== main parser functions =======
@@ -897,7 +898,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
           && newLearnset.onEvo == ls.onEvo
           && newLearnset.moveId == ls.moveId
           && newLearnset.genIntroducedId == ls.genCompletedId + 1) {
-console.log("hi");
+
           // loop through learnset's pokemon array to match given pokemonId
           for (var j = 0; j < ls.pokemon.length; j++) {
             var p = ls.pokemon[j];
@@ -973,6 +974,7 @@ console.log("hi");
     return pokemon;
   };
 
+  //====== query building for learnset table retrieval
   function createYqlQueryUrl(pokemonName, genString) {
     // for generations excluding most recent
     var source = 'https://query.yahooapis.com/v1/public/';
@@ -986,7 +988,30 @@ console.log("hi");
     return source + 'yql?q=' + encodeURI(query) + '&format=json' + env + '&callback=';
   };
 
+  function createIndQueryUrl(individualUrl, xpath) {
+    var source = 'https://query.yahooapis.com/v1/public/';
+    var query = 'select * from htmlstring where url="'
+      + individualUrl
+      + '" and xpath=\''
+      + xpath
+      + '\'';
+    var env = "&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+
+    return source + 'yql?q=' + encodeURI(query) + '&format=json' + env + '&callback=';
+  };
+
   //====== remote data retrieval ========
+  function ajaxRequestLearnsetTable(requestUrl, pokemon) {
+    $.ajax({
+        url: requestUrl,
+        type: 'GET',
+        dataType: 'json'
+      })
+      .done(function(res) {
+        prepAndSendLearnsets(res, pokemon);
+      });
+  }
+
   function getAllLearnsets() {
     Learnset.get().then(function(res){
       $scope.learnsets = res.data;
@@ -1653,6 +1678,9 @@ module.exports = function($http) {
   return {
     get: function() {
       return $http.get('/api/pokemon');
+    },
+    getById: function(id) {
+      return $http.get('/api/pokemon/' + id)
     },
     bulkCreate: function(data) {
       return $http.post('/api/pokemon/bulk', data);
