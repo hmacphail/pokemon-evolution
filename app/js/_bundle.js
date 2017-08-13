@@ -798,9 +798,9 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
     //var pm = pokemon[0];
 
     //MAKE SURE TO ORDER POKEMON BY ID WHEN RETRIEVING FROM DB, SO ARRAY WILL ALWAYS BE IN SAME ORDER
-   /* var startIndex = $scope.pokemonArrayIndex;
+    var startIndex = $scope.pokemonArrayIndex;
     var endIndex = startIndex + 200;
-    for (var i = startIndex; i < Math.min(endIndex, pokemon.length - 1); i++) {
+    for (var i = startIndex; i < Math.min(endIndex, pokemon.length); i++) {
       var pm = pokemon[i];
       ajaxRequestLearnsetTable(
         createYqlQueryUrl(pm.name, $scope.formData.gen),
@@ -808,15 +808,15 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
       );
     }
     $scope.pokemonArrayIndex = endIndex;
-    */
 
+/*
     pokemon.forEach(function(pm) {
       ajaxRequestLearnsetTable(
         createYqlQueryUrl(pm.name, $scope.formData.gen),
         pm
       );
     });
-
+*/
     //loopPokemonCalls(0, pokemon);
 
     /*function loopPokemonCalls(startIndex, pokemon) {
@@ -906,7 +906,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
           "onEvo" : onEvo
         });
       }
-      else {
+      else if (level != "N/A") {
         console.error("couldn't find move from row", rowObj);
       }
 
