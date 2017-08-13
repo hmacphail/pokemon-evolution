@@ -121,7 +121,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
             if (p.id == pokemonId) {
               newLearnset.genIntroducedId = ls.genIntroducedId;
               Learnset.update(ls.id, newLearnset); // send update data
-              console.log(newLearnset);
+              //console.log(newLearnset);
               return true;
             }
           }
@@ -136,10 +136,16 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
 
   //====== data preparation =======
   function prepAndSendLearnsets(res, pokemon) {
+
+    if (pokemon.form != 'original' || variation != null) {
+      console.log(pokemon.name);
+      return;
+    }
+
     var learnsets = [];
     $scope.entryCount++;
 
-    console.log(pokemon.name);
+    //console.log(pokemon.name);
     var results = $(res.query.results.result)
       .tableToJSON(
         { ignoreHiddenRows: false }
@@ -164,6 +170,8 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
       // create array with one pokemon for creating learnset, but only if form == 'original' or variation == null (??)
       // otherwise, check for existing entry. if not found, create as array like above,
       // if found, create single entry in pokemonLearnset (manually?)
+      //
+      // cant add variations into pokemon array b/c what if the current gen range is wrong for the pokemon youre adding?
 
       // creating array like this only good for Gen 1
       // or maybe only for things with no variation (or form..?)
@@ -205,6 +213,10 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
   };
 
   function createIndQueryUrl(individualUrl, xpath) {
+    if (xpath == null) {
+      xpath = '//*[@id="mw-content-text"]/table[1]/tbody/tr[2]/td/table';
+    }
+
     var source = 'https://query.yahooapis.com/v1/public/';
     var query = 'select * from htmlstring where url="'
       + individualUrl
