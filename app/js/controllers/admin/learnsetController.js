@@ -10,10 +10,10 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
   $scope.runYqlScript = function() {
     // get list of all pokemon names for selected gen and down
     var pokemon = allPokemonByGeneration($scope.formData.gen);
-    var p = pokemon[0];
+    var pm = pokemon[0];
     //pokemon.forEach(function(pm) {
       ajaxRequestLearnsetTable(
-        createYqlQueryUrl(p.name, $scope.formData.gen),
+        createYqlQueryUrl(pm.name, $scope.formData.gen),
         pm
       );
     //});
@@ -57,13 +57,14 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
     }
   }*/
 
-  function createLearnsetObj(moveByLevel) {
+  function createLearnsetObj(moveByLevel, pokemonId) {
     var gen = generationIdByName($scope.formData.gen);
     var newObj = {
       "level" : moveByLevel.level,
       "onEvo" : moveByLevel.onEvo,
       "byTM" : false,
       "moveId" : moveIdByName(moveByLevel.move, gen),
+      "pokemonId": pokemonId,
       "genIntroducedId" : gen,
       "genCompletedId" : gen,
     };
@@ -100,7 +101,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
    * update duplicates with new genCompletedId
    * @return {bool} returns true if duplicate was found
    */
-  function checkForDuplicates(newLearnset, pokemonId) {
+  function checkForDuplicates(newLearnset) {
     // loop through all learnsets looking for duplicates on level/move/etc. association
     for (var i = 0; i < $scope.learnsets.length; i++) {
       var ls = $scope.learnsets[i];
@@ -113,19 +114,13 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
         if (newLearnset.level == ls.level
           && newLearnset.onEvo == ls.onEvo
           && newLearnset.moveId == ls.moveId
+          && newLearnset.pokemonId == ls.pokemonId
           && newLearnset.genIntroducedId == ls.genCompletedId + 1) {
 
-          // loop through learnset's pokemon array to match given pokemonId
-          for (var j = 0; j < ls.pokemon.length; j++) {
-            var p = ls.pokemon[j];
-            if (p.id == pokemonId) {
-              newLearnset.genIntroducedId = ls.genIntroducedId;
-              Learnset.update(ls.id, newLearnset); // send update data
-              //console.log(newLearnset);
-              return true;
-            }
-          }
-
+          newLearnset.genIntroducedId = ls.genIntroducedId;
+          Learnset.update(ls.id, newLearnset); // send update data
+          //console.log(newLearnset);
+          return true;
         }
 
       }
@@ -136,8 +131,8 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
 
   //====== data preparation =======
   function prepAndSendLearnsets(res, pokemon) {
-
-    if (pokemon.form != 'original' || variation != null) {
+    console.log(pokemon);
+    if (pokemon.form != 'original' || pokemon.variation != null) {
       console.log(pokemon.name);
       return;
     }
@@ -153,15 +148,18 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
 
     var movesByLevel = parseLearnsetJson(results); // parse JSON
     movesByLevel.forEach(function(row) { // create objects to send
-      var newLearnset = createLearnsetObj(row);
-      if (!checkForDuplicates(newLearnset, pokemon.id)) {
+      var newLearnset = createLearnsetObj(row, pokemon.id);
+      if (!checkForDuplicates(newLearnset)) {
         learnsets.push(newLearnset);
       }
     });
+
+    Learnset.bulkCreate(learnsets);
+
     //console.log(learnsets);
     // send data
-    learnsets.forEach(function(ls) {
-      Learnset.create({ learnset: ls, pokemon: [pokemon.id] });
+    //learnsets.forEach(function(ls) {
+    //  Learnset.create({ learnset: ls, pokemon: [pokemon.id] });
 
 
 
@@ -179,7 +177,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
 
 
 
-    });
+    //});
   };
 
   /**

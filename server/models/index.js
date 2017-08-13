@@ -47,7 +47,6 @@ if (!global.hasOwnProperty('db')) {
     Learnset: sequelize.import(__dirname + '/learnset'),
     Item: sequelize.import(__dirname + '/item'),
     PokemonTypes: sequelize.import(__dirname + '/pokemonTypes'),
-    PokemonLearnset: sequelize.import(__dirname + '/pokemonLearnset'),
     User: sequelize.import(__dirname + '/user')
   }
 
@@ -146,13 +145,10 @@ if (!global.hasOwnProperty('db')) {
       allowNull: false
     }
   });
-  db.Pokemon.belongsToMany(db.Learnset, {
-    as: 'learnsets',
-    through: db.PokemonLearnset
-  });
-  db.Learnset.belongsToMany(db.Pokemon, {
-    as: 'pokemon',
-    through: db.PokemonLearnset
+  db.Pokemon.hasMany(db.Learnset, {
+    foreignKey: {
+      allowNull: false
+    }
   });
 
   db.Type.hasMany(db.PokemonTypes, {
