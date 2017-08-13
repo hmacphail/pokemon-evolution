@@ -205,6 +205,13 @@ if (!global.hasOwnProperty('db')) {
     foreignKey: 'itemId'
   });
 
+  db.Game.hasMany(db.Abilityset, {
+    foreignKey: 'gameId'
+  });
+  db.Game.hasMany(db.Move, {
+    foreignKey: 'gameId'
+  });
+
 }
 
 module.exports = db;
