@@ -10,6 +10,7 @@ var abilitysetController    = require('./admin/abilitysetController');
 var moveController          = require('./admin/moveController');
 var learnsetController      = require('./admin/learnsetController');
 var itemController          = require('./admin/itemController');
+var gameController          = require('./admin/gameController');
 
 // create controllers
 var ctrl = angular.module('controllers', []);
@@ -26,3 +27,4 @@ ctrl.controller('abilitysetController', ['$scope', 'Abilitysets', 'Generations',
 ctrl.controller('moveController', ['$scope', 'Moves', 'Generations', 'Types', moveController]);
 ctrl.controller('learnsetController', ['$scope', 'Learnsets', 'Generations', 'Pokemon', 'Moves', learnsetController]);
 ctrl.controller('itemController', ['$scope', 'Items', itemController]);
+ctrl.controller('gameController', ['$scope', 'Games', 'Generations', gameController]);

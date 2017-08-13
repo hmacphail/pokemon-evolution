@@ -53,6 +53,10 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
       templateUrl : '/views/admin/items.html',
       controller  : 'itemController'
     })
+    .when('/admin/games', {
+      templateUrl : '/views/admin/games.html',
+      controller  : 'gameController'
+    })
     .otherwise({redirectTo: '/404'});
   $locationProvider.html5Mode(true);
 }]);

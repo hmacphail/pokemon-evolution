@@ -54,11 +54,15 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
       templateUrl : '/views/admin/items.html',
       controller  : 'itemController'
     })
+    .when('/admin/games', {
+      templateUrl : '/views/admin/games.html',
+      controller  : 'gameController'
+    })
     .otherwise({redirectTo: '/404'});
   $locationProvider.html5Mode(true);
 }]);
 
-},{"./controllers/controllers":12,"./services/services":26}],2:[function(require,module,exports){
+},{"./controllers/controllers":13,"./services/services":28}],2:[function(require,module,exports){
 module.exports = function ($scope, Abilities, Generations) {
 
   $scope.formData = {};
@@ -690,6 +694,64 @@ module.exports = function ($scope, Evolution, Pokemon, Item) {
 };
 
 },{}],6:[function(require,module,exports){
+module.exports = function ($scope, Games, Generations) {
+
+  $scope.formData = {};
+  getAllGames();
+  getAllGenerations();
+
+  $scope.createGame = function() {
+    Games.create(createGameObj($scope.formData))
+      .then(function(res) {
+        if (res.status == 200) {
+          $scope.formData = {};
+          getAllGames();
+        }
+      });
+  };
+
+  $scope.deleteGame = function(id) {
+    Games.delete(id)
+      .then(function(res) {
+        getAllGames();
+      });
+  };
+
+
+  // --- helper functions ---
+
+  function createGameObj(formData) {
+    return {
+      "code": formData.code,
+      "name": formData.name,
+      "generationId": generationIdByName(formData.generation)
+    };
+  }
+
+  function getAllGames() {
+    Games.get().then(function(res){
+      $scope.games = res.data;
+    });
+  };
+
+  function getAllGenerations() {
+    Generations.get().then(function(res){
+      $scope.generations = res.data;
+    });
+  }
+
+  function generationIdByName(name) {
+    for (var i = 0; i < $scope.generations.length; i++){
+      if ($scope.generations[i].name == name){
+        return $scope.generations[i].id
+      }
+    }
+    return null;
+  };
+
+};
+
+},{}],7:[function(require,module,exports){
 module.exports = function ($scope, Generations) {
 
   $scope.formData = {};
@@ -723,7 +785,7 @@ module.exports = function ($scope, Generations) {
 
 };
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 module.exports = function ($scope, Items) {
 
   $scope.formData = {};
@@ -781,7 +843,7 @@ module.exports = function ($scope, Items) {
 
 };
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 require('../../lib/tableToJson');
 
 module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
@@ -1129,7 +1191,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
 
 };
 
-},{"../../lib/tableToJson":15}],9:[function(require,module,exports){
+},{"../../lib/tableToJson":16}],10:[function(require,module,exports){
 module.exports = function ($scope, Moves, Generations, Types) {
 
   $scope.formData = {};
@@ -1254,7 +1316,7 @@ module.exports = function ($scope, Moves, Generations, Types) {
 
 };
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 module.exports = function ($scope, Pokemon, Generations, Types) {
 
   $scope.formData = {};
@@ -1324,7 +1386,7 @@ module.exports = function ($scope, Pokemon, Generations, Types) {
 
 };
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 module.exports = function ($scope, Types) {
 
   $scope.formData = {};
@@ -1358,7 +1420,7 @@ module.exports = function ($scope, Types) {
 
 };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 var homeController          = require('./homeController');
 var errorController         = require('./errorController');
 var generationController    = require('./admin/generationController');
@@ -1371,6 +1433,7 @@ var abilitysetController    = require('./admin/abilitysetController');
 var moveController          = require('./admin/moveController');
 var learnsetController      = require('./admin/learnsetController');
 var itemController          = require('./admin/itemController');
+var gameController          = require('./admin/gameController');
 
 // create controllers
 var ctrl = angular.module('controllers', []);
@@ -1387,20 +1450,21 @@ ctrl.controller('abilitysetController', ['$scope', 'Abilitysets', 'Generations',
 ctrl.controller('moveController', ['$scope', 'Moves', 'Generations', 'Types', moveController]);
 ctrl.controller('learnsetController', ['$scope', 'Learnsets', 'Generations', 'Pokemon', 'Moves', learnsetController]);
 ctrl.controller('itemController', ['$scope', 'Items', itemController]);
+ctrl.controller('gameController', ['$scope', 'Games', 'Generations', gameController]);
 
-},{"./admin/abilityController":2,"./admin/abilitysetController":3,"./admin/effectivenessController":4,"./admin/evolutionController":5,"./admin/generationController":6,"./admin/itemController":7,"./admin/learnsetController":8,"./admin/moveController":9,"./admin/pokemonController":10,"./admin/typeController":11,"./errorController":13,"./homeController":14}],13:[function(require,module,exports){
+},{"./admin/abilityController":2,"./admin/abilitysetController":3,"./admin/effectivenessController":4,"./admin/evolutionController":5,"./admin/gameController":6,"./admin/generationController":7,"./admin/itemController":8,"./admin/learnsetController":9,"./admin/moveController":10,"./admin/pokemonController":11,"./admin/typeController":12,"./errorController":14,"./homeController":15}],14:[function(require,module,exports){
 module.exports = function ($scope) {
     $scope.message = 'Page not found!';
   };
 
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 module.exports = function ($scope) {
     $scope.message = 'Everyone come and see how good I look!';
   };
 
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 /**
  * table-to-json
  * jQuery plugin that reads an HTML table and returns a javascript object representing the values and columns of the table
@@ -1588,7 +1652,7 @@ module.exports = function ($scope) {
     return construct(this, headings);
   };
 })( jQuery );
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1603,7 +1667,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1618,7 +1682,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1639,7 +1703,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1654,7 +1718,22 @@ module.exports = function($http) {
   }
 };
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
+module.exports = function($http) {
+  return {
+    get: function() {
+      return $http.get('/api/games');
+    },
+    create: function(data) {
+      return $http.post('/api/games', data);
+    },
+    delete: function(id) {
+      return $http.delete('/api/games/' + id);
+    }
+  }
+};
+
+},{}],22:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1669,7 +1748,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],21:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1687,7 +1766,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],22:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1708,7 +1787,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],23:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1726,7 +1805,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],24:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1744,7 +1823,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],25:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1759,7 +1838,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],26:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 var generationService     = require('./admin/generationService');
 var pokemonService        = require('./admin/pokemonService');
 var evolutionService      = require('./admin/evolutionService');
@@ -1770,6 +1849,7 @@ var abilitysetService     = require('./admin/abilitysetService');
 var moveService           = require('./admin/moveService');
 var learnsetService       = require('./admin/learnsetService');
 var itemService           = require('./admin/itemService');
+var gameService           = require('./admin/gameService');
 
 // create factories
 var srvc = angular.module('services', []);
@@ -1783,5 +1863,6 @@ srvc.factory('Abilitysets',   ['$http', abilitysetService]);
 srvc.factory('Moves',         ['$http', moveService]);
 srvc.factory('Learnsets',     ['$http', learnsetService]);
 srvc.factory('Items',         ['$http', itemService]);
+srvc.factory('Games',         ['$http', gameService]);
 
-},{"./admin/abilityService":16,"./admin/abilitysetService":17,"./admin/effectivenessService":18,"./admin/evolutionService":19,"./admin/generationService":20,"./admin/itemService":21,"./admin/learnsetService":22,"./admin/moveService":23,"./admin/pokemonService":24,"./admin/typeService":25}]},{},[1]);
+},{"./admin/abilityService":17,"./admin/abilitysetService":18,"./admin/effectivenessService":19,"./admin/evolutionService":20,"./admin/gameService":21,"./admin/generationService":22,"./admin/itemService":23,"./admin/learnsetService":24,"./admin/moveService":25,"./admin/pokemonService":26,"./admin/typeService":27}]},{},[1]);

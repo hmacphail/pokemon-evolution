@@ -11,6 +11,7 @@ var abilitysets   = require('./controllers/abilitysets');
 var moves         = require('./controllers/moves');
 var learnsets     = require('./controllers/learnsets');
 var items         = require('./controllers/items');
+var games         = require('./controllers/games');
 var users         = require('./controllers/users');
 
 router.get(   '/generations',         generations.index);
@@ -72,6 +73,11 @@ router.get(   '/items/:id',           items.show);
 router.post(  '/items',               items.create);
 router.post(  '/items/bulk',          items.bulkCreate);
 router.delete('/items/:id',           items.delete);
+
+router.get(   '/games',               games.index);
+router.get(   '/games/:id',           games.show);
+router.post(  '/games',               games.create);
+router.delete('/games/:id',           games.delete);
 
 router.get(   '/users',               users.index);
 router.get(   '/users/:id',           users.show);

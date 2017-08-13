@@ -8,6 +8,7 @@ var abilitysetService     = require('./admin/abilitysetService');
 var moveService           = require('./admin/moveService');
 var learnsetService       = require('./admin/learnsetService');
 var itemService           = require('./admin/itemService');
+var gameService           = require('./admin/gameService');
 
 // create factories
 var srvc = angular.module('services', []);
@@ -21,3 +22,4 @@ srvc.factory('Abilitysets',   ['$http', abilitysetService]);
 srvc.factory('Moves',         ['$http', moveService]);
 srvc.factory('Learnsets',     ['$http', learnsetService]);
 srvc.factory('Items',         ['$http', itemService]);
+srvc.factory('Games',         ['$http', gameService]);

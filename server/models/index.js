@@ -47,7 +47,8 @@ if (!global.hasOwnProperty('db')) {
     Learnset: sequelize.import(__dirname + '/learnset'),
     Item: sequelize.import(__dirname + '/item'),
     PokemonTypes: sequelize.import(__dirname + '/pokemonTypes'),
-    User: sequelize.import(__dirname + '/user')
+    Game: sequelize.import(__dirname + '/game'),
+    User: sequelize.import(__dirname + '/user'),
   }
 
   // global table associations
@@ -119,6 +120,11 @@ if (!global.hasOwnProperty('db')) {
   db.Generation.hasMany(db.PokemonTypes, {
     as: 'genCompleted',
     foreignKey: 'genCompletedId'
+  });
+  db.Generation.hasMany(db.Game, {
+    foreignKey: {
+      allowNull: false
+    }
   });
 
   db.Pokemon.hasMany(db.Evolution, {
