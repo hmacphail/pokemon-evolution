@@ -2,7 +2,7 @@ if (!global.hasOwnProperty('db')) {
   var Sequelize = require('sequelize')
     , sequelize = null
 
-  if (process.env.NODE_ENV) {
+  /*if (process.env.NODE_ENV) {
     // the application is executed on Heroku ... use the postgres database
     sequelize = new Sequelize(process.env.DATABASE_URL, {
       dialect:  'postgres',
@@ -29,7 +29,7 @@ if (!global.hasOwnProperty('db')) {
       port: 3306,
       dialect: 'mysql'
     });
-  }
+  //}
 
   var db = {
     Sequelize: Sequelize,

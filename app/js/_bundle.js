@@ -787,6 +787,7 @@ require('../../lib/tableToJson');
 module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
 
   $scope.entryCount = 0;
+  $scope.pokemonArrayIndex = 0;
   $scope.formData = {};
   getAllLearnsets();
   getAssociatedData();
@@ -794,13 +795,44 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
   $scope.runYqlScript = function() {
     // get list of all pokemon names for selected gen and down
     var pokemon = allPokemonByGeneration($scope.formData.gen);
-    var pm = pokemon[0];
-    //pokemon.forEach(function(pm) {
+    //var pm = pokemon[0];
+
+    //MAKE SURE TO ORDER POKEMON BY ID WHEN RETRIEVING FROM DB, SO ARRAY WILL ALWAYS BE IN SAME ORDER
+   /* var startIndex = $scope.pokemonArrayIndex;
+    var endIndex = startIndex + 200;
+    for (var i = startIndex; i < Math.min(endIndex, pokemon.length - 1); i++) {
+      var pm = pokemon[i];
       ajaxRequestLearnsetTable(
         createYqlQueryUrl(pm.name, $scope.formData.gen),
         pm
       );
-    //});
+    }
+    $scope.pokemonArrayIndex = endIndex;
+    */
+
+    pokemon.forEach(function(pm) {
+      ajaxRequestLearnsetTable(
+        createYqlQueryUrl(pm.name, $scope.formData.gen),
+        pm
+      );
+    });
+
+    //loopPokemonCalls(0, pokemon);
+
+    /*function loopPokemonCalls(startIndex, pokemon) {
+      console.info("loop loop");
+      var i = startIndex;
+      for (; i < Math.min(startIndex + 150, pokemon.length - 1); i++) {
+        ajaxRequestLearnsetTable(
+          createYqlQueryUrl(pokemon[i].name, $scope.formData.gen),
+          pokemon[i]
+        );
+      }
+      if (i < pokemon.length - 1) {
+        console.info("index", i);
+        setTimeout(loopPokemonCalls(startIndex, pokemon), 15000);
+      }
+    }*/
 
   };
 
@@ -874,6 +906,9 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
           "onEvo" : onEvo
         });
       }
+      else {
+        console.error("couldn't find move from row", rowObj);
+      }
 
     });
 
@@ -915,16 +950,16 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
 
   //====== data preparation =======
   function prepAndSendLearnsets(res, pokemon) {
-    console.log(pokemon);
+
     if (pokemon.form != 'original' || pokemon.variation != null) {
-      console.log(pokemon.name);
+      console.log(pokemon);
       return;
     }
 
     var learnsets = [];
     $scope.entryCount++;
 
-    //console.log(pokemon.name);
+    console.log(pokemon.name);
     var results = $(res.query.results.result)
       .tableToJSON(
         { ignoreHiddenRows: false }
@@ -943,7 +978,8 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
     //console.log(learnsets);
     // send data
     //learnsets.forEach(function(ls) {
-    //  Learnset.create({ learnset: ls, pokemon: [pokemon.id] });
+    //  Learnset.create(ls);
+    //});
 
 
 
@@ -1079,8 +1115,15 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
         else if (n == 'highjumpkick' && name == 'hijumpkick') {
           return $scope.moves[i].id;
         }
+        else if (n == 'feintattack' && name == 'faintattack') {
+          return $scope.moves[i].id;
+        }
+        else if (n = 'smellingsalts' && name == 'smellingsalt') {
+          return $scope.moves[i].id;
+        }
       }
     }
+    console.error("no move id found", name);
     return null;
   };
 

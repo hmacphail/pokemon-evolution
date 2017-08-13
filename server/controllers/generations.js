@@ -1,14 +1,11 @@
 Generation = require('../models/').Generation;
-Abilityset = require('../models/').Abilityset;
+//Abilityset = require('../models/').Abilityset;
 
 module.exports = {
   //Get a list of all generations using model.findAll()
   index(req, res) {
     Generation.findAll({
-      //include: [{
-      //  model: Abilityset,
-      //  as: 'abilityset',
-      //}]
+      //include: Abilityset
     })
       .then(function (generations) {
         res.status(200).json(generations);
