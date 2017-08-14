@@ -1,3 +1,4 @@
+var Promise = require('promise');
 DataStore = require('../../lib/dataStore');
 
 module.exports = function ($scope, Generations) {
