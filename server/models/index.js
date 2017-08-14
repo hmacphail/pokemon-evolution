@@ -211,6 +211,9 @@ if (!global.hasOwnProperty('db')) {
   db.Game.hasMany(db.Move, {
     foreignKey: 'gameId'
   });
+  db.Game.hasMany(db.Learnset, {
+    foreignKey: 'gameId'
+  });
 
 }
 

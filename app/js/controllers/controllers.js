@@ -25,6 +25,6 @@ ctrl.controller('effectivenessController', ['$scope', 'Effectiveness', 'Generati
 ctrl.controller('abilityController', ['$scope', 'Abilities', 'Generations', abilityController]);
 ctrl.controller('abilitysetController', ['$scope', 'Abilitysets', 'Generations', 'Pokemon', 'Abilities', abilitysetController]);
 ctrl.controller('moveController', ['$scope', 'Moves', 'Generations', 'Types', moveController]);
-ctrl.controller('learnsetController', ['$scope', 'Learnsets', 'Generations', 'Pokemon', 'Moves', learnsetController]);
+ctrl.controller('learnsetController', ['$scope', 'Learnsets', 'Generations', 'Pokemon', 'Moves', 'Games', learnsetController]);
 ctrl.controller('itemController', ['$scope', 'Items', itemController]);
 ctrl.controller('gameController', ['$scope', 'Games', 'Generations', gameController]);

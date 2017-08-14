@@ -1,9 +1,11 @@
 require('../../lib/tableToJson');
 
-module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
+module.exports = function ($scope, Learnset, Generation, Pokemon, Move, Game) {
 
   $scope.entryCount = 0;
   $scope.pokemonArrayIndex = 0;
+  $scope.gameCodesToCheck = ["RGB", "Y", "DP", "PtHGSS", "DPPt", "HGSS", "BW", "B2W2", "XY", "ORAS"];
+
   $scope.formData = {};
   getAllLearnsets();
   getAssociatedData();
@@ -11,11 +13,14 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
   $scope.runYqlScript = function() {
     // get list of all pokemon names for selected gen and down
     var pokemon = allPokemonByGeneration($scope.formData.gen);
-    //var pm = pokemon[0];
+    var pm = pokemon[361];
 
-    //MAKE SURE TO ORDER POKEMON BY ID WHEN RETRIEVING FROM DB, SO ARRAY WILL ALWAYS BE IN SAME ORDER
-    var startIndex = $scope.pokemonArrayIndex;
-    var endIndex = startIndex + 200;
+    // TEST
+    ajaxRequestLearnsetTable(createYqlQueryUrl(pm.name, $scope.formData.gen), pm);
+
+
+    /*var startIndex = $scope.pokemonArrayIndex;
+    var endIndex = startIndex + 100;
     for (var i = startIndex; i < Math.min(endIndex, pokemon.length); i++) {
       var pm = pokemon[i];
       ajaxRequestLearnsetTable(
@@ -24,32 +29,15 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
       );
     }
     $scope.pokemonArrayIndex = endIndex;
-
-/*
+*/
+    /*
     pokemon.forEach(function(pm) {
       ajaxRequestLearnsetTable(
         createYqlQueryUrl(pm.name, $scope.formData.gen),
         pm
       );
     });
-*/
-    //loopPokemonCalls(0, pokemon);
-
-    /*function loopPokemonCalls(startIndex, pokemon) {
-      console.info("loop loop");
-      var i = startIndex;
-      for (; i < Math.min(startIndex + 150, pokemon.length - 1); i++) {
-        ajaxRequestLearnsetTable(
-          createYqlQueryUrl(pokemon[i].name, $scope.formData.gen),
-          pokemon[i]
-        );
-      }
-      if (i < pokemon.length - 1) {
-        console.info("index", i);
-        setTimeout(loopPokemonCalls(startIndex, pokemon), 15000);
-      }
-    }*/
-
+    */
   };
 
   $scope.createIndividualLearnset = function() {
@@ -99,6 +87,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
       "pokemonId": pokemonId,
       "genIntroducedId" : gen,
       "genCompletedId" : gen,
+      "gameId": moveByLevel.gameId,
     };
     return newObj;
 
@@ -106,30 +95,67 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
 
   //====== main parser functions =======
   function parseLearnsetJson(results) {
+
     var movesByLevel = [];
-
     results.forEach(function(rowObj) {
-      //console.log(rowObj);
       var move = rowObj["Move"];
-      var level = (rowObj["Level"]) ? rowObj["Level"].split("\n")[0] : rowObj["RGB"];
-      var onEvo = (level == "Evo"); // check if "on evolution" move
 
-      // level is a number or onEvo (not N/A)
-      if (!isNaN(parseInt(level)) || onEvo) {
-        movesByLevel.push({
-          "move" : move,
-          "level" : onEvo ? null : parseInt(level),
-          "onEvo" : onEvo
+      // check for game-specific moves
+      if (rowObj["Level"]) {
+        createMoveDataFromJson(movesByLevel, move, rowObj["Level"], null);
+
+      } else {
+        // check all game codes
+        $scope.gameCodesToCheck.forEach(function(code) {
+          var singleGameCode = code;
+
+          if (rowObj[code]) {
+            // extra move entry for doubled up game codes (only occurs when Pt game is included)
+            if (code.includes("Pt")) {
+              createMoveDataFromJson(movesByLevel, move, rowObj[code], "Pt");
+              singleGameCode = code.replace("Pt", "");
+            }
+
+            createMoveDataFromJson(movesByLevel, move, rowObj[code], singleGameCode);
+          }
+
         });
-      }
-      else if (level != "N/A") {
-        console.error("couldn't find move from row", rowObj);
-      }
 
+      }
     });
-
+    //console.log(movesByLevel);
     return movesByLevel;
   };
+
+  function createMoveDataFromJson(movesArray, move, levelColumn, gameCode) {
+    var level = levelColumn.split("\n")[0];
+    var onEvo = (level == "Evo"); // check if "on evolution" move
+    var gameId = null;
+
+    // find game id based on given code string
+    if (gameCode != null) {
+      for (var i = 0; i < $scope.games.length; i++) {
+        var gm = $scope.games[i];
+        if (gameCode == gm.code) {
+          gameId = gm.id;
+          break;
+        }
+      }
+    }
+
+    // level is a number or onEvo (not N/A)
+    if (!isNaN(parseInt(level)) || onEvo) {
+      movesArray.push({
+        "move" : move,
+        "level" : onEvo ? null : parseInt(level),
+        "onEvo" : onEvo,
+        "gameId" : gameId,
+      });
+    }
+    else if (level != "N/A") {
+      console.error("couldn't find move from row", rowObj);
+    }
+  }
 
   /**
    * checks existing data for duplicates
@@ -141,9 +167,11 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
     for (var i = 0; i < $scope.learnsets.length; i++) {
       var ls = $scope.learnsets[i];
 
-      // skip if old & new generation ranges are equivalent
-      if (newLearnset.genIntroducedId != ls.genIntroducedId
-        && newLearnset.genCompletedId != ls.genCompletedId) {
+      // only check if old & new generation ranges are different
+      // and gameId is null
+      if (newLearnset.genIntroducedId != ls.genIntroducedId &&
+        newLearnset.genCompletedId != ls.genCompletedId &&
+        newLearnset.gameId == null && ls.gameId == null) {
 
         // if newLearnset is equal to a previous generation (or another entry in DB)
         if (newLearnset.level == ls.level
@@ -289,6 +317,9 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move) {
     });
     Move.get().then(function(res){
       $scope.moves = res.data;
+    });
+    Game.get().then(function(res){
+      $scope.games = res.data;
     });
   };
 
