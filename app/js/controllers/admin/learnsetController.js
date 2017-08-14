@@ -1,6 +1,6 @@
 require('../../lib/tableToJson');
 
-module.exports = function ($scope, Learnset, Generation, Pokemon, Move, Game) {
+module.exports = function ($scope, Learnset, PokemonLearnset, Generation, Pokemon, Move, Game) {
 
   $scope.entryCount = 0;
   $scope.pokemonArrayIndex = 0;

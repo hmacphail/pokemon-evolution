@@ -1,4 +1,4 @@
-Learnset = require('../models/').Learnset;
+Learnset = require('../models').Learnset;
 Pokemon = require('../models').Pokemon;
 
 module.exports = {

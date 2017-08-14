@@ -1,6 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-require('./controllers/controllers');
-require('./services/services');
+require('./controllers');
+require('./services');
 
 var app = angular.module('pokelution', ['controllers', 'services', 'ngRoute']);
 
@@ -62,7 +62,39 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
   $locationProvider.html5Mode(true);
 }]);
 
-},{"./controllers/controllers":13,"./services/services":28}],2:[function(require,module,exports){
+},{"./controllers":2,"./services":17}],2:[function(require,module,exports){
+var homeController          = require('./controllers/homeController');
+var errorController         = require('./controllers/errorController');
+var generationController    = require('./controllers/admin/generationController');
+var pokemonController       = require('./controllers/admin/pokemonController');
+var evolutionController     = require('./controllers/admin/evolutionController');
+var typeController          = require('./controllers/admin/typeController');
+var effectivenessController = require('./controllers/admin/effectivenessController');
+var abilityController       = require('./controllers/admin/abilityController');
+var abilitysetController    = require('./controllers/admin/abilitysetController');
+var moveController          = require('./controllers/admin/moveController');
+var learnsetController      = require('./controllers/admin/learnsetController');
+var itemController          = require('./controllers/admin/itemController');
+var gameController          = require('./controllers/admin/gameController');
+
+// create controllers
+var ctrl = angular.module('controllers', []);
+
+ctrl.controller('homeController', ['$scope', homeController]);
+ctrl.controller('errorController', ['$scope', errorController]);
+ctrl.controller('generationController', ['$scope', 'Generations', generationController]);
+ctrl.controller('pokemonController', ['$scope', 'Pokemon', 'Generations', 'Types', pokemonController]);
+ctrl.controller('evolutionController', ['$scope', 'Evolutions', 'Pokemon', 'Items', evolutionController]);
+ctrl.controller('typeController', ['$scope', 'Types', typeController]);
+ctrl.controller('effectivenessController', ['$scope', 'Effectiveness', 'Generations', 'Types', effectivenessController]);
+ctrl.controller('abilityController', ['$scope', 'Abilities', 'Generations', abilityController]);
+ctrl.controller('abilitysetController', ['$scope', 'Abilitysets', 'Generations', 'Pokemon', 'Abilities', abilitysetController]);
+ctrl.controller('moveController', ['$scope', 'Moves', 'Generations', 'Types', moveController]);
+ctrl.controller('learnsetController', ['$scope', 'Learnsets', 'PokemonLearnsets', 'Generations', 'Pokemon', 'Moves', 'Games', learnsetController]);
+ctrl.controller('itemController', ['$scope', 'Items', itemController]);
+ctrl.controller('gameController', ['$scope', 'Games', 'Generations', gameController]);
+
+},{"./controllers/admin/abilityController":3,"./controllers/admin/abilitysetController":4,"./controllers/admin/effectivenessController":5,"./controllers/admin/evolutionController":6,"./controllers/admin/gameController":7,"./controllers/admin/generationController":8,"./controllers/admin/itemController":9,"./controllers/admin/learnsetController":10,"./controllers/admin/moveController":11,"./controllers/admin/pokemonController":12,"./controllers/admin/typeController":13,"./controllers/errorController":14,"./controllers/homeController":15}],3:[function(require,module,exports){
 module.exports = function ($scope, Abilities, Generations) {
 
   $scope.formData = {};
@@ -126,7 +158,7 @@ module.exports = function ($scope, Abilities, Generations) {
 
 };
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities) {
 
   $scope.formData = {};
@@ -317,7 +349,7 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
 
 };
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 module.exports = function ($scope, Effectiveness, Generations, Types) {
 
   $scope.formData = {};
@@ -444,7 +476,7 @@ module.exports = function ($scope, Effectiveness, Generations, Types) {
 
 };
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 module.exports = function ($scope, Evolution, Pokemon, Item) {
 
   $scope.formData = {};
@@ -693,7 +725,7 @@ module.exports = function ($scope, Evolution, Pokemon, Item) {
 
 };
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 module.exports = function ($scope, Games, Generations) {
 
   $scope.formData = {};
@@ -751,7 +783,7 @@ module.exports = function ($scope, Games, Generations) {
 
 };
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 module.exports = function ($scope, Generations) {
 
   $scope.formData = {};
@@ -785,7 +817,7 @@ module.exports = function ($scope, Generations) {
 
 };
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 module.exports = function ($scope, Items) {
 
   $scope.formData = {};
@@ -843,10 +875,10 @@ module.exports = function ($scope, Items) {
 
 };
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 require('../../lib/tableToJson');
 
-module.exports = function ($scope, Learnset, Generation, Pokemon, Move, Game) {
+module.exports = function ($scope, Learnset, PokemonLearnset, Generation, Pokemon, Move, Game) {
 
   $scope.entryCount = 0;
   $scope.pokemonArrayIndex = 0;
@@ -1226,7 +1258,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move, Game) {
 
 };
 
-},{"../../lib/tableToJson":16}],10:[function(require,module,exports){
+},{"../../lib/tableToJson":16}],11:[function(require,module,exports){
 module.exports = function ($scope, Moves, Generations, Types) {
 
   $scope.formData = {};
@@ -1351,7 +1383,7 @@ module.exports = function ($scope, Moves, Generations, Types) {
 
 };
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 module.exports = function ($scope, Pokemon, Generations, Types) {
 
   $scope.formData = {};
@@ -1421,7 +1453,7 @@ module.exports = function ($scope, Pokemon, Generations, Types) {
 
 };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 module.exports = function ($scope, Types) {
 
   $scope.formData = {};
@@ -1455,39 +1487,7 @@ module.exports = function ($scope, Types) {
 
 };
 
-},{}],13:[function(require,module,exports){
-var homeController          = require('./homeController');
-var errorController         = require('./errorController');
-var generationController    = require('./admin/generationController');
-var pokemonController       = require('./admin/pokemonController');
-var evolutionController     = require('./admin/evolutionController');
-var typeController          = require('./admin/typeController');
-var effectivenessController = require('./admin/effectivenessController');
-var abilityController       = require('./admin/abilityController');
-var abilitysetController    = require('./admin/abilitysetController');
-var moveController          = require('./admin/moveController');
-var learnsetController      = require('./admin/learnsetController');
-var itemController          = require('./admin/itemController');
-var gameController          = require('./admin/gameController');
-
-// create controllers
-var ctrl = angular.module('controllers', []);
-
-ctrl.controller('homeController', ['$scope', homeController]);
-ctrl.controller('errorController', ['$scope', errorController]);
-ctrl.controller('generationController', ['$scope', 'Generations', generationController]);
-ctrl.controller('pokemonController', ['$scope', 'Pokemon', 'Generations', 'Types', pokemonController]);
-ctrl.controller('evolutionController', ['$scope', 'Evolutions', 'Pokemon', 'Items', evolutionController]);
-ctrl.controller('typeController', ['$scope', 'Types', typeController]);
-ctrl.controller('effectivenessController', ['$scope', 'Effectiveness', 'Generations', 'Types', effectivenessController]);
-ctrl.controller('abilityController', ['$scope', 'Abilities', 'Generations', abilityController]);
-ctrl.controller('abilitysetController', ['$scope', 'Abilitysets', 'Generations', 'Pokemon', 'Abilities', abilitysetController]);
-ctrl.controller('moveController', ['$scope', 'Moves', 'Generations', 'Types', moveController]);
-ctrl.controller('learnsetController', ['$scope', 'Learnsets', 'Generations', 'Pokemon', 'Moves', 'Games', learnsetController]);
-ctrl.controller('itemController', ['$scope', 'Items', itemController]);
-ctrl.controller('gameController', ['$scope', 'Games', 'Generations', gameController]);
-
-},{"./admin/abilityController":2,"./admin/abilitysetController":3,"./admin/effectivenessController":4,"./admin/evolutionController":5,"./admin/gameController":6,"./admin/generationController":7,"./admin/itemController":8,"./admin/learnsetController":9,"./admin/moveController":10,"./admin/pokemonController":11,"./admin/typeController":12,"./errorController":14,"./homeController":15}],14:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 module.exports = function ($scope) {
     $scope.message = 'Page not found!';
   };
@@ -1688,6 +1688,37 @@ module.exports = function ($scope) {
   };
 })( jQuery );
 },{}],17:[function(require,module,exports){
+var generationService       = require('./services/generationService');
+var pokemonService          = require('./services/pokemonService');
+var evolutionService        = require('./services/evolutionService');
+var typeService             = require('./services/typeService');
+var effectivenessService    = require('./services/effectivenessService');
+var abilityService          = require('./services/abilityService');
+var abilitysetService       = require('./services/abilitysetService');
+var moveService             = require('./services/moveService');
+var learnsetService         = require('./services/learnsetService');
+var itemService             = require('./services/itemService');
+var pokemonTypeService      = require('./services/gameService');
+var gameService             = require('./services/gameService');
+var pokemonLearnsetService  = require('./services/gameService');
+
+// create factories
+var srvc = angular.module('services', []);
+srvc.factory('Generations',       ['$http', generationService]);
+srvc.factory('Pokemon',           ['$http', pokemonService]);
+srvc.factory('Evolutions',        ['$http', evolutionService]);
+srvc.factory('Types',             ['$http', typeService]);
+srvc.factory('Effectiveness',     ['$http', effectivenessService]);
+srvc.factory('Abilities',         ['$http', abilityService]);
+srvc.factory('Abilitysets',       ['$http', abilitysetService]);
+srvc.factory('Moves',             ['$http', moveService]);
+srvc.factory('Learnsets',         ['$http', learnsetService]);
+srvc.factory('Items',             ['$http', itemService]);
+srvc.factory('PokemonTypes',      ['$http', pokemonTypeService]);
+srvc.factory('Games',             ['$http', gameService]);
+srvc.factory('PokemonLearnsets',  ['$http', pokemonLearnsetService]);
+
+},{"./services/abilityService":18,"./services/abilitysetService":19,"./services/effectivenessService":20,"./services/evolutionService":21,"./services/gameService":22,"./services/generationService":23,"./services/itemService":24,"./services/learnsetService":25,"./services/moveService":26,"./services/pokemonService":27,"./services/typeService":28}],18:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1702,7 +1733,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1717,7 +1748,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1738,7 +1769,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1753,7 +1784,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1768,7 +1799,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1783,7 +1814,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1801,7 +1832,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1822,7 +1853,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1840,7 +1871,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1858,7 +1889,7 @@ module.exports = function($http) {
   }
 };
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 module.exports = function($http) {
   return {
     get: function() {
@@ -1873,31 +1904,4 @@ module.exports = function($http) {
   }
 };
 
-},{}],28:[function(require,module,exports){
-var generationService     = require('./admin/generationService');
-var pokemonService        = require('./admin/pokemonService');
-var evolutionService      = require('./admin/evolutionService');
-var typeService           = require('./admin/typeService');
-var effectivenessService  = require('./admin/effectivenessService');
-var abilityService        = require('./admin/abilityService');
-var abilitysetService     = require('./admin/abilitysetService');
-var moveService           = require('./admin/moveService');
-var learnsetService       = require('./admin/learnsetService');
-var itemService           = require('./admin/itemService');
-var gameService           = require('./admin/gameService');
-
-// create factories
-var srvc = angular.module('services', []);
-srvc.factory('Generations',   ['$http', generationService]);
-srvc.factory('Pokemon',       ['$http', pokemonService]);
-srvc.factory('Evolutions',    ['$http', evolutionService]);
-srvc.factory('Types',         ['$http', typeService]);
-srvc.factory('Effectiveness', ['$http', effectivenessService]);
-srvc.factory('Abilities',     ['$http', abilityService]);
-srvc.factory('Abilitysets',   ['$http', abilitysetService]);
-srvc.factory('Moves',         ['$http', moveService]);
-srvc.factory('Learnsets',     ['$http', learnsetService]);
-srvc.factory('Items',         ['$http', itemService]);
-srvc.factory('Games',         ['$http', gameService]);
-
-},{"./admin/abilityService":17,"./admin/abilitysetService":18,"./admin/effectivenessService":19,"./admin/evolutionService":20,"./admin/gameService":21,"./admin/generationService":22,"./admin/itemService":23,"./admin/learnsetService":24,"./admin/moveService":25,"./admin/pokemonService":26,"./admin/typeService":27}]},{},[1]);
+},{}]},{},[1]);

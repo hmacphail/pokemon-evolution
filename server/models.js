@@ -36,19 +36,20 @@ if (!global.hasOwnProperty('db')) {
     sequelize: sequelize,
 
     // link to model definitions and add to db variable
-    Generation: sequelize.import(__dirname + '/generation'),
-    Pokemon: sequelize.import(__dirname + '/pokemon'),
-    Evolution: sequelize.import(__dirname + '/evolution'),
-    Type: sequelize.import(__dirname + '/type'),
-    Effectiveness: sequelize.import(__dirname + '/effectiveness'),
-    Ability: sequelize.import(__dirname + '/ability'),
-    Abilityset: sequelize.import(__dirname + '/abilityset'),
-    Move: sequelize.import(__dirname + '/move'),
-    Learnset: sequelize.import(__dirname + '/learnset'),
-    Item: sequelize.import(__dirname + '/item'),
-    PokemonTypes: sequelize.import(__dirname + '/pokemonTypes'),
-    Game: sequelize.import(__dirname + '/game'),
-    User: sequelize.import(__dirname + '/user'),
+    Generation: sequelize.import('./models/generation'),
+    Pokemon: sequelize.import('./models/pokemon'),
+    Evolution: sequelize.import('./models/evolution'),
+    Type: sequelize.import('./models/type'),
+    Effectiveness: sequelize.import('./models/effectiveness'),
+    Ability: sequelize.import('./models/ability'),
+    Abilityset: sequelize.import('./models/abilityset'),
+    Move: sequelize.import('./models/move'),
+    Learnset: sequelize.import('./models/learnset'),
+    Item: sequelize.import('./models/item'),
+    PokemonTypes: sequelize.import('./models/pokemonTypes'),
+    Game: sequelize.import('./models/game'),
+    PokemonLearnsets: sequelize.import('./models/pokemonLearnsets'),
+    User: sequelize.import('./models/user'),
   }
 
   // global table associations
@@ -99,17 +100,6 @@ if (!global.hasOwnProperty('db')) {
     as: 'genCompleted',
     foreignKey: 'genCompletedId'
   });
-  db.Generation.hasMany(db.Learnset, {
-    as: 'genIntroduced',
-    foreignKey: {
-      name: 'genIntroducedId',
-      allowNull: false
-    }
-  });
-  db.Generation.hasMany(db.Learnset, {
-    as: 'genCompleted',
-    foreignKey: 'genCompletedId'
-  });
   db.Generation.hasMany(db.PokemonTypes, {
     as: 'genIntroduced',
     foreignKey: {
@@ -125,6 +115,17 @@ if (!global.hasOwnProperty('db')) {
     foreignKey: {
       allowNull: false
     }
+  });
+  db.Generation.hasMany(db.PokemonLearnsets, {
+    as: 'genIntroduced',
+    foreignKey: {
+      name: 'genIntroducedId',
+      allowNull: false
+    }
+  });
+  db.Generation.hasMany(db.PokemonLearnsets, {
+    as: 'genCompleted',
+    foreignKey: 'genCompletedId'
   });
 
   db.Pokemon.hasMany(db.Evolution, {
@@ -151,7 +152,7 @@ if (!global.hasOwnProperty('db')) {
       allowNull: false
     }
   });
-  db.Pokemon.hasMany(db.Learnset, {
+  db.Pokemon.hasMany(db.PokemonLearnsets, {
     foreignKey: {
       allowNull: false
     }
@@ -211,7 +212,7 @@ if (!global.hasOwnProperty('db')) {
   db.Game.hasMany(db.Move, {
     foreignKey: 'gameId'
   });
-  db.Game.hasMany(db.Learnset, {
+  db.Game.hasMany(db.PokemonLearnsets, {
     foreignKey: 'gameId'
   });
 

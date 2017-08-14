@@ -1,5 +1,5 @@
-require('./controllers/controllers');
-require('./services/services');
+require('./controllers');
+require('./services');
 
 var app = angular.module('pokelution', ['controllers', 'services', 'ngRoute']);
 

@@ -1,4 +1,4 @@
-Type = require('../models/').Type;
+Type = require('../models').Type;
 
 module.exports = {
   //Get a list of all types using model.findAll()

@@ -1,5 +1,5 @@
-Generation = require('../models/').Generation;
-//Abilityset = require('../models/').Abilityset;
+Generation = require('../models').Generation;
+//Abilityset = require('../models').Abilityset;
 
 module.exports = {
   //Get a list of all generations using model.findAll()
