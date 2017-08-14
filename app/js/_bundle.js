@@ -862,7 +862,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move, Game) {
     var pm = pokemon[361];
 
     // TEST
-    ajaxRequestLearnsetTable(createYqlQueryUrl(pm.name, $scope.formData.gen), pm);
+    ajaxRequestLearnsetTable(createYqlQueryUrl(pm.name, $scope.formData.gen), pm, false);
 
 
     /*var startIndex = $scope.pokemonArrayIndex;
@@ -871,7 +871,8 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move, Game) {
       var pm = pokemon[i];
       ajaxRequestLearnsetTable(
         createYqlQueryUrl(pm.name, $scope.formData.gen),
-        pm
+        pm,
+        false
       );
     }
     $scope.pokemonArrayIndex = endIndex;
@@ -880,7 +881,8 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move, Game) {
     pokemon.forEach(function(pm) {
       ajaxRequestLearnsetTable(
         createYqlQueryUrl(pm.name, $scope.formData.gen),
-        pm
+        pm,
+        false
       );
     });
     */
@@ -890,7 +892,8 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move, Game) {
     Pokemon.getById($scope.formData.individualPokemonId).then(function(res) {
       ajaxRequestLearnsetTable(
         createIndQueryUrl($scope.formData.individualUrl, $scope.formData.individualTableXPath),
-        res.data
+        res.data,
+        true
       );
     });
 
@@ -1039,9 +1042,9 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move, Game) {
   }
 
   //====== data preparation =======
-  function prepAndSendLearnsets(res, pokemon) {
+  function prepAndSendLearnsets(res, pokemon, isIndividual) {
 
-    if (pokemon.form != 'original' || pokemon.variation != null) {
+    if (!isIndividual && (pokemon.form != 'original' || pokemon.variation != null)) {
       console.log(pokemon);
       return;
     }
@@ -1054,6 +1057,7 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move, Game) {
       .tableToJSON(
         { ignoreHiddenRows: false }
       );
+
 
     var movesByLevel = parseLearnsetJson(results); // parse JSON
     movesByLevel.forEach(function(row) { // create objects to send
@@ -1137,14 +1141,14 @@ module.exports = function ($scope, Learnset, Generation, Pokemon, Move, Game) {
   };
 
   //====== remote data retrieval ========
-  function ajaxRequestLearnsetTable(requestUrl, pokemon) {
+  function ajaxRequestLearnsetTable(requestUrl, pokemon, isIndividual) {
     $.ajax({
         url: requestUrl,
         type: 'GET',
         dataType: 'json'
       })
       .done(function(res) {
-        prepAndSendLearnsets(res, pokemon);
+        prepAndSendLearnsets(res, pokemon, isIndividual);
       });
   }
 
