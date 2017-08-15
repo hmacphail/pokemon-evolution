@@ -1,5 +1,5 @@
-Generation = require('../models/').Generation;
-Abilityset = require('../models/').Abilityset;
+Generation = require('../models').Generation;
+//Abilityset = require('../models').Abilityset;
 
 module.exports = {
   //Get a list of all generations using model.findAll()
@@ -17,9 +17,7 @@ module.exports = {
 
   //Get a generation by the unique ID using model.findById()
   show(req, res) {
-    Generation.findById(req.params.id, {
-      //include: Abilityset
-    })
+    Generation.findById(req.params.id)
     .then(function (generation) {
       res.status(200).json(generation);
     })

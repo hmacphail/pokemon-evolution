@@ -1,9 +1,12 @@
-Learnset = require('../models/').Learnset;
+Learnset = require('../models').Learnset;
+Pokemon = require('../models').Pokemon;
 
 module.exports = {
   //Get a list of all learnsets using model.findAll()
   index(req, res) {
-    Learnset.findAll()
+    Learnset.findAll({
+      //include: Pokemon
+    })
       .then(function (learnsets) {
         res.status(200).json(learnsets);
       })
@@ -25,10 +28,9 @@ module.exports = {
 
   //Create a new learnset using model.create()
   create(req, res) {
-    Learnset.create(req.body.learnset)
+    Learnset.create(req.body)
       .then(function (newLearnset) {
         res.status(200).json(newLearnset);
-        newLearnset.addPokemon(req.body.pokemon);
       })
       .catch(function (error){
         res.status(500).json(error);
@@ -37,13 +39,13 @@ module.exports = {
 
   //Create multiple new learnsets using model.bulkCreate()
   bulkCreate(req, res) {
-    Learnset.bulkCreate(req.body.learnsets)
+    Learnset.bulkCreate(req.body)
       .then(function(learnsets) {
         res.status(200).json(learnsets);
-        learnsets[0].addPokemon(req.body.pokemon);
       })
       .catch(function (error) {
         res.status(500).json(error);
+        console.log(req.body[0].pokemonId);
       });
   },
 

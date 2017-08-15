@@ -1,4 +1,4 @@
-Abilityset = require('../models/').Abilityset;
+Abilityset = require('../models').Abilityset;
 
 module.exports = {
   //Get a list of all abilitysets using model.findAll()

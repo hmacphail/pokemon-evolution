@@ -1,9 +1,10 @@
 var Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  var PokemonLearnset = sequelize.define('pokemonLearnset', {
+  var PokemonLearnsets = sequelize.define('pokemonLearnsets', {
   }, {
+    freezeTableName: true,
     timestamps: false
   });
-  return PokemonLearnset;
+  return PokemonLearnsets;
 }

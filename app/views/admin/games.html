@@ -1,0 +1,64 @@
+<div id="admin-items" class="container">
+  <div class="row">
+
+    <div class="col-sm-3">
+      <h2>Games</h2>
+    </div>
+
+    <div class="col-sm-9">
+      <form>
+        <div class="form-group row">
+          <div class="col-sm-3">
+            <label for="select-gen">Generation:</label>
+          </div>
+          <div class="col-sm-9">
+            <select id="select-gen" class="form-control pull-right" ng-model="formData.generation">
+              <option ng-repeat="gen in generations">{{ gen.name }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-3">
+            <label for="input-code">Code:</label>
+          </div>
+          <div class="col-sm-9">
+            <input id="input-code" type="text" class="form-control" ng-model="formData.code">
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-3">
+            <label for="input-name">Name:</label>
+          </div>
+          <div class="col-sm-9">
+            <input id="input-name" type="text" class="form-control" ng-model="formData.name">
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-12">
+            <button type="submit" class="btn btn-primary pull-right" ng-click="createGame()">Add</button>
+          </div>
+        </div>
+      </form>
+
+      <table class="table table-condensed">
+        <tr>
+          <th>Code</th>
+          <th>Name</th>
+          <th>Gen</th>
+          <th></th>
+        </tr>
+        <tr ng-repeat="game in games">
+          <td> {{ game.code }} </td>
+          <td> {{ game.name }} </td>
+          <td> {{ game.generationId }} </td>
+          <td>
+            <a href="#" class="lnk-danger pull-right" ng-click="deleteGame(game.id)">
+              <i class="fa fa-times"></i>
+            </a>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+  </div>
+</div>

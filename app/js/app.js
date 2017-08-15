@@ -1,5 +1,5 @@
-require('./controllers/controllers');
-require('./services/services');
+require('./controllers');
+require('./services');
 
 var app = angular.module('pokelution', ['controllers', 'services', 'ngRoute']);
 
@@ -52,6 +52,10 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
     .when('/admin/items', {
       templateUrl : '/views/admin/items.html',
       controller  : 'itemController'
+    })
+    .when('/admin/games', {
+      templateUrl : '/views/admin/games.html',
+      controller  : 'gameController'
     })
     .otherwise({redirectTo: '/404'});
   $locationProvider.html5Mode(true);

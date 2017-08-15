@@ -3,6 +3,9 @@ module.exports = function($http) {
     get: function() {
       return $http.get('/api/pokemon');
     },
+    getById: function(id) {
+      return $http.get('/api/pokemon/' + id)
+    },
     bulkCreate: function(data) {
       return $http.post('/api/pokemon/bulk', data);
     },

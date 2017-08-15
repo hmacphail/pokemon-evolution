@@ -1,42 +1,42 @@
-Type = require('../models').Type;
+Game = require('../models').Game;
 
 module.exports = {
-  //Get a list of all types using model.findAll()
+  //Get a list of all games using model.findAll()
   index(req, res) {
-    Type.findAll()
-      .then(function (types) {
-        res.status(200).json(types);
+    Game.findAll()
+      .then(function (games) {
+        res.status(200).json(games);
       })
       .catch(function (error) {
         res.status(500).json(error);
       });
   },
 
-  //Get a type by it's unique ID using model.findById()
+  //Get a game by it's unique ID using model.findById()
   show(req, res) {
-    Type.findById(req.params.id)
-    .then(function (type) {
-      res.status(200).json(type);
+    Game.findById(req.params.id)
+    .then(function (game) {
+      res.status(200).json(game);
     })
     .catch(function (error){
       res.status(500).json(error);
     });
   },
 
-  //Create a new type using model.create()
+  //Create a new game using model.create()
   create(req, res) {
-    Type.create(req.body)
-      .then(function (newType) {
-        res.status(200).json(newType);
+    Game.create(req.body)
+      .then(function (newGame) {
+        res.status(200).json(newGame);
       })
       .catch(function (error){
         res.status(500).json(error);
       });
   },
 
-  //Delete an existing type by the unique ID using model.destroy()
+  //Delete an existing game by the unique ID using model.destroy()
   delete(req, res) {
-    Type.destroy({
+    Game.destroy({
       where: {
         id: req.params.id
       }

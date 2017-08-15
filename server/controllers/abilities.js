@@ -1,4 +1,4 @@
-Ability = require('../models/').Ability;
+Ability = require('../models').Ability;
 
 module.exports = {
   //Get a list of all abilities using model.findAll()
