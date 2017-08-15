@@ -202,6 +202,10 @@ if (!global.hasOwnProperty('db')) {
     }
   });
 
+  db.Learnset.hasMany(db.PokemonLearnsets, {
+    foreignKey: 'learnsetId'
+  });
+
   db.Item.hasMany(db.Evolution, {
     foreignKey: 'itemId'
   });
