@@ -1,4 +1,5 @@
 Sequelize = require('sequelize');
+let db = {};
 
 if (!global.hasOwnProperty('db')) {
   //let sequelize = null;
@@ -32,7 +33,7 @@ if (!global.hasOwnProperty('db')) {
   });
   //}
 
-  let db = {
+  db = {
     Sequelize: Sequelize,
     sequelize: sequelize,
 

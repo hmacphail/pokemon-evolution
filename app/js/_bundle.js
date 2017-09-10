@@ -63,19 +63,19 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 }]);
 
 },{"./controllers":2,"./services":18}],2:[function(require,module,exports){
-var homeController          = require('./controllers/homeController');
-var errorController         = require('./controllers/errorController');
-var generationController    = require('./controllers/admin/generationController');
-var pokemonController       = require('./controllers/admin/pokemonController');
-var evolutionController     = require('./controllers/admin/evolutionController');
-var typeController          = require('./controllers/admin/typeController');
-var effectivenessController = require('./controllers/admin/effectivenessController');
-var abilityController       = require('./controllers/admin/abilityController');
-var abilitysetController    = require('./controllers/admin/abilitysetController');
-var moveController          = require('./controllers/admin/moveController');
-var learnsetController      = require('./controllers/admin/learnsetController');
-var itemController          = require('./controllers/admin/itemController');
-var gameController          = require('./controllers/admin/gameController');
+homeController          = require('./controllers/homeController');
+errorController         = require('./controllers/errorController');
+generationController    = require('./controllers/admin/generationController');
+pokemonController       = require('./controllers/admin/pokemonController');
+evolutionController     = require('./controllers/admin/evolutionController');
+typeController          = require('./controllers/admin/typeController');
+effectivenessController = require('./controllers/admin/effectivenessController');
+abilityController       = require('./controllers/admin/abilityController');
+abilitysetController    = require('./controllers/admin/abilitysetController');
+moveController          = require('./controllers/admin/moveController');
+learnsetController      = require('./controllers/admin/learnsetController');
+itemController          = require('./controllers/admin/itemController');
+gameController          = require('./controllers/admin/gameController');
 
 // create controllers
 var ctrl = angular.module('controllers', []);
@@ -120,32 +120,21 @@ module.exports = function ($scope, Abilities, Generations) {
       .then((res) => {
         $scope.dataStore.getAbilities(Abilities);
       });
-  };
-
-
-  // --- helper functions ---
+  }
 
   function parseBulkData(inputData) {
     // parse pasted data from bulbapedia table
     // http://bulbapedia.bulbagarden.net/wiki/Ability#List_of_Abilities
-    var abilities = [];
-    inputData.bulk.split('\n').forEach(function(a){
-      var ability = a.split('\t');
+    let abilities = [];
+    inputData.bulk.split('\n').forEach((a) => {
+      const ability = a.split('\t');
       abilities.push({
         "name" : ability[1],
         "description" : ability[2],
-        "genIntroducedId" : genIdByName(ability[3])
+        "genIntroducedId" : $scope.dataStore.getGenerationIdByName(ability[3])
       });
     });
     return abilities;
-  }
-
-  function genIdByName(name) {
-    for (var i = 0; i < $scope.dataStore.generations.length; i++){
-      if ($scope.dataStore.generations[i].name == name){
-        return $scope.dataStore.generations[i].id
-      }
-    }
   }
 
 };
@@ -178,26 +167,14 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
       .then((res) => {
         $scope.dataStore.getAbilitysets(Abilitysets);
       });
-  };
+  }
 
   $scope.pokemonName = function(pokemonId) {
-    if ($scope.dataStore.pokemon) {
-      for (var i = 0; i < $scope.dataStore.pokemon.length; i++){
-        if ($scope.dataStore.pokemon[i].id == [pokemonId]){
-          return $scope.dataStore.pokemon[i].name + ($scope.dataStore.pokemon[i].form == 'alolan' ? '*' : '');
-        }
-      }
-    }
-  };
+    $scope.dataStore.getPokemonNameById(pokemonId);
+  }
 
   $scope.abilityName = function(abilityId) {
-    if ($scope.dataStore.abilities) {
-      for (var i = 0; i < $scope.dataStore.abilities.length; i++){
-        if ($scope.dataStore.abilities[i].id == [abilityId]){
-          return $scope.dataStore.abilities[i].name;
-        }
-      }
-    }
+    $scope.dataStore.getAbilityNameById(abilityId);
   }
 
 
@@ -206,14 +183,14 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
   function parseBulkData(inputData) {
     // parse pasted data from bulbapedia table
     // http://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_Ability
-    var abilitysets = [];
-    //var prevName = "";
-    inputData.bulk.split('\n').forEach(function(a){
-      var as = a.split('\t');
+    let abilitysets = [];
+    //let prevName = "";
+    inputData.bulk.split('\n').forEach((a) => {
+      let as = a.split('\t');
       // if spaces instead of tab character
       if (as.length == 1) {
         as = as[0].split('   ');
-        as.forEach(function(a, i){
+        as.forEach((a, i) => {
           as[i] = a.trim();
         });
       }
@@ -223,31 +200,31 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
       //  console.log(as[2]);
       //}
       //else {
-      var pokeIds = pokemonIdsByName(as[2], as[1]);
+      const pokeIds = pokemonIdsByName(as[2], as[1]);
 
       // use pokemon's gen if no gen provided
       // only need to check first pokemonId as should all be same gen
-      var genIntro = as[6] || generationByPokemonId(pokeIds[0]);
-      var genCompl = as[7] || null;
+      const genIntro = as[6] || getGenerationByPokemonId(pokeIds[0]);
+      const genCompl = as[7] || null;
 
       if (as[3] && (!inputData.includeStarred && as[3].indexOf('*') < 0 ||
         inputData.includeStarred && as[3].indexOf('*') >= 0)) {
         // primary ability
-        createAbilitysetObjs(pokeIds, abilityIdByName(as[3]), "primary", genIntro, genCompl).forEach(function(as) {
+        createAbilitysetObjs(pokeIds, $scope.dataStore.getAbilityIdByName(as[3]), "primary", genIntro, genCompl).forEach((as) => {
           abilitysets.push(as);
         });
       }
       if (as[4] && (!inputData.includeStarred && as[4].indexOf('*') < 0 ||
         inputData.includeStarred && as[4].indexOf('*') >= 0)) {
         // secondary ability
-        createAbilitysetObjs(pokeIds, abilityIdByName(as[4]), "secondary", genIntro, genCompl).forEach(function(as) {
+        createAbilitysetObjs(pokeIds, $scope.dataStore.getAbilityIdByName(as[4]), "secondary", genIntro, genCompl).forEach((as) => {
           abilitysets.push(as);
         });
       }
       if (as[5] && (!inputData.includeStarred && as[5].indexOf('*') < 0 ||
         inputData.includeStarred && as[5].indexOf('*') >= 0)) {
         // hidden ability
-        createAbilitysetObjs(pokeIds, abilityIdByName(as[5]), "hidden", genIntro, genCompl).forEach(function(as) {
+        createAbilitysetObjs(pokeIds, $scope.dataStore.getAbilityIdByName(as[5]), "hidden", genIntro, genCompl).forEach((as) => {
           abilitysets.push(as);
         });
       }
@@ -269,8 +246,8 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
       genIntroducedId = 3;
     }
 
-    var as = [];
-    for (var i = 0; i < pokemonIds.length; i++) {
+    let as = [];
+    for (let i = 0; i < pokemonIds.length; i++) {
       as.push({
         "pokemonId" : pokemonIds[i],
         "abilityId" : abilityId,
@@ -282,22 +259,22 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
     return as;
   }
 
+  //======= find data entries ========
   function pokemonIdsByName(name, variation) {
     name = name.replace('*', '');
-    var pm = [];
-    var isAlolan = (name.indexOf('Alolan') >= 0);
+    let pm = [];
+    const isAlolan = (name.indexOf('Alolan') >= 0);
     if (isAlolan) {
       name = name.split(' ')[1];
     }
-    for (var i = 0; i < $scope.dataStore.pokemon.length; i++){
-      var p = $scope.dataStore.pokemon[i];
+    for (let i = 0; i < $scope.dataStore.pokemon.length; i++){
+      const p = $scope.dataStore.pokemon[i];
 
       // check that name matches
       if (p.name == name){
 
         // check that isAlolan if required
-        if ((!isAlolan && p.form != 'alolan') ||
-          (isAlolan && p.form == 'alolan')) {
+        if ((!isAlolan && p.form != 'alolan') || (isAlolan && p.form == 'alolan')) {
 
           // check that variation matches if required (unless mega)
           if (variation == name || p.form == 'mega' || p.variation == variation) {
@@ -310,19 +287,10 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
     return pm;
   }
 
-  function generationByPokemonId(pokemonId) {
-    for (var i = 0; i < $scope.dataStore.pokemon.length; i++){
+  function getGenerationByPokemonId(pokemonId) {
+    for (let i = 0; i < $scope.dataStore.pokemon.length; i++){
       if ($scope.dataStore.pokemon[i].id == pokemonId){
         return $scope.dataStore.pokemon[i].genIntroducedId;
-      }
-    }
-  }
-
-  function abilityIdByName(name) {
-    name = name.replace('*', '');
-    for (var i = 0; i < $scope.dataStore.abilities.length; i++){
-      if ($scope.dataStore.abilities[i].name == name){
-        return $scope.dataStore.abilities[i].id;
       }
     }
   }
@@ -343,9 +311,7 @@ module.exports = function ($scope, Effectiveness, Generations, Types) {
 
   $scope.createEffectivenessBulk = function() {
     // prep data to send
-    var effectiveness = checkBulkForDuplicates(parseBulkData($scope.formData));
-
-    Effectiveness.bulkCreate(effectiveness)
+    Effectiveness.bulkCreate(checkBulkForDuplicates(parseBulkData($scope.formData)))
       .then((res) => {
         if (res.status == 200) {
           $scope.formData = {};
@@ -359,7 +325,7 @@ module.exports = function ($scope, Effectiveness, Generations, Types) {
       .then((res) => {
         $scope.dataStore.getEffectiveness(Effectiveness);
       });
-  };
+  }
 
 
   // --- helper functions ---
@@ -367,16 +333,15 @@ module.exports = function ($scope, Effectiveness, Generations, Types) {
   function parseBulkData(inputData) {
     // parse pasted data from bulbapedia table
     // http://bulbapedia.bulbagarden.net/wiki/Type/Type_chart
-    var effectiveness = [];
-    var effects = inputData.bulk.split('\n');
+    const effects = inputData.bulk.split('\n');
 
-    for (var ii = 0; ii < effects.length; ii++) {
-      var e = effects[ii].split('\t');
-      var attType = typeIdByName(e[0]);
+    let effectiveness = [];
+    for (let ii = 0; ii < effects.length; ii++) {
+      const e = effects[ii].split('\t');
+      const attType = $scope.dataStore.getTypeIdByName(e[0]);
 
-      for (var jj = 0; jj < effects.length; jj++) {
-
-        var defType = typeIdByName(effects[jj].substr(0, effects[jj].indexOf('\t')));
+      for (let jj = 0; jj < effects.length; jj++) {
+        const defType = $scope.dataStore.getTypeIdByName(effects[jj].substr(0, effects[jj].indexOf('\t')));
         try {
           effectiveness.push({
             "comparison" : getComparisonEnum(e[jj+1]),
@@ -397,13 +362,13 @@ module.exports = function ($scope, Effectiveness, Generations, Types) {
 
   function checkBulkForDuplicates(dataToCheck) {
     // check against existing data for matches
-    var bulkDataToSend = [];
-    dataToCheck.forEach(function(newEffect) {
+    let bulkDataToSend = [];
+    dataToCheck.forEach((newEffect) => {
       // add every object to send array
       bulkDataToSend.push(newEffect);
 
-      for(var i = 0; i< $scope.dataStore.effectiveness.length; i++) {
-        var oldEffect = $scope.dataStore.effectiveness[i];
+      for(let i = 0; i< $scope.dataStore.effectiveness.length; i++) {
+        const oldEffect = $scope.dataStore.effectiveness[i];
 
         // skip if old & new generation ranges are equivalent
         if (newEffect.genIntroducedId != oldEffect.genIntroducedId
@@ -424,14 +389,6 @@ module.exports = function ($scope, Effectiveness, Generations, Types) {
       }
     });
     return bulkDataToSend;
-  }
-
-  function typeIdByName(name) {
-    for (var i = 0; i < $scope.dataStore.types.length; i++){
-      if ($scope.dataStore.types[i].name == name){
-        return $scope.dataStore.types[i].id
-      }
-    }
   }
 
   function getComparisonEnum(multiplier) {
@@ -469,44 +426,32 @@ module.exports = function ($scope, Evolutions, Pokemon, Items) {
           }
         });
     }
-  };
+  }
 
   $scope.deleteEvolution = function(id) {
     Evolutions.delete(id)
       .then((res) => {
         $scope.dataStore.getEvolutions(Evolutions);
       });
-  };
+  }
 
   $scope.pokemonName = function(pokemonId) {
-    if ($scope.dataStore.pokemon) {
-      for (var i = 0; i < $scope.dataStore.pokemon.length; i++){
-        if ($scope.dataStore.pokemon[i].id == [pokemonId]){
-          return $scope.dataStore.pokemon[i].name + ($scope.dataStore.pokemon[i].form == 'alolan' ? '*' : '');
-        }
-      }
-    }
-  };
+    $scope.dataStore.getPokemonNameById(pokemonId);
+  }
 
   $scope.itemName = function(itemId) {
-    if ($scope.dataStore.items) {
-      for (var i = 0; i < $scope.dataStore.items.length; i++){
-        if ($scope.dataStore.items[i].id == [itemId]){
-          return $scope.dataStore.items[i].name;
-        }
-      }
-    }
+    $scope.dataStore.getItemNameById(itemId);
   }
 
   //======= main parser functions ========
   function parseBulkData(inputData) {
     // parse pasted data from evolutions tables
     // https://pokemondb.net/evolution/level
-    var evolutions = [];
-    var prev = [];
+    let evolutions = [];
+    let prev = [];
 
-    inputData.bulk.split('\n').forEach(function(e) {
-      var evo = e.split('\t');
+    inputData.bulk.split('\n').forEach((e) => {
+      const evo = e.split('\t');
 
       if (evo.length <= 3 ) { // dual row data entry
         if (evo.length == 1) {
@@ -516,39 +461,39 @@ module.exports = function ($scope, Evolutions, Pokemon, Items) {
           prev = evo;
         }
         else { // second row
-          var evs = parseDataRow(inputData.trigger, prev, evo);
-          evs.forEach(function(e) {
+          const evs = parseDataRow(inputData.trigger, prev, evo);
+          evs.forEach((e) => {
             evolutions.push(e);
           });
           prev = [];
         }
       }
       else { // regular data row
-        var evs = parseDataRow(inputData.trigger, evo);
-        evs.forEach(function(e) {
+        const evs = parseDataRow(inputData.trigger, evo);
+        evs.forEach((e) => {
           evolutions.push(e);
         });
       }
     });
     if (prev.length != 0) { // missed last entry
-      var evs = parseDataRow(inputData.trigger, prev);
-      evs.forEach(function(e) {
+      const evs = parseDataRow(inputData.trigger, prev);
+      evs.forEach((e) => {
         evolutions.push(e);
       });
     }
 
     console.log(evolutions);
     return evolutions;
-  };
+  }
 
   function parseDataRow(trigger, row1, row2) {
     if (row2) { // dual row data entry
-      var variation = checkSpecialCondition(row1[2]) ? row2[0] : null;
+      const variation = checkSpecialCondition(row1[2]) ? row2[0] : null;
 
-      var frmPoke = checkAlolan(row1[0])
+      const frmPoke = checkAlolan(row1[0])
           ? pokemonObjsByName(splitPokemonNameString(row1[0].split(' ')[1]), variation, true)
           : pokemonObjsByName(splitPokemonNameString(row1[0]), variation, false);
-      var toPoke = checkAlolan(row1[2])
+      const toPoke = checkAlolan(row1[2])
           ? pokemonObjsByName(splitPokemonNameString(row1[2].split(' ')[1]), variation, true)
           : pokemonObjsByName(splitPokemonNameString(row1[2].split(' ')[0]), variation, false);
 
@@ -556,8 +501,8 @@ module.exports = function ($scope, Evolutions, Pokemon, Items) {
         case 'level' :
           return createEvolutionObjs(frmPoke, toPoke, row2[2], row2[1], null);
         case 'item' :
-          var itemCond = splitItemConditionString(row2[1]);
-          return createEvolutionObjs(frmPoke, toPoke, itemCond[1], null, itemIdByName(itemCond[0]));
+          const itemCond = splitItemConditionString(row2[1]);
+          return createEvolutionObjs(frmPoke, toPoke, itemCond[1], null, $scope.dataStore.getItemIdByName(itemCond[0]));
         case 'trade' :
           return createEvolutionObjs(frmPoke, toPoke, row2[1], null, null);
         case 'happiness' :
@@ -570,18 +515,18 @@ module.exports = function ($scope, Evolutions, Pokemon, Items) {
       }
 
     } else { // regular data row
-      var frmPoke = pokemonObjsByName(splitPokemonNameString(row1[0]));
-      var toPoke = pokemonObjsByName(splitPokemonNameString(row1[2]));
+      const frmPoke = pokemonObjsByName(splitPokemonNameString(row1[0]));
+      const toPoke = pokemonObjsByName(splitPokemonNameString(row1[2]));
 
       switch (trigger) {
         case 'level' :
           return createEvolutionObjs(frmPoke, toPoke, row1[4], row1[3], null);
         case 'item' :
-          var itemCond = splitItemConditionString(row1[3]);
-          return createEvolutionObjs(frmPoke, toPoke, itemCond[1], null, itemIdByName(itemCond[0]));
+          const itemCond = splitItemConditionString(row1[3]);
+          return createEvolutionObjs(frmPoke, toPoke, itemCond[1], null, $scope.dataStore.getItemIdByName(itemCond[0]));
         case 'trade' :
-          var item = itemIdByName(row1[3]);
-          var cond = item ? null : row1[3];
+          const item = $scope.dataStore.getItemIdByName(row1[3]);
+          const cond = item ? null : row1[3];
           return createEvolutionObjs(frmPoke, toPoke, cond, null, item);
         case 'happiness' :
           return createEvolutionObjs(frmPoke, toPoke, row1[3], null, null);
@@ -598,11 +543,11 @@ module.exports = function ($scope, Evolutions, Pokemon, Items) {
 
   //======= data preparation ==========
   function createEvolutionObjs(fromPokemon, toPokemon, condition, level, item) {
-    var evs = [];
-    for (var f = 0; f < fromPokemon.length; f++) {
-      for (var t = 0; t < toPokemon.length; t++) {
-        var from = fromPokemon[f];
-        var to = toPokemon[t];
+    let evs = [];
+    for (let f = 0; f < fromPokemon.length; f++) {
+      for (let t = 0; t < toPokemon.length; t++) {
+        const from = fromPokemon[f];
+        const to = toPokemon[t];
         // if both from and to pokemon have variations, only include when variations match
         if (from.variation != null && to.variation != null && from.variation != to.variation) {
           continue;
@@ -618,33 +563,33 @@ module.exports = function ($scope, Evolutions, Pokemon, Items) {
       }
     }
     return evs;
-  };
+  }
 
   function splitPokemonNameString(inputStr) {
-    var len = inputStr.length;
-    var firstHalf = inputStr.substr(0, len/2);
-    var secondHalf = inputStr.substr(len/2, len/2);
+    const len = inputStr.length;
+    const firstHalf = inputStr.substr(0, len/2);
+    const secondHalf = inputStr.substr(len/2, len/2);
 
     if (firstHalf === secondHalf)
       return firstHalf;
     else
       return inputStr;
-  };
+  }
 
   function checkSpecialCondition(inputStr) {
     return inputStr.indexOf('(') >= 0;
-  };
+  }
 
   function checkAlolan(inputStr) {
     return inputStr.split(' ')[0] === "Alolan";
-  };
+  }
 
   //---- data parsing for item trigger ----
   function splitItemConditionString(inputStr) {
-    var bracketInd = inputStr.indexOf('(');
+    const bracketInd = inputStr.indexOf('(');
     if (bracketInd >= 0) {
-      var item = inputStr.substring(0, bracketInd).trim();
-      var condition = inputStr.substring(bracketInd + 1, inputStr.indexOf(')'));
+      const item = inputStr.substring(0, bracketInd).trim();
+      const condition = inputStr.substring(bracketInd + 1, inputStr.indexOf(')'));
       return [item, condition];
     }
     return [inputStr];
@@ -652,16 +597,15 @@ module.exports = function ($scope, Evolutions, Pokemon, Items) {
 
   //======= find entries by name string ========
   function pokemonObjsByName(name, variation, isAlolan) {
-    var pm = [];
-    for (var i = 0; i < $scope.dataStore.pokemon.length; i++){
-      var p = $scope.dataStore.pokemon[i];
+    let pm = [];
+    for (let i = 0; i < $scope.dataStore.pokemon.length; i++){
+      const p = $scope.dataStore.pokemon[i];
 
       // check that name matches
       if (p.name == name) {
 
         // check that isAlolan if required
-        if ((isAlolan && p.form == 'alolan')
-          || (!isAlolan && p.form == 'original')) {
+        if ((isAlolan && p.form == 'alolan') || (!isAlolan && p.form == 'original')) {
 
           // check that variation matches if required
           if (variation == null || p.variation == null || p.variation == variation) {
@@ -671,16 +615,7 @@ module.exports = function ($scope, Evolutions, Pokemon, Items) {
       }
     }
     return pm;
-  };
-
-  function itemIdByName(name) {
-    for (var i = 0; i < $scope.dataStore.items.length; i++){
-      if ($scope.dataStore.items[i].name == name){
-        return $scope.dataStore.items[i].id
-      }
-    }
-    return null;
-  };
+  }
 
 };
 
@@ -703,34 +638,22 @@ module.exports = function ($scope, Games, Generations) {
           $scope.dataStore.getGames(Games);
         }
       });
-  };
+  }
 
   $scope.deleteGame = function(id) {
     Games.delete(id)
       .then((res) => {
         $scope.dataStore.getGames(Games);
       });
-  };
-
-
-  // --- helper functions ---
+  }
 
   function createGameObj(formData) {
     return {
       "code": formData.code,
       "name": formData.name,
-      "generationId": generationIdByName(formData.generation)
+      "generationId": $scope.dataStore.getGenerationIdByName(formData.generation)
     };
   }
-
-  function generationIdByName(name) {
-    for (var i = 0; i < $scope.dataStore.generations.length; i++){
-      if ($scope.dataStore.generations[i].name == name){
-        return $scope.dataStore.generations[i].id
-      }
-    }
-    return null;
-  };
 
 };
 
@@ -752,14 +675,15 @@ module.exports = function ($scope, Generations) {
           $scope.dataStore.getGenerations(Generations);
         }
       });
-  };
+  }
 
   $scope.deleteGen = function(id) {
     Generations.delete(id)
       .then((res) => {
         $scope.dataStore.getGenerations(Generations);
       });
-  };
+  }
+
 };
 
 },{"../../lib/dataStore":16}],9:[function(require,module,exports){
@@ -780,7 +704,7 @@ module.exports = function ($scope, Items) {
           $scope.dataStore.getItems(Items);
         }
       });
-  };
+  }
 
   $scope.createItemsBulk = function() {
     Items.bulkCreate(parseBulkData($scope.formData))
@@ -797,7 +721,7 @@ module.exports = function ($scope, Items) {
       .then((res) => {
         $scope.dataStore.getItems(Items);
       });
-  };
+  }
 
 
   // --- helper functions ---
@@ -805,9 +729,9 @@ module.exports = function ($scope, Items) {
   function parseBulkData(inputData) {
     // parse pasted data from evolutionary items table
     // http://www.serebii.net/itemdex/list/evolutionary.shtml
-    var items = [];
+    let items = [];
     inputData.bulk.split('\n\n').forEach(function(i){
-      var item = i.split('\t');
+      const item = i.split('\t');
       items.push({
         "name" : item[0],
         "description" : item[1]
@@ -840,17 +764,17 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
 
   $scope.runYqlScript = function() {
     // get list of all pokemon names for selected gen and down
-    var pokemon = allPokemonByGeneration($scope.formData.gen);
-    var pm = pokemon[24];
+    const pokemon = allPokemonByGeneration($scope.formData.gen);
+    const pm = pokemon[24];
 
     // TEST
     ajaxRequestLearnsetTable(createYqlQueryUrl(pm.name, $scope.formData.gen), pm, false);
 
-
-    /*var startIndex = $scope.pokemonArrayIndex;
-    var endIndex = startIndex + 100;
-    for (var i = startIndex; i < Math.min(endIndex, pokemon.length); i++) {
-      var pm = pokemon[i];
+    /*
+    const startIndex = $scope.pokemonArrayIndex;
+    const endIndex = startIndex + 100;
+    for (let i = startIndex; i < Math.min(endIndex, pokemon.length); i++) {
+      const pm = pokemon[i];
       ajaxRequestLearnsetTable(
         createYqlQueryUrl(pm.name, $scope.formData.gen),
         pm,
@@ -860,7 +784,7 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
     $scope.pokemonArrayIndex = endIndex;
     */
     /*
-    pokemon.forEach(function(pm) {
+    pokemon.forEach((pm) => {
       ajaxRequestLearnsetTable(
         createYqlQueryUrl(pm.name, $scope.formData.gen),
         pm,
@@ -868,10 +792,10 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
       );
     });
     */
-  };
+  }
 
   $scope.createIndividualLearnset = function() {
-    Pokemon.getById($scope.formData.individualPokemonId).then(function(res) {
+    Pokemon.getById($scope.formData.individualPokemonId).then((res) => {
       ajaxRequestLearnsetTable(
         createIndQueryUrl($scope.formData.individualUrl, $scope.formData.individualTableXPath),
         res.data,
@@ -879,34 +803,14 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
       );
     });
 
-  };
+  }
 
   $scope.deleteLearnset = function(id) {
     Learnsets.delete(id)
       .then((res) => {
         $scope.dataStore.getLearnsets(Learnsets);
       });
-  };
-
-  /*$scope.pokemonName = function(pokemonId) {
-    if ($scope.dataStore.pokemon) {
-      for (var i = 0; i < $scope.dataStore.pokemon.length; i++){
-        if ($scope.dataStore.pokemon[i].id == [pokemonId]){
-          return $scope.dataStore.pokemon[i].name + ($scope.dataStore.pokemon[i].form == 'alolan' ? '*' : '');
-        }
-      }
-    }
-  };
-
-  $scope.moveName = function(moveId) {
-    if ($scope.dataStore.moves) {
-      for (var i = 0; i < $scope.dataStore.moves.length; i++){
-        if ($scope.dataStore.moves[i].id == [moveId]){
-          return $scope.dataStore.moves[i].name;
-        }
-      }
-    }
-  }*/
+  }
 
   function createLearnsetObj(moveByLevel, generationId) {
     return {
@@ -915,7 +819,7 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
       "byTM" : false,
       "moveId" : moveIdByName(moveByLevel.move, generationId),
     };
-  };
+  }
 
   function createPokemonLearnsetObj(learnsetId, pokemonId, generationId, gameId) {
     return {
@@ -925,14 +829,14 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
       "genCompletedId" : generationId,
       "gameId": gameId,
     };
-  };
+  }
 
   //====== main parser functions =======
   function parseLearnsetJson(results) {
 
-    var movesByLevel = [];
-    results.forEach(function(rowObj) {
-      var move = rowObj["Move"];
+    let movesByLevel = [];
+    results.forEach((rowObj) => {
+      const move = rowObj["Move"];
 
       // check for game-specific moves
       if (rowObj["Level"]) {
@@ -940,8 +844,8 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
 
       } else {
         // check all game codes
-        $scope.gameCodesToCheck.forEach(function(code) {
-          var singleGameCode = code;
+        $scope.gameCodesToCheck.forEach((code) => {
+          let singleGameCode = code;
 
           if (rowObj[code]) {
             // extra move entry for doubled up game codes (only occurs when Pt game is included)
@@ -959,17 +863,17 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
     });
     //console.log(movesByLevel);
     return movesByLevel;
-  };
+  }
 
   function createMoveDataFromJson(movesArray, move, levelColumn, gameCode) {
-    var level = levelColumn.split("\n")[0];
-    var onEvo = (level == "Evo"); // check if "on evolution" move
-    var gameId = null;
+    const level = levelColumn.split("\n")[0];
+    const onEvo = (level == "Evo"); // check if "on evolution" move
+    let gameId = null;
 
     // find game id based on given code string
     if (gameCode != null) {
-      for (var i = 0; i < $scope.dataStore.games.length; i++) {
-        var gm = $scope.dataStore.games[i];
+      for (let i = 0; i < $scope.dataStore.games.length; i++) {
+        const gm = $scope.dataStore.games[i];
         if (gameCode == gm.code) {
           gameId = gm.id;
           break;
@@ -1003,8 +907,8 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
     }
 
     // loop through all pokemonLearnsets looking for duplicates on learnset/pokemon relationship
-    for (var i = 0; i < $scope.dataStore.pokemonLearnsets.length; i++) {
-      var pl = $scope.dataStore.pokemonLearnsets[i];
+    for (let i = 0; i < $scope.dataStore.pokemonLearnsets.length; i++) {
+      const pl = $scope.dataStore.pokemonLearnsets[i];
 
       // only check if old & new generation ranges are different
       // and gameId is null
@@ -1033,8 +937,8 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
     // CHECK BOTH DB AND LOCAL BEING-CREATED ARRAY OF LEARNSETS
 
     // loop through all learnsets looking for duplicates on level/move/etc. association
-    for (var i = 0; i < $scope.dataStore.learnsets.length; i++) {
-      var ls = $scope.dataStore.learnsets[i];
+    for (let i = 0; i < $scope.dataStore.learnsets.length; i++) {
+      const ls = $scope.dataStore.learnsets[i];
 
       // if newLearnset is equivalent to another entry in DB
       if (newLearnset.level == ls.level
@@ -1061,32 +965,32 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
     $scope.entryCount++;
 
     console.log(pokemon.name);
-    var results = $(res.query.results.result)
+    const results = $(res.query.results.result)
       .tableToJSON(
         { ignoreHiddenRows: false }
       );
 
-    var movesByLevel = parseLearnsetJson(results); // parse JSON
-    var generationId = generationIdByName($scope.formData.gen);
+    const movesByLevel = parseLearnsetJson(results); // parse JSON
+    const generationId = $scope.dataStore.getGenerationIdByName($scope.formData.gen);
 
     //console.log(movesByLevel);
 
-    movesByLevel.forEach(function(move) { // create objects to send
-      var newLearnset = createLearnsetObj(move, generationId);
-      var learnsetId = lookForExistingLearnset(newLearnset);
+    movesByLevel.forEach((move) => { // create objects to send
+      const newLearnset = createLearnsetObj(move, generationId);
+      const learnsetId = lookForExistingLearnset(newLearnset);
 
       if (learnsetId == -1) {
         // create new learnset and pokemonLearnset
         // NEED TO WAIT FOR THIS TO FINISH BEFORE LOOP CONTINUES...
         // OR SOMEHOW GUARANTEE IT GETS ADDED
-        Learnset.create(newLearnset).then(function(res) {
+        Learnset.create(newLearnset).then((res) => {
           console.log(res.data);
           PokemonLearnsets.create(createPokemonLearnsetObj(res.data.id, pokemon.id, generationId, move.gameId));
-        })
+        });
         //pokemonLearnsets.push(createPokemonLearnsetObj());
       } else {
-        var newPokemonLearnset = createPokemonLearnsetObj(learnsetId, pokemon.id, generationId, move.gameId);
-        var pokemonLearnsetId = updateIfDuplicate(newPokemonLearnset);
+        const newPokemonLearnset = createPokemonLearnsetObj(learnsetId, pokemon.id, generationId, move.gameId);
+        const pokemonLearnsetId = updateIfDuplicate(newPokemonLearnset);
         if (pokemonLearnsetId == -1) {
           // create new pokemonLearnset
           PokemonLearnsets.create(newPokemonLearnset);
@@ -1132,45 +1036,37 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
    * @return Pokemon[]           Array of Pokemon introduced on or before Generation given by genString
    */
   function allPokemonByGeneration(genString) {
-    var pokemon = [];
-    var gen = generationIdByName(genString);
-    $scope.dataStore.pokemon.forEach(function(p){
+    let pokemon = [];
+    const gen = $scope.dataStore.getGenerationIdByName(genString);
+    $scope.dataStore.pokemon.forEach((p) => {
       if (p.genIntroducedId <= gen) {
         pokemon.push(p);
       }
     });
     return pokemon;
-  };
+  }
 
-  //====== query building for learnset table retrieval
+  //====== query building for learnset table retrieval ==========
   function createYqlQueryUrl(pokemonName, genString) {
     // for generations excluding most recent
-    var source = 'https://query.yahooapis.com/v1/public/';
-    var query = 'select * from htmlstring where url="http://bulbapedia.bulbagarden.net/wiki/'
-      + pokemonName.replace(' ', '_')
-      + '_(Pokémon)/Generation_'
-      + genString
-      + '_learnset" and xpath=\'//*[@id="mw-content-text"]/table[1]/tbody/tr[2]/td/table\'';
-    var env = "&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+    const source = `https://query.yahooapis.com/v1/public/yql`;
+    const query = `select * from htmlstring where url="http://bulbapedia.bulbagarden.net/wiki/${pokemonName.replace('_', '_')}_(Pokémon)/Generation_${genString}_learnset" and xpath='//*[@id="mw-content-text"]/table[1]/tbody/tr[2]/td/table'`;
+    const env = `store%3A%2F%2Fdatatables.org%2Falltableswithkeys`;
 
-    return source + 'yql?q=' + encodeURI(query) + '&format=json' + env + '&callback=';
-  };
+    return `${source}?q=${encodeURI(query)}&format=json&env=${env}&callback=`;
+  }
 
   function createIndQueryUrl(individualUrl, xpath) {
     if (xpath == null) {
-      xpath = '//*[@id="mw-content-text"]/table[1]/tbody/tr[2]/td/table';
+      xpath = `//*[@id="mw-content-text"]/table[1]/tbody/tr[2]/td/table`;
     }
 
-    var source = 'https://query.yahooapis.com/v1/public/';
-    var query = 'select * from htmlstring where url="'
-      + individualUrl
-      + '" and xpath=\''
-      + xpath
-      + '\'';
-    var env = "&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+    const source = `https://query.yahooapis.com/v1/public/yql`;
+    const query = `select * from htmlstring where url="${individualUrl}" and xpath='${xpath}'`;
+    const env = `store%3A%2F%2Fdatatables.org%2Falltableswithkeys`;
 
-    return source + 'yql?q=' + encodeURI(query) + '&format=json' + env + '&callback=';
-  };
+    return `${source}?q=${encodeURI(query)}&format=json&env=${env}&callback=`;
+  }
 
   //====== remote data retrieval ========
   function ajaxRequestLearnsetTable(requestUrl, pokemon, isIndividual) {
@@ -1179,29 +1075,12 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
         type: 'GET',
         dataType: 'json'
       })
-      .done(function(res) {
+      .done((res) => {
         prepAndSendLearnsets(res, pokemon, isIndividual);
       });
   }
 
   //======= find entries by name string ========
-  function generationIdByName(name) {
-    for (var i = 0; i < $scope.dataStore.generations.length; i++){
-      if ($scope.dataStore.generations[i].name == name){
-        return $scope.dataStore.generations[i].id
-      }
-    }
-    return null;
-  };
-
-  function pokemonIdByName(name) {
-    for (var i = 0; i < $scope.dataStore.pokemon.length; i++){
-      if ($scope.dataStore.pokemon[i].name == name){
-        return $scope.dataStore.pokemon[i].id
-      }
-    }
-    return null;
-  };
 
   /**
    * Find move within moves table by name
@@ -1211,9 +1090,9 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
    */
   function moveIdByName(name, genId) {
     name = name.replace(/[^a-zA-Z0-9]*/g, '').toLowerCase();
-    for (var i = 0; i < $scope.dataStore.moves.length; i++){
-      var move = $scope.dataStore.moves[i];
-      var n = move.name.replace(/[^a-zA-Z0-9]*/g, '').toLowerCase();
+    for (let i = 0; i < $scope.dataStore.moves.length; i++){
+      const move = $scope.dataStore.moves[i];
+      const n = move.name.replace(/[^a-zA-Z0-9]*/g, '').toLowerCase();
       // check generation range
       if (genId >= move.genIntroducedId && (genId <= move.genCompletedId || move.genCompletedId == null)) {
         if (n == name){
@@ -1233,7 +1112,7 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
     }
     console.error("no move id found", name);
     return null;
-  };
+  }
 
 };
 
@@ -1257,7 +1136,7 @@ module.exports = function ($scope, Moves, Generations, Types) {
           $scope.dataStore.getMoves(Moves);
         }
       });
-  };
+  }
 
   $scope.createMovesBulk = function() {
     Moves.bulkCreate(parseBulkData($scope.formData))
@@ -1274,7 +1153,7 @@ module.exports = function ($scope, Moves, Generations, Types) {
       .then((res) => {
         $scope.dataStore.getMoves(Moves);
       });
-  };
+  }
 
 
   // --- helper functions ---
@@ -1282,8 +1161,8 @@ module.exports = function ($scope, Moves, Generations, Types) {
   function parseBulkData(inputData) {
     // parse pasted data from bulbapedia
     // http://bulbapedia.bulbagarden.net/wiki/List_of_moves
-    var moves = [];
-    inputData.bulk.split('\n').forEach(function(m) {
+    let moves = [];
+    inputData.bulk.split('\n').forEach((m) => {
 
       // check if including moves with generation-based conditions
       if (inputData.includeStarred || m.indexOf('*') < 0) {
@@ -1296,25 +1175,25 @@ module.exports = function ($scope, Moves, Generations, Types) {
   }
 
   function createMoveObj(data) {
-    var move = data.replace(/\*/g, '').split('\t');
+    const move = data.replace(/\*/g, '').split('\t');
     // if spaces instead of tab character
     if (move.length == 1) {
       move = move[0].split('   ');
-      move.forEach(function(m, i){
+      move.forEach((m, i) => {
         move[i] = m.trim();
       });
     }
-    var gens = move[8].split('-');
+    const gens = move[8].split('-');
 
     return {
       "name" : move[1],
-      "typeId" : typeIdByName(move[2]),
+      "typeId" : $scope.dataStore.getTypeIdByName(move[2]),
       "category" : move[3].toLowerCase(),
       "pp" : move[5],
       "power" : isNumber(move[6]) ? move[6] : null,
       "accuracy" : isNumber(move[7]) ? move[7].substr(0, move[7].indexOf('%')) : null,
-      "genIntroducedId" : genIdByName(gens[0]),
-      "genCompletedId" : gens.length > 1 ? genIdByName(gens[1]) : mostRecentGen(),
+      "genIntroducedId" : $scope.dataStore.getGenerationIdByName(gens[0]),
+      "genCompletedId" : gens.length > 1 ? $scope.dataStore.getGenerationIdByName(gens[1]) : mostRecentGen(),
       "isTM" : "false",
       "extraInfoColumn" : move.length > 9 ? move[9] : null,
       "extraInfo" : move.length > 9 ? move[10] : null
@@ -1322,28 +1201,12 @@ module.exports = function ($scope, Moves, Generations, Types) {
   }
 
   function mostRecentGen() {
-    var gen = $scope.dataStore.generations[$scope.dataStore.generations.length-1].id;
-    for (var i = 0; i < $scope.dataStore.generations.length; i++){
+    let gen = $scope.dataStore.generations[$scope.dataStore.generations.length-1].id;
+    for (let i = 0; i < $scope.dataStore.generations.length; i++){
       if (gen < $scope.dataStore.generations[i].id)
         gen = $scope.dataStore.generations[i].id;
     }
     return gen;
-  }
-
-  function genIdByName(name) {
-    for (var i = 0; i < $scope.dataStore.generations.length; i++){
-      if ($scope.dataStore.generations[i].name == name){
-        return $scope.dataStore.generations[i].id
-      }
-    }
-  }
-
-  function typeIdByName(name) {
-    for (var i = 0; i < $scope.dataStore.types.length; i++){
-      if ($scope.dataStore.types[i].name == name){
-        return $scope.dataStore.types[i].id
-      }
-    }
   }
 
   function isNumber(data) {
@@ -1379,7 +1242,7 @@ module.exports = function ($scope, Pokemon, Generations, Types) {
       .then((res) => {
         $scope.dataStore.getPokemon(Pokemon);
       });
-  };
+  }
 
 
   // --- helper functions ---
@@ -1387,27 +1250,19 @@ module.exports = function ($scope, Pokemon, Generations, Types) {
   function parseBulkData(inputData) {
     // parse pasted data from bulbapedia table
     // http://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_National_Pok%C3%A9dex_number
-    var pokemon = [];
-    inputData.bulk.split('\n').forEach(function(p){
-      var pkmn = p.split('\t');
+    let pokemon = [];
+    inputData.bulk.split('\n').forEach((p) => {
+      const pkmn = p.split('\t');
       pokemon.push({
         "pokedexId" : pkmn[1].substr(1),
         "name" : pkmn[3],
         "form" : (pkmn[0] == " " && inputData.gen == "1" ? "alolan" : "original"),
         "genIntroducedId" : inputData.gen,
-        "primaryTypeId" : typeIdByName(pkmn[4]),
-        "secondaryTypeId" : (pkmn.length == 6 ? typeIdByName(pkmn[5]) : null)
+        "primaryTypeId" : $scope.dataStore.getTypeIdByName(pkmn[4]),
+        "secondaryTypeId" : (pkmn.length == 6 ? $scope.dataStore.getTypeIdByName(pkmn[5]) : null)
       });
     });
     return pokemon;
-  }
-
-  function typeIdByName(name) {
-    for (var i = 0; i < $scope.dataStore.types.length; i++){
-      if ($scope.dataStore.types[i].name == name){
-        return $scope.dataStore.types[i].id
-      }
-    }
   }
 
 };
@@ -1430,28 +1285,26 @@ module.exports = function ($scope, Types) {
           $scope.dataStore.getTypes(Types);
         }
       });
-  };
+  }
 
   $scope.deleteType = function(id) {
     Types.delete(id)
       .then((res) => {
         $scope.dataStore.getTypes(Types);
       });
-  };
+  }
 
 };
 
 },{"../../lib/dataStore":16}],14:[function(require,module,exports){
 module.exports = function ($scope) {
-    $scope.message = 'Page not found!';
-  };
-
+  $scope.message = 'Page not found!';
+};
 
 },{}],15:[function(require,module,exports){
 module.exports = function ($scope) {
-    $scope.message = 'Everyone come and see how good I look!';
-  };
-
+  $scope.message = 'Everyone come and see how good I look!';
+};
 
 },{}],16:[function(require,module,exports){
 module.exports = class DataStore {
@@ -1471,6 +1324,91 @@ module.exports = class DataStore {
     this.games = null;
   }
 
+  // TODO: Send errors instead of null, then use try/catch?
+
+  //====== Get Data Object from ID =======
+  getPokemonNameById(pokemonId) {
+    if (this.pokemon) {
+      for (let i = 0; i < this.pokemon.length; i++){
+        if (this.pokemon[i].id == [pokemonId]){
+          return this.pokemon[i].name + (this.pokemon[i].form == 'alolan' ? '*' : '');
+        }
+      }
+    }
+    return null;
+  }
+
+  getAbilityNameById(abilityId) {
+    if (this.abilities) {
+      for (let i = 0; i < this.abilities.length; i++){
+        if (this.abilities[i].id == [abilityId]){
+          return this.abilities[i].name;
+        }
+      }
+    }
+    return null;
+  }
+
+  getItemNameById(itemId) {
+    if (this.items) {
+      for (let i = 0; i < this.items.length; i++){
+        if (this.items[i].id == [itemId]){
+          return this.items[i].name;
+        }
+      }
+    }
+    return null;
+  }
+
+
+  //====== Get ID from Name =======
+  getGenerationIdByName(generationName) {
+    if (this.generations) {
+      for (let i = 0; i < this.generations.length; i++){
+        if (this.generations[i].name == generationName){
+          return this.generations[i].id;
+        }
+      }
+    }
+    return null;
+  }
+
+  getTypeIdByName(typeName) {
+    if (this.types) {
+      for (let i = 0; i < this.types.length; i++){
+        if (this.types[i].name == typeName){
+          return this.types[i].id
+        }
+      }
+    }
+    return null;
+  }
+
+  getAbilityIdByName(abilityName) {
+    if (this.abilities) {
+      abilityName = abilityName.replace('*', '');
+      for (let i = 0; i < this.abilities.length; i++){
+        if (this.abilities[i].name == abilityName){
+          return this.abilities[i].id;
+        }
+      }
+    }
+    return null;
+  }
+
+  getItemIdByName(itemName) {
+    if (this.items) {
+      for (let i = 0; i < this.items.length; i++){
+        if (this.items[i].name == itemName){
+          return this.items[i].id
+        }
+      }
+    }
+    return null;
+  }
+
+
+  //====== Get/Refresh Data Arrays from Database =======
   getGenerations(Generations) {
     Generations.get().then((res) => {
       this.generations = res.data;
@@ -1549,6 +1487,7 @@ module.exports = class DataStore {
     });
   }
 };
+
 },{}],17:[function(require,module,exports){
 /**
  * table-to-json
@@ -1738,19 +1677,19 @@ module.exports = class DataStore {
   };
 })( jQuery );
 },{}],18:[function(require,module,exports){
-var generationService       = require('./services/generationService');
-var pokemonService          = require('./services/pokemonService');
-var evolutionService        = require('./services/evolutionService');
-var typeService             = require('./services/typeService');
-var effectivenessService    = require('./services/effectivenessService');
-var abilityService          = require('./services/abilityService');
-var abilitysetService       = require('./services/abilitysetService');
-var moveService             = require('./services/moveService');
-var learnsetService         = require('./services/learnsetService');
-var itemService             = require('./services/itemService');
-var pokemonTypeService      = require('./services/gameService');
-var gameService             = require('./services/gameService');
-var pokemonLearnsetService  = require('./services/gameService');
+generationService       = require('./services/generationService');
+pokemonService          = require('./services/pokemonService');
+evolutionService        = require('./services/evolutionService');
+typeService             = require('./services/typeService');
+effectivenessService    = require('./services/effectivenessService');
+abilityService          = require('./services/abilityService');
+abilitysetService       = require('./services/abilitysetService');
+moveService             = require('./services/moveService');
+learnsetService         = require('./services/learnsetService');
+itemService             = require('./services/itemService');
+pokemonTypeService      = require('./services/gameService');
+gameService             = require('./services/gameService');
+pokemonLearnsetService  = require('./services/gameService');
 
 // create factories
 var srvc = angular.module('services', []);
@@ -1779,7 +1718,7 @@ module.exports = function($http) {
     },
     delete: function(id) {
       return $http.delete('/api/abilities/' + id);
-    }
+    },
   }
 };
 
@@ -1794,7 +1733,7 @@ module.exports = function($http) {
     },
     delete: function(id) {
       return $http.delete('/api/abilitysets/' + id);
-    }
+    },
   }
 };
 
@@ -1815,7 +1754,7 @@ module.exports = function($http) {
     },
     delete: function(id) {
       return $http.delete('/api/effectiveness/' + id);
-    }
+    },
   }
 };
 
@@ -1830,7 +1769,7 @@ module.exports = function($http) {
     },
     delete: function(id) {
       return $http.delete('/api/evolutions/' + id);
-    }
+    },
   }
 };
 
@@ -1845,7 +1784,7 @@ module.exports = function($http) {
     },
     delete: function(id) {
       return $http.delete('/api/games/' + id);
-    }
+    },
   }
 };
 
@@ -1860,7 +1799,7 @@ module.exports = function($http) {
     },
     delete: function(id) {
       return $http.delete('/api/generations/' + id);
-    }
+    },
   }
 };
 
@@ -1878,7 +1817,7 @@ module.exports = function($http) {
     },
     delete: function(id) {
       return $http.delete('/api/items/' + id);
-    }
+    },
   }
 };
 
@@ -1899,7 +1838,7 @@ module.exports = function($http) {
     },
     delete: function(id) {
       return $http.delete('/api/learnsets/' + id);
-    }
+    },
   }
 };
 
@@ -1917,7 +1856,7 @@ module.exports = function($http) {
     },
     delete: function(id) {
       return $http.delete('/api/moves/' + id);
-    }
+    },
   }
 };
 
@@ -1935,7 +1874,7 @@ module.exports = function($http) {
     },
     delete: function(id) {
       return $http.delete('/api/pokemon/' + id);
-    }
+    },
   }
 };
 
@@ -1950,7 +1889,7 @@ module.exports = function($http) {
     },
     delete: function(id) {
       return $http.delete('/api/types/' + id);
-    }
+    },
   }
 };
 
