@@ -15,6 +15,91 @@ module.exports = class DataStore {
     this.games = null;
   }
 
+  // TODO: Send errors instead of null, then use try/catch?
+
+  //====== Get Data Object from ID =======
+  getPokemonNameById(pokemonId) {
+    if (this.pokemon) {
+      for (let i = 0; i < this.pokemon.length; i++){
+        if (this.pokemon[i].id == [pokemonId]){
+          return this.pokemon[i].name + (this.pokemon[i].form == 'alolan' ? '*' : '');
+        }
+      }
+    }
+    return null;
+  }
+
+  getAbilityNameById(abilityId) {
+    if (this.abilities) {
+      for (let i = 0; i < this.abilities.length; i++){
+        if (this.abilities[i].id == [abilityId]){
+          return this.abilities[i].name;
+        }
+      }
+    }
+    return null;
+  }
+
+  getItemNameById(itemId) {
+    if (this.items) {
+      for (let i = 0; i < this.items.length; i++){
+        if (this.items[i].id == [itemId]){
+          return this.items[i].name;
+        }
+      }
+    }
+    return null;
+  }
+
+
+  //====== Get ID from Name =======
+  getGenerationIdByName(generationName) {
+    if (this.generations) {
+      for (let i = 0; i < this.generations.length; i++){
+        if (this.generations[i].name == generationName){
+          return this.generations[i].id;
+        }
+      }
+    }
+    return null;
+  }
+
+  getTypeIdByName(typeName) {
+    if (this.types) {
+      for (let i = 0; i < this.types.length; i++){
+        if (this.types[i].name == typeName){
+          return this.types[i].id
+        }
+      }
+    }
+    return null;
+  }
+
+  getAbilityIdByName(abilityName) {
+    if (this.abilities) {
+      abilityName = abilityName.replace('*', '');
+      for (let i = 0; i < this.abilities.length; i++){
+        if (this.abilities[i].name == abilityName){
+          return this.abilities[i].id;
+        }
+      }
+    }
+    return null;
+  }
+
+  getItemIdByName(itemName) {
+    if (this.items) {
+      for (let i = 0; i < this.items.length; i++){
+        if (this.items[i].name == itemName){
+          return this.items[i].id
+        }
+      }
+    }
+    return null;
+  }
+
+
+  //====== Get/Refresh Data Arrays from Database =======
   getGenerations(Generations) {
     Generations.get().then((res) => {
       this.generations = res.data;

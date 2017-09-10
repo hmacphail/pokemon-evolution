@@ -28,23 +28,11 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
   };
 
   $scope.pokemonName = function(pokemonId) {
-    if ($scope.dataStore.pokemon) {
-      for (var i = 0; i < $scope.dataStore.pokemon.length; i++){
-        if ($scope.dataStore.pokemon[i].id == [pokemonId]){
-          return $scope.dataStore.pokemon[i].name + ($scope.dataStore.pokemon[i].form == 'alolan' ? '*' : '');
-        }
-      }
-    }
+    $scope.dataStore.getPokemonNameById(pokemonId);
   };
 
   $scope.abilityName = function(abilityId) {
-    if ($scope.dataStore.abilities) {
-      for (var i = 0; i < $scope.dataStore.abilities.length; i++){
-        if ($scope.dataStore.abilities[i].id == [abilityId]){
-          return $scope.dataStore.abilities[i].name;
-        }
-      }
-    }
+    $scope.dataStore.getAbilityNameById(abilityId);
   }
 
 
@@ -80,21 +68,21 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
       if (as[3] && (!inputData.includeStarred && as[3].indexOf('*') < 0 ||
         inputData.includeStarred && as[3].indexOf('*') >= 0)) {
         // primary ability
-        createAbilitysetObjs(pokeIds, abilityIdByName(as[3]), "primary", genIntro, genCompl).forEach(function(as) {
+        createAbilitysetObjs(pokeIds, $scope.dataStore.getAbilityIdByName(as[3]), "primary", genIntro, genCompl).forEach(function(as) {
           abilitysets.push(as);
         });
       }
       if (as[4] && (!inputData.includeStarred && as[4].indexOf('*') < 0 ||
         inputData.includeStarred && as[4].indexOf('*') >= 0)) {
         // secondary ability
-        createAbilitysetObjs(pokeIds, abilityIdByName(as[4]), "secondary", genIntro, genCompl).forEach(function(as) {
+        createAbilitysetObjs(pokeIds, $scope.dataStore.getAbilityIdByName(as[4]), "secondary", genIntro, genCompl).forEach(function(as) {
           abilitysets.push(as);
         });
       }
       if (as[5] && (!inputData.includeStarred && as[5].indexOf('*') < 0 ||
         inputData.includeStarred && as[5].indexOf('*') >= 0)) {
         // hidden ability
-        createAbilitysetObjs(pokeIds, abilityIdByName(as[5]), "hidden", genIntro, genCompl).forEach(function(as) {
+        createAbilitysetObjs(pokeIds, $scope.dataStore.getAbilityIdByName(as[5]), "hidden", genIntro, genCompl).forEach(function(as) {
           abilitysets.push(as);
         });
       }
@@ -161,15 +149,6 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
     for (var i = 0; i < $scope.dataStore.pokemon.length; i++){
       if ($scope.dataStore.pokemon[i].id == pokemonId){
         return $scope.dataStore.pokemon[i].genIntroducedId;
-      }
-    }
-  }
-
-  function abilityIdByName(name) {
-    name = name.replace('*', '');
-    for (var i = 0; i < $scope.dataStore.abilities.length; i++){
-      if ($scope.dataStore.abilities[i].name == name){
-        return $scope.dataStore.abilities[i].id;
       }
     }
   }

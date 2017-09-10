@@ -16,7 +16,7 @@ module.exports = function ($scope, Abilities, Generations) {
           $scope.dataStore.getAbilities(Abilities);
         }
       });
-  }
+  };
 
   $scope.deleteAbility = function(id) {
     Abilities.delete(id)
@@ -24,9 +24,6 @@ module.exports = function ($scope, Abilities, Generations) {
         $scope.dataStore.getAbilities(Abilities);
       });
   };
-
-
-  // --- helper functions ---
 
   function parseBulkData(inputData) {
     // parse pasted data from bulbapedia table
@@ -37,18 +34,10 @@ module.exports = function ($scope, Abilities, Generations) {
       abilities.push({
         "name" : ability[1],
         "description" : ability[2],
-        "genIntroducedId" : genIdByName(ability[3])
+        "genIntroducedId" : $scope.dataStore.getGenerationIdByName(ability[3])
       });
     });
     return abilities;
-  }
-
-  function genIdByName(name) {
-    for (var i = 0; i < $scope.dataStore.generations.length; i++){
-      if ($scope.dataStore.generations[i].name == name){
-        return $scope.dataStore.generations[i].id
-      }
-    }
-  }
+  };
 
 };

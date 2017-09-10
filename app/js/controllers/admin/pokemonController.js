@@ -40,19 +40,11 @@ module.exports = function ($scope, Pokemon, Generations, Types) {
         "name" : pkmn[3],
         "form" : (pkmn[0] == " " && inputData.gen == "1" ? "alolan" : "original"),
         "genIntroducedId" : inputData.gen,
-        "primaryTypeId" : typeIdByName(pkmn[4]),
-        "secondaryTypeId" : (pkmn.length == 6 ? typeIdByName(pkmn[5]) : null)
+        "primaryTypeId" : $scope.dataStore.getTypeIdByName(pkmn[4]),
+        "secondaryTypeId" : (pkmn.length == 6 ? $scope.dataStore.getTypeIdByName(pkmn[5]) : null)
       });
     });
     return pokemon;
-  }
-
-  function typeIdByName(name) {
-    for (var i = 0; i < $scope.dataStore.types.length; i++){
-      if ($scope.dataStore.types[i].name == name){
-        return $scope.dataStore.types[i].id
-      }
-    }
   }
 
 };

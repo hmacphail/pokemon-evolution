@@ -68,13 +68,13 @@ module.exports = function ($scope, Moves, Generations, Types) {
 
     return {
       "name" : move[1],
-      "typeId" : typeIdByName(move[2]),
+      "typeId" : $scope.dataStore.getTypeIdByName(move[2]),
       "category" : move[3].toLowerCase(),
       "pp" : move[5],
       "power" : isNumber(move[6]) ? move[6] : null,
       "accuracy" : isNumber(move[7]) ? move[7].substr(0, move[7].indexOf('%')) : null,
-      "genIntroducedId" : genIdByName(gens[0]),
-      "genCompletedId" : gens.length > 1 ? genIdByName(gens[1]) : mostRecentGen(),
+      "genIntroducedId" : $scope.dataStore.getGenerationIdByName(gens[0]),
+      "genCompletedId" : gens.length > 1 ? $scope.dataStore.getGenerationIdByName(gens[1]) : mostRecentGen(),
       "isTM" : "false",
       "extraInfoColumn" : move.length > 9 ? move[9] : null,
       "extraInfo" : move.length > 9 ? move[10] : null
@@ -88,22 +88,6 @@ module.exports = function ($scope, Moves, Generations, Types) {
         gen = $scope.dataStore.generations[i].id;
     }
     return gen;
-  }
-
-  function genIdByName(name) {
-    for (var i = 0; i < $scope.dataStore.generations.length; i++){
-      if ($scope.dataStore.generations[i].name == name){
-        return $scope.dataStore.generations[i].id
-      }
-    }
-  }
-
-  function typeIdByName(name) {
-    for (var i = 0; i < $scope.dataStore.types.length; i++){
-      if ($scope.dataStore.types[i].name == name){
-        return $scope.dataStore.types[i].id
-      }
-    }
   }
 
   function isNumber(data) {

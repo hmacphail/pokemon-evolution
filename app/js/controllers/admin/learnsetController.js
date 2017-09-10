@@ -67,26 +67,6 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
       });
   };
 
-  /*$scope.pokemonName = function(pokemonId) {
-    if ($scope.dataStore.pokemon) {
-      for (var i = 0; i < $scope.dataStore.pokemon.length; i++){
-        if ($scope.dataStore.pokemon[i].id == [pokemonId]){
-          return $scope.dataStore.pokemon[i].name + ($scope.dataStore.pokemon[i].form == 'alolan' ? '*' : '');
-        }
-      }
-    }
-  };
-
-  $scope.moveName = function(moveId) {
-    if ($scope.dataStore.moves) {
-      for (var i = 0; i < $scope.dataStore.moves.length; i++){
-        if ($scope.dataStore.moves[i].id == [moveId]){
-          return $scope.dataStore.moves[i].name;
-        }
-      }
-    }
-  }*/
-
   function createLearnsetObj(moveByLevel, generationId) {
     return {
       "level" : moveByLevel.level,
@@ -246,7 +226,7 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
       );
 
     var movesByLevel = parseLearnsetJson(results); // parse JSON
-    var generationId = generationIdByName($scope.formData.gen);
+    var generationId = $scope.dataStore.getGenerationIdByName($scope.formData.gen);
 
     //console.log(movesByLevel);
 
@@ -312,7 +292,7 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
    */
   function allPokemonByGeneration(genString) {
     var pokemon = [];
-    var gen = generationIdByName(genString);
+    var gen = $scope.dataStore.getGenerationIdByName(genString);
     $scope.dataStore.pokemon.forEach(function(p){
       if (p.genIntroducedId <= gen) {
         pokemon.push(p);
@@ -321,7 +301,7 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
     return pokemon;
   };
 
-  //====== query building for learnset table retrieval
+  //====== query building for learnset table retrieval ==========
   function createYqlQueryUrl(pokemonName, genString) {
     // for generations excluding most recent
     var source = 'https://query.yahooapis.com/v1/public/';
@@ -364,23 +344,6 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
   }
 
   //======= find entries by name string ========
-  function generationIdByName(name) {
-    for (var i = 0; i < $scope.dataStore.generations.length; i++){
-      if ($scope.dataStore.generations[i].name == name){
-        return $scope.dataStore.generations[i].id
-      }
-    }
-    return null;
-  };
-
-  function pokemonIdByName(name) {
-    for (var i = 0; i < $scope.dataStore.pokemon.length; i++){
-      if ($scope.dataStore.pokemon[i].name == name){
-        return $scope.dataStore.pokemon[i].id
-      }
-    }
-    return null;
-  };
 
   /**
    * Find move within moves table by name

@@ -40,11 +40,11 @@ module.exports = function ($scope, Effectiveness, Generations, Types) {
 
     for (var ii = 0; ii < effects.length; ii++) {
       var e = effects[ii].split('\t');
-      var attType = typeIdByName(e[0]);
+      var attType = $scope.dataStore.getTypeIdByName(e[0]);
 
       for (var jj = 0; jj < effects.length; jj++) {
 
-        var defType = typeIdByName(effects[jj].substr(0, effects[jj].indexOf('\t')));
+        var defType = $scope.dataStore.getTypeIdByName(effects[jj].substr(0, effects[jj].indexOf('\t')));
         try {
           effectiveness.push({
             "comparison" : getComparisonEnum(e[jj+1]),
@@ -92,14 +92,6 @@ module.exports = function ($scope, Effectiveness, Generations, Types) {
       }
     });
     return bulkDataToSend;
-  }
-
-  function typeIdByName(name) {
-    for (var i = 0; i < $scope.dataStore.types.length; i++){
-      if ($scope.dataStore.types[i].name == name){
-        return $scope.dataStore.types[i].id
-      }
-    }
   }
 
   function getComparisonEnum(multiplier) {

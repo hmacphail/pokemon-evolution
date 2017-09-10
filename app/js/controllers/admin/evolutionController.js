@@ -30,23 +30,11 @@ module.exports = function ($scope, Evolutions, Pokemon, Items) {
   };
 
   $scope.pokemonName = function(pokemonId) {
-    if ($scope.dataStore.pokemon) {
-      for (var i = 0; i < $scope.dataStore.pokemon.length; i++){
-        if ($scope.dataStore.pokemon[i].id == [pokemonId]){
-          return $scope.dataStore.pokemon[i].name + ($scope.dataStore.pokemon[i].form == 'alolan' ? '*' : '');
-        }
-      }
-    }
+    $scope.dataStore.getPokemonNameById(pokemonId);
   };
 
   $scope.itemName = function(itemId) {
-    if ($scope.dataStore.items) {
-      for (var i = 0; i < $scope.dataStore.items.length; i++){
-        if ($scope.dataStore.items[i].id == [itemId]){
-          return $scope.dataStore.items[i].name;
-        }
-      }
-    }
+    $scope.dataStore.getItemNameById(itemId);
   }
 
   //======= main parser functions ========
@@ -108,7 +96,7 @@ module.exports = function ($scope, Evolutions, Pokemon, Items) {
           return createEvolutionObjs(frmPoke, toPoke, row2[2], row2[1], null);
         case 'item' :
           var itemCond = splitItemConditionString(row2[1]);
-          return createEvolutionObjs(frmPoke, toPoke, itemCond[1], null, itemIdByName(itemCond[0]));
+          return createEvolutionObjs(frmPoke, toPoke, itemCond[1], null, $scope.dataStore.getItemIdByName(itemCond[0]));
         case 'trade' :
           return createEvolutionObjs(frmPoke, toPoke, row2[1], null, null);
         case 'happiness' :
@@ -129,9 +117,9 @@ module.exports = function ($scope, Evolutions, Pokemon, Items) {
           return createEvolutionObjs(frmPoke, toPoke, row1[4], row1[3], null);
         case 'item' :
           var itemCond = splitItemConditionString(row1[3]);
-          return createEvolutionObjs(frmPoke, toPoke, itemCond[1], null, itemIdByName(itemCond[0]));
+          return createEvolutionObjs(frmPoke, toPoke, itemCond[1], null, $scope.dataStore.getItemIdByName(itemCond[0]));
         case 'trade' :
-          var item = itemIdByName(row1[3]);
+          var item = $scope.dataStore.getItemIdByName(row1[3]);
           var cond = item ? null : row1[3];
           return createEvolutionObjs(frmPoke, toPoke, cond, null, item);
         case 'happiness' :
@@ -222,15 +210,6 @@ module.exports = function ($scope, Evolutions, Pokemon, Items) {
       }
     }
     return pm;
-  };
-
-  function itemIdByName(name) {
-    for (var i = 0; i < $scope.dataStore.items.length; i++){
-      if ($scope.dataStore.items[i].name == name){
-        return $scope.dataStore.items[i].id
-      }
-    }
-    return null;
   };
 
 };

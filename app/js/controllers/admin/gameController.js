@@ -25,24 +25,12 @@ module.exports = function ($scope, Games, Generations) {
       });
   };
 
-
-  // --- helper functions ---
-
   function createGameObj(formData) {
     return {
       "code": formData.code,
       "name": formData.name,
-      "generationId": generationIdByName(formData.generation)
+      "generationId": $scope.dataStore.getGenerationIdByName(formData.generation)
     };
   }
-
-  function generationIdByName(name) {
-    for (var i = 0; i < $scope.dataStore.generations.length; i++){
-      if ($scope.dataStore.generations[i].name == name){
-        return $scope.dataStore.generations[i].id
-      }
-    }
-    return null;
-  };
 
 };
