@@ -1,16 +1,16 @@
-var generationService       = require('./services/generationService');
-var pokemonService          = require('./services/pokemonService');
-var evolutionService        = require('./services/evolutionService');
-var typeService             = require('./services/typeService');
-var effectivenessService    = require('./services/effectivenessService');
-var abilityService          = require('./services/abilityService');
-var abilitysetService       = require('./services/abilitysetService');
-var moveService             = require('./services/moveService');
-var learnsetService         = require('./services/learnsetService');
-var itemService             = require('./services/itemService');
-var pokemonTypeService      = require('./services/gameService');
-var gameService             = require('./services/gameService');
-var pokemonLearnsetService  = require('./services/gameService');
+generationService       = require('./services/generationService');
+pokemonService          = require('./services/pokemonService');
+evolutionService        = require('./services/evolutionService');
+typeService             = require('./services/typeService');
+effectivenessService    = require('./services/effectivenessService');
+abilityService          = require('./services/abilityService');
+abilitysetService       = require('./services/abilitysetService');
+moveService             = require('./services/moveService');
+learnsetService         = require('./services/learnsetService');
+itemService             = require('./services/itemService');
+pokemonTypeService      = require('./services/gameService');
+gameService             = require('./services/gameService');
+pokemonLearnsetService  = require('./services/gameService');
 
 // create factories
 var srvc = angular.module('services', []);

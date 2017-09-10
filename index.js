@@ -1,11 +1,12 @@
 // set up ========================
-var express = require('express');
-var app = express();                              // create our app w/ express
-var http = require('http');
-var morgan = require('morgan');                   // log requests to the console (express4)
-var bodyParser = require('body-parser');          // pull information from HTML POST (express4)
-var methodOverride = require('method-override');  // simulate DELETE and PUT (express4)
-var db = require('./server/models');
+express = require('express');
+http = require('http');
+morgan = require('morgan');                   // log requests to the console (express4)
+bodyParser = require('body-parser');          // pull information from HTML POST (express4)
+methodOverride = require('method-override');  // simulate DELETE and PUT (express4)
+db = require('./server/models');
+
+var app = express();                          // create our app w/ express
 
 // configuration ========================
 global.rootdir = __dirname;

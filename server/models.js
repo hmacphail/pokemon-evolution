@@ -1,6 +1,7 @@
+Sequelize = require('sequelize');
+
 if (!global.hasOwnProperty('db')) {
-  var Sequelize = require('sequelize')
-    , sequelize = null
+  //let sequelize = null;
 
   /*if (process.env.NODE_ENV) {
     // the application is executed on Heroku ... use the postgres database
@@ -24,14 +25,14 @@ if (!global.hasOwnProperty('db')) {
     });*/
 
     // jaws db connection string
-    sequelize = new Sequelize('jp41rk8gc3x9jb7h', 'xfxbjt9ip3wfij77', 'kbdyuxmcr3xx3knk', {
-      host: 'wftuqljwesiffol6.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',
-      port: 3306,
-      dialect: 'mysql'
-    });
+  let sequelize = new Sequelize('jp41rk8gc3x9jb7h', 'xfxbjt9ip3wfij77', 'kbdyuxmcr3xx3knk', {
+    host: 'wftuqljwesiffol6.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',
+    port: 3306,
+    dialect: 'mysql'
+  });
   //}
 
-  var db = {
+  let db = {
     Sequelize: Sequelize,
     sequelize: sequelize,
 
@@ -50,7 +51,7 @@ if (!global.hasOwnProperty('db')) {
     Game: sequelize.import('./models/game'),
     PokemonLearnsets: sequelize.import('./models/pokemonLearnsets'),
     User: sequelize.import('./models/user'),
-  }
+  };
 
   // global table associations
   db.Generation.hasMany(db.Pokemon, {

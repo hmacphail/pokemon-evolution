@@ -4,10 +4,10 @@ module.exports = {
   //Get a list of all effectivenesss using model.findAll()
   index(req, res) {
     Effectiveness.findAll()
-      .then(function (effectivenesss) {
+      .then((effectivenesss) => {
         res.status(200).json(effectivenesss);
       })
-      .catch(function (error) {
+      .catch((error) => {
         res.status(500).json(error);
       });
   },
@@ -15,21 +15,21 @@ module.exports = {
   //Get a effectiveness by it's unique ID using model.findById()
   show(req, res) {
     Effectiveness.findById(req.params.id)
-    .then(function (effectiveness) {
-      res.status(200).json(effectiveness);
-    })
-    .catch(function (error){
-      res.status(500).json(error);
-    });
+      .then((effectiveness) => {
+        res.status(200).json(effectiveness);
+      })
+      .catch((error) => {
+        res.status(500).json(error);
+      });
   },
 
   //Create a new effectiveness using model.create()
   create(req, res) {
     Effectiveness.create(req.body)
-      .then(function (newEffectiveness) {
+      .then((newEffectiveness) => {
         res.status(200).json(newEffectiveness);
       })
-      .catch(function (error){
+      .catch((error) => {
         res.status(500).json(error);
       });
   },
@@ -37,10 +37,10 @@ module.exports = {
   //Create multiple new effectiveness using model.bulkCreate()
   bulkCreate(req, res) {
     Effectiveness.bulkCreate(req.body)
-      .then(function(effectiveness) {
+      .then((effectiveness) => {
         res.status(200).json(effectiveness);
       })
-      .catch(function (error) {
+      .catch((error) => {
         res.status(500).json(error);
       });
   },
@@ -48,30 +48,30 @@ module.exports = {
   //Edit an existing effectiveness details using model.update()
   update(req, res) {
     Effectiveness.update(req.body, {
-      where: {
-        id: req.params.id
-      }
-    })
-    .then(function (updatedRecords) {
-      res.status(200).json(updatedRecords);
-    })
-    .catch(function (error){
-      res.status(500).json(error);
-    });
+        where: {
+          id: req.params.id
+        }
+      })
+      .then((updatedRecords) => {
+        res.status(200).json(updatedRecords);
+      })
+      .catch((error) => {
+        res.status(500).json(error);
+      });
   },
 
   //Delete an existing effectiveness by the unique ID using model.destroy()
   delete(req, res) {
     Effectiveness.destroy({
-      where: {
-        id: req.params.id
-      }
-    })
-    .then(function (deletedRecords) {
-      res.status(200).json(deletedRecords);
-    })
-    .catch(function (error){
-      res.status(500).json(error);
-    });
-  }
+        where: {
+          id: req.params.id
+        }
+      })
+      .then((deletedRecords) => {
+        res.status(200).json(deletedRecords);
+      })
+      .catch((error) => {
+        res.status(500).json(error);
+      });
+  },
 };

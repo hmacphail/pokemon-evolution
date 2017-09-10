@@ -4,10 +4,10 @@ module.exports = {
   //Get a list of all users using model.findAll()
   index(req, res) {
     User.findAll()
-      .then(function (users) {
+      .then((users) => {
         res.status(200).json(users);
       })
-      .catch(function (error) {
+      .catch((error) => {
         res.status(500).json(error);
       });
   },
@@ -15,10 +15,10 @@ module.exports = {
   //Get a user by the unique ID using model.findById()
   show(req, res) {
     User.findById(req.params.id)
-      .then(function (user) {
+      .then((user) => {
         res.status(200).json(user);
       })
-      .catch(function (error){
+      .catch((error) => {
         res.status(500).json(error);
       });
   },
@@ -26,10 +26,10 @@ module.exports = {
   //Create a new user using model.create()
   create(req, res) {
     User.create(req.body)
-      .then(function (newUser) {
+      .then((newUser) => {
         res.status(200).json(newUser);
       })
-      .catch(function (error){
+      .catch((error) => {
         res.status(500).json(error);
       });
   },
@@ -37,30 +37,30 @@ module.exports = {
   //Edit an existing user details using model.update()
   update(req, res) {
     User.update(req.body, {
-      where: {
-        id: req.params.id
-      }
-    })
-    .then(function (updatedRecords) {
-      res.status(200).json(updatedRecords);
-    })
-    .catch(function (error){
-      res.status(500).json(error);
-    });
+        where: {
+          id: req.params.id
+        }
+      })
+      .then((updatedRecords) => {
+        res.status(200).json(updatedRecords);
+      })
+      .catch((error) => {
+        res.status(500).json(error);
+      });
   },
 
   //Delete an existing user by the unique ID using model.destroy()
   delete(req, res) {
     User.destroy({
-      where: {
-        id: req.params.id
-      }
-    })
-    .then(function (deletedRecords) {
-      res.status(200).json(deletedRecords);
-    })
-    .catch(function (error){
-      res.status(500).json(error);
-    });
-  }
+        where: {
+          id: req.params.id
+        }
+      })
+      .then((deletedRecords) => {
+        res.status(200).json(deletedRecords);
+      })
+      .catch((error) => {
+        res.status(500).json(error);
+      });
+  },
 };

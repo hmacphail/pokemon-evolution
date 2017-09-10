@@ -1,20 +1,20 @@
-var express = require('express');
-var router  = express();
+generations       = require('./controllers/generations');
+pokemon           = require('./controllers/pokemon');
+evolutions        = require('./controllers/evolutions');
+types             = require('./controllers/types');
+effectiveness     = require('./controllers/effectiveness');
+abilities         = require('./controllers/abilities');
+abilitysets       = require('./controllers/abilitysets');
+moves             = require('./controllers/moves');
+learnsets         = require('./controllers/learnsets');
+items             = require('./controllers/items');
+pokemonTypes      = require('./controllers/pokemonTypes');
+games             = require('./controllers/games');
+pokemonLearnsets  = require('./controllers/pokemonLearnsets');
+users             = require('./controllers/users');
 
-var generations       = require('./controllers/generations');
-var pokemon           = require('./controllers/pokemon');
-var evolutions        = require('./controllers/evolutions');
-var types             = require('./controllers/types');
-var effectiveness     = require('./controllers/effectiveness');
-var abilities         = require('./controllers/abilities');
-var abilitysets       = require('./controllers/abilitysets');
-var moves             = require('./controllers/moves');
-var learnsets         = require('./controllers/learnsets');
-var items             = require('./controllers/items');
-var pokemonTypes      = require('./controllers/pokemonTypes');
-var games             = require('./controllers/games');
-var pokemonLearnsets  = require('./controllers/pokemonLearnsets');
-var users             = require('./controllers/users');
+express = require('express');
+var router = express();
 
 router.get(   '/generations',           generations.index);
 router.get(   '/generations/:id',       generations.show);

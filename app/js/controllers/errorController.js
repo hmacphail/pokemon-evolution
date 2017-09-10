@@ -1,4 +1,3 @@
 module.exports = function ($scope) {
-    $scope.message = 'Page not found!';
-  };
-
+  $scope.message = 'Page not found!';
+};

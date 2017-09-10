@@ -1,7 +1,7 @@
-var Sequelize = require('sequelize');
+Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  var Pokemon = sequelize.define('pokemon', {
+  return sequelize.define('pokemon', {
     pokedexId: {
       type: Sequelize.INTEGER,
       allowNull: false
@@ -23,5 +23,4 @@ module.exports = function(sequelize, DataTypes) {
     freezeTableName: true,
     timestamps: false
   });
-  return Pokemon;
-}
+};

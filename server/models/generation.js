@@ -1,7 +1,7 @@
-var Sequelize = require('sequelize');
+Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  var Generation = sequelize.define('generation', {
+  return sequelize.define('generation', {
     name: {
       type: Sequelize.STRING(20),
       allowNull: false
@@ -9,5 +9,4 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     timestamps: false
   });
-  return Generation;
-}
+};

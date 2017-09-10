@@ -17,7 +17,7 @@ module.exports = function ($scope, Moves, Generations, Types) {
           $scope.dataStore.getMoves(Moves);
         }
       });
-  };
+  }
 
   $scope.createMovesBulk = function() {
     Moves.bulkCreate(parseBulkData($scope.formData))
@@ -34,7 +34,7 @@ module.exports = function ($scope, Moves, Generations, Types) {
       .then((res) => {
         $scope.dataStore.getMoves(Moves);
       });
-  };
+  }
 
 
   // --- helper functions ---
@@ -42,8 +42,8 @@ module.exports = function ($scope, Moves, Generations, Types) {
   function parseBulkData(inputData) {
     // parse pasted data from bulbapedia
     // http://bulbapedia.bulbagarden.net/wiki/List_of_moves
-    var moves = [];
-    inputData.bulk.split('\n').forEach(function(m) {
+    let moves = [];
+    inputData.bulk.split('\n').forEach((m) => {
 
       // check if including moves with generation-based conditions
       if (inputData.includeStarred || m.indexOf('*') < 0) {
@@ -56,15 +56,15 @@ module.exports = function ($scope, Moves, Generations, Types) {
   }
 
   function createMoveObj(data) {
-    var move = data.replace(/\*/g, '').split('\t');
+    const move = data.replace(/\*/g, '').split('\t');
     // if spaces instead of tab character
     if (move.length == 1) {
       move = move[0].split('   ');
-      move.forEach(function(m, i){
+      move.forEach((m, i) => {
         move[i] = m.trim();
       });
     }
-    var gens = move[8].split('-');
+    const gens = move[8].split('-');
 
     return {
       "name" : move[1],
@@ -82,8 +82,8 @@ module.exports = function ($scope, Moves, Generations, Types) {
   }
 
   function mostRecentGen() {
-    var gen = $scope.dataStore.generations[$scope.dataStore.generations.length-1].id;
-    for (var i = 0; i < $scope.dataStore.generations.length; i++){
+    let gen = $scope.dataStore.generations[$scope.dataStore.generations.length-1].id;
+    for (let i = 0; i < $scope.dataStore.generations.length; i++){
       if (gen < $scope.dataStore.generations[i].id)
         gen = $scope.dataStore.generations[i].id;
     }

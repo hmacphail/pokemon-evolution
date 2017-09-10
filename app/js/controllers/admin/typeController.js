@@ -15,13 +15,13 @@ module.exports = function ($scope, Types) {
           $scope.dataStore.getTypes(Types);
         }
       });
-  };
+  }
 
   $scope.deleteType = function(id) {
     Types.delete(id)
       .then((res) => {
         $scope.dataStore.getTypes(Types);
       });
-  };
+  }
 
 };

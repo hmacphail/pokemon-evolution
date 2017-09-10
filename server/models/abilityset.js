@@ -1,7 +1,7 @@
-var Sequelize = require('sequelize');
+Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  var Abilityset = sequelize.define('abilityset', {
+  return sequelize.define('abilityset', {
     trait: {
       type: Sequelize.ENUM,
       values: ['primary', 'secondary', 'hidden'],
@@ -10,5 +10,4 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     timestamps: false
   });
-  return Abilityset;
-}
+};

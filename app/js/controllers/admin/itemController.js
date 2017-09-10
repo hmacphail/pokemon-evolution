@@ -15,7 +15,7 @@ module.exports = function ($scope, Items) {
           $scope.dataStore.getItems(Items);
         }
       });
-  };
+  }
 
   $scope.createItemsBulk = function() {
     Items.bulkCreate(parseBulkData($scope.formData))
@@ -32,7 +32,7 @@ module.exports = function ($scope, Items) {
       .then((res) => {
         $scope.dataStore.getItems(Items);
       });
-  };
+  }
 
 
   // --- helper functions ---
@@ -40,9 +40,9 @@ module.exports = function ($scope, Items) {
   function parseBulkData(inputData) {
     // parse pasted data from evolutionary items table
     // http://www.serebii.net/itemdex/list/evolutionary.shtml
-    var items = [];
+    let items = [];
     inputData.bulk.split('\n\n').forEach(function(i){
-      var item = i.split('\t');
+      const item = i.split('\t');
       items.push({
         "name" : item[0],
         "description" : item[1]

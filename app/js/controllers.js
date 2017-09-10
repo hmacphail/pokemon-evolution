@@ -1,16 +1,16 @@
-var homeController          = require('./controllers/homeController');
-var errorController         = require('./controllers/errorController');
-var generationController    = require('./controllers/admin/generationController');
-var pokemonController       = require('./controllers/admin/pokemonController');
-var evolutionController     = require('./controllers/admin/evolutionController');
-var typeController          = require('./controllers/admin/typeController');
-var effectivenessController = require('./controllers/admin/effectivenessController');
-var abilityController       = require('./controllers/admin/abilityController');
-var abilitysetController    = require('./controllers/admin/abilitysetController');
-var moveController          = require('./controllers/admin/moveController');
-var learnsetController      = require('./controllers/admin/learnsetController');
-var itemController          = require('./controllers/admin/itemController');
-var gameController          = require('./controllers/admin/gameController');
+homeController          = require('./controllers/homeController');
+errorController         = require('./controllers/errorController');
+generationController    = require('./controllers/admin/generationController');
+pokemonController       = require('./controllers/admin/pokemonController');
+evolutionController     = require('./controllers/admin/evolutionController');
+typeController          = require('./controllers/admin/typeController');
+effectivenessController = require('./controllers/admin/effectivenessController');
+abilityController       = require('./controllers/admin/abilityController');
+abilitysetController    = require('./controllers/admin/abilitysetController');
+moveController          = require('./controllers/admin/moveController');
+learnsetController      = require('./controllers/admin/learnsetController');
+itemController          = require('./controllers/admin/itemController');
+gameController          = require('./controllers/admin/gameController');
 
 // create controllers
 var ctrl = angular.module('controllers', []);

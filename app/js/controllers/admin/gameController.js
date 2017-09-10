@@ -16,14 +16,14 @@ module.exports = function ($scope, Games, Generations) {
           $scope.dataStore.getGames(Games);
         }
       });
-  };
+  }
 
   $scope.deleteGame = function(id) {
     Games.delete(id)
       .then((res) => {
         $scope.dataStore.getGames(Games);
       });
-  };
+  }
 
   function createGameObj(formData) {
     return {

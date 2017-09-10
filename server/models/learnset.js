@@ -1,7 +1,7 @@
-var Sequelize = require('sequelize');
+Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  var Learnset = sequelize.define('learnset', {
+  return sequelize.define('learnset', {
     level: {
       type: Sequelize.INTEGER
     },
@@ -15,5 +15,4 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     timestamps: false
   });
-  return Learnset;
-}
+};

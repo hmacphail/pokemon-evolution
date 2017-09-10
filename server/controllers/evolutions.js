@@ -4,10 +4,10 @@ module.exports = {
   //Get a list of all evolutions using model.findAll()
   index(req, res) {
     Evolution.findAll()
-      .then(function (evolutions) {
+      .then((evolutions) => {
         res.status(200).json(evolutions);
       })
-      .catch(function (error) {
+      .catch((error) => {
         res.status(500).json(error);
       });
   },
@@ -15,21 +15,21 @@ module.exports = {
   //Get a evolution by it's unique ID using model.findById()
   show(req, res) {
     Evolution.findById(req.params.id)
-    .then(function (evolution) {
-      res.status(200).json(evolution);
-    })
-    .catch(function (error){
-      res.status(500).json(error);
-    });
+      .then((evolution) => {
+        res.status(200).json(evolution);
+      })
+      .catch((error) => {
+        res.status(500).json(error);
+      });
   },
 
   //Create a new evolution using model.create()
   create(req, res) {
     Evolution.create(req.body)
-      .then(function (newEvolution) {
+      .then((newEvolution) => {
         res.status(200).json(newEvolution);
       })
-      .catch(function (error){
+      .catch((error) => {
         res.status(500).json(error);
       });
   },
@@ -37,10 +37,10 @@ module.exports = {
   //Create multiple new evolutions using model.bulkCreate()
   bulkCreate(req, res) {
     Evolution.bulkCreate(req.body)
-      .then(function(evolution) {
+      .then((evolution) => {
         res.status(200).json(evolution);
       })
-      .catch(function (error) {
+      .catch((error) => {
         res.status(500).json(error);
       });
   },
@@ -48,15 +48,15 @@ module.exports = {
   //Delete an existing evolution by the unique ID using model.destroy()
   delete(req, res) {
     Evolution.destroy({
-      where: {
-        id: req.params.id
-      }
-    })
-    .then(function (deletedRecords) {
-      res.status(200).json(deletedRecords);
-    })
-    .catch(function (error){
-      res.status(500).json(error);
-    });
-  }
+        where: {
+          id: req.params.id
+        }
+      })
+      .then((deletedRecords) => {
+        res.status(200).json(deletedRecords);
+      })
+      .catch((error) => {
+        res.status(500).json(error);
+      });
+  },
 };

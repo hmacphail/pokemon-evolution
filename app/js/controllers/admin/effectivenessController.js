@@ -11,9 +11,7 @@ module.exports = function ($scope, Effectiveness, Generations, Types) {
 
   $scope.createEffectivenessBulk = function() {
     // prep data to send
-    var effectiveness = checkBulkForDuplicates(parseBulkData($scope.formData));
-
-    Effectiveness.bulkCreate(effectiveness)
+    Effectiveness.bulkCreate(checkBulkForDuplicates(parseBulkData($scope.formData)))
       .then((res) => {
         if (res.status == 200) {
           $scope.formData = {};
@@ -27,7 +25,7 @@ module.exports = function ($scope, Effectiveness, Generations, Types) {
       .then((res) => {
         $scope.dataStore.getEffectiveness(Effectiveness);
       });
-  };
+  }
 
 
   // --- helper functions ---
@@ -35,16 +33,15 @@ module.exports = function ($scope, Effectiveness, Generations, Types) {
   function parseBulkData(inputData) {
     // parse pasted data from bulbapedia table
     // http://bulbapedia.bulbagarden.net/wiki/Type/Type_chart
-    var effectiveness = [];
-    var effects = inputData.bulk.split('\n');
+    const effects = inputData.bulk.split('\n');
 
-    for (var ii = 0; ii < effects.length; ii++) {
-      var e = effects[ii].split('\t');
-      var attType = $scope.dataStore.getTypeIdByName(e[0]);
+    let effectiveness = [];
+    for (let ii = 0; ii < effects.length; ii++) {
+      const e = effects[ii].split('\t');
+      const attType = $scope.dataStore.getTypeIdByName(e[0]);
 
-      for (var jj = 0; jj < effects.length; jj++) {
-
-        var defType = $scope.dataStore.getTypeIdByName(effects[jj].substr(0, effects[jj].indexOf('\t')));
+      for (let jj = 0; jj < effects.length; jj++) {
+        const defType = $scope.dataStore.getTypeIdByName(effects[jj].substr(0, effects[jj].indexOf('\t')));
         try {
           effectiveness.push({
             "comparison" : getComparisonEnum(e[jj+1]),
@@ -65,13 +62,13 @@ module.exports = function ($scope, Effectiveness, Generations, Types) {
 
   function checkBulkForDuplicates(dataToCheck) {
     // check against existing data for matches
-    var bulkDataToSend = [];
-    dataToCheck.forEach(function(newEffect) {
+    let bulkDataToSend = [];
+    dataToCheck.forEach((newEffect) => {
       // add every object to send array
       bulkDataToSend.push(newEffect);
 
-      for(var i = 0; i< $scope.dataStore.effectiveness.length; i++) {
-        var oldEffect = $scope.dataStore.effectiveness[i];
+      for(let i = 0; i< $scope.dataStore.effectiveness.length; i++) {
+        const oldEffect = $scope.dataStore.effectiveness[i];
 
         // skip if old & new generation ranges are equivalent
         if (newEffect.genIntroducedId != oldEffect.genIntroducedId

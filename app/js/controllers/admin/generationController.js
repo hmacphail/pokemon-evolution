@@ -15,12 +15,13 @@ module.exports = function ($scope, Generations) {
           $scope.dataStore.getGenerations(Generations);
         }
       });
-  };
+  }
 
   $scope.deleteGen = function(id) {
     Generations.delete(id)
       .then((res) => {
         $scope.dataStore.getGenerations(Generations);
       });
-  };
+  }
+
 };

@@ -8,6 +8,6 @@ module.exports = function($http) {
     },
     delete: function(id) {
       return $http.delete('/api/abilities/' + id);
-    }
+    },
   }
 };

@@ -1,7 +1,7 @@
-var Sequelize = require('sequelize');
+Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  var Item = sequelize.define('item', {
+  return sequelize.define('item', {
     name: {
       type: Sequelize.STRING(50),
       allowNull: false
@@ -12,5 +12,4 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     timestamps: false
   });
-  return Item;
-}
+};

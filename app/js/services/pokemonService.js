@@ -11,6 +11,6 @@ module.exports = function($http) {
     },
     delete: function(id) {
       return $http.delete('/api/pokemon/' + id);
-    }
+    },
   }
 };

@@ -4,10 +4,10 @@ module.exports = {
   //Get a list of all types using model.findAll()
   index(req, res) {
     Type.findAll()
-      .then(function (types) {
+      .then((types) => {
         res.status(200).json(types);
       })
-      .catch(function (error) {
+      .catch((error) => {
         res.status(500).json(error);
       });
   },
@@ -15,21 +15,21 @@ module.exports = {
   //Get a type by it's unique ID using model.findById()
   show(req, res) {
     Type.findById(req.params.id)
-    .then(function (type) {
-      res.status(200).json(type);
-    })
-    .catch(function (error){
-      res.status(500).json(error);
-    });
+      .then((type) => {
+        res.status(200).json(type);
+      })
+      .catch((error) => {
+        res.status(500).json(error);
+      });
   },
 
   //Create a new type using model.create()
   create(req, res) {
     Type.create(req.body)
-      .then(function (newType) {
+      .then((newType) => {
         res.status(200).json(newType);
       })
-      .catch(function (error){
+      .catch((error) => {
         res.status(500).json(error);
       });
   },
@@ -37,15 +37,15 @@ module.exports = {
   //Delete an existing type by the unique ID using model.destroy()
   delete(req, res) {
     Type.destroy({
-      where: {
-        id: req.params.id
-      }
-    })
-    .then(function (deletedRecords) {
-      res.status(200).json(deletedRecords);
-    })
-    .catch(function (error){
-      res.status(500).json(error);
-    });
-  }
+        where: {
+          id: req.params.id
+        }
+      })
+      .then((deletedRecords) => {
+        res.status(200).json(deletedRecords);
+      })
+      .catch((error) => {
+        res.status(500).json(error);
+      });
+  },
 };
