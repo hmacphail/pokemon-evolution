@@ -29,7 +29,7 @@
           <th>Item</th>
           <th></th>
         </tr>
-        <tr ng-repeat="evo in evolutions">
+        <tr ng-repeat="evo in dataStore.evolutions">
           <td> {{ pokemonName(evo.fromPokemonId) }} </td>
           <td> {{ pokemonName(evo.toPokemonId) }} </td>
           <td> {{ evo.trigger }} </td>

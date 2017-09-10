@@ -16,7 +16,7 @@
           </div>
           <div class="col-sm-9">
             <select id="select-gen" class="form-control pull-right" ng-model="formData.gen">
-              <option ng-repeat="g in generations">{{ g.name }}</option>
+              <option ng-repeat="g in dataStore.generations">{{ g.name }}</option>
             </select>
           </div>
         </div>
@@ -84,7 +84,7 @@
           <th>Gen Completed</th>
           <th></th>
         </tr>
-        <tr ng-repeat="ls in learnsets">
+        <tr ng-repeat="ls in dataStore.learnsets">
           <td> {{ pokemonName(ls.pokemonId) }} </td>
           <td> {{ moveName(ls.moveId) }} </td>
           <td> {{ ls.level }} </td>

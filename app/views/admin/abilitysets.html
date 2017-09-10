@@ -25,7 +25,7 @@
           <th>Gen Completed</th>
           <th></th>
         </tr>
-        <tr ng-repeat="as in abilitysets">
+        <tr ng-repeat="as in dataStore.abilitysets">
           <td> {{ pokemonName(as.pokemonId) }} </td>
           <td> {{ abilityName(as.abilityId) }} </td>
           <td> {{ as.trait }} </td>

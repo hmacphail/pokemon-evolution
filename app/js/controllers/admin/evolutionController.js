@@ -1,64 +1,53 @@
-module.exports = function ($scope, Evolution, Pokemon, Item) {
+DataStore = require('../../lib/dataStore');
+
+module.exports = function ($scope, Evolutions, Pokemon, Items) {
 
   $scope.formData = {};
   $scope.triggers = ['level', 'item', 'trade', 'happiness', 'other'];
-  getAllEvolutions();
-  getPokemonAndItemData();
+  $scope.dataStore = new DataStore();
+
+  $scope.dataStore.getEvolutions(Evolutions);
+  $scope.dataStore.getPokemon(Pokemon);
+  $scope.dataStore.getItems(Items);
 
   $scope.createEvolutionsBulk = function() {
     if ($scope.formData.trigger) {
-      Evolution.bulkCreate(parseBulkData($scope.formData))
-        .then(function(res) {
+      Evolutions.bulkCreate(parseBulkData($scope.formData))
+        .then((res) => {
           if (res.status == 200) {
             $scope.formData = {};
-            getAllEvolutions();
+            $scope.dataStore.getEvolutions(Evolutions);
           }
         });
     }
   };
 
   $scope.deleteEvolution = function(id) {
-    Evolution.delete(id)
-      .then(function(res) {
-        getAllEvolutions();
+    Evolutions.delete(id)
+      .then((res) => {
+        $scope.dataStore.getEvolutions(Evolutions);
       });
   };
 
   $scope.pokemonName = function(pokemonId) {
-    if ($scope.pokemon) {
-      for (var i = 0; i < $scope.pokemon.length; i++){
-        if ($scope.pokemon[i].id == [pokemonId]){
-          return $scope.pokemon[i].name + ($scope.pokemon[i].form == 'alolan' ? '*' : '');
+    if ($scope.dataStore.pokemon) {
+      for (var i = 0; i < $scope.dataStore.pokemon.length; i++){
+        if ($scope.dataStore.pokemon[i].id == [pokemonId]){
+          return $scope.dataStore.pokemon[i].name + ($scope.dataStore.pokemon[i].form == 'alolan' ? '*' : '');
         }
       }
     }
   };
 
   $scope.itemName = function(itemId) {
-    if ($scope.items) {
-      for (var i = 0; i < $scope.items.length; i++){
-        if ($scope.items[i].id == [itemId]){
-          return $scope.items[i].name;
+    if ($scope.dataStore.items) {
+      for (var i = 0; i < $scope.dataStore.items.length; i++){
+        if ($scope.dataStore.items[i].id == [itemId]){
+          return $scope.dataStore.items[i].name;
         }
       }
     }
   }
-
-  //====== remote data retrieval ========
-  function getAllEvolutions() {
-    Evolution.get().then(function(res){
-      $scope.evolutions = res.data;
-    });
-  };
-
-  function getPokemonAndItemData() {
-    Pokemon.get().then(function(res){
-      $scope.pokemon = res.data;
-    });
-    Item.get().then(function(res){
-      $scope.items = res.data;
-    });
-  };
 
   //======= main parser functions ========
   function parseBulkData(inputData) {
@@ -215,8 +204,8 @@ module.exports = function ($scope, Evolution, Pokemon, Item) {
   //======= find entries by name string ========
   function pokemonObjsByName(name, variation, isAlolan) {
     var pm = [];
-    for (var i = 0; i < $scope.pokemon.length; i++){
-      var p = $scope.pokemon[i];
+    for (var i = 0; i < $scope.dataStore.pokemon.length; i++){
+      var p = $scope.dataStore.pokemon[i];
 
       // check that name matches
       if (p.name == name) {
@@ -236,9 +225,9 @@ module.exports = function ($scope, Evolution, Pokemon, Item) {
   };
 
   function itemIdByName(name) {
-    for (var i = 0; i < $scope.items.length; i++){
-      if ($scope.items[i].name == name){
-        return $scope.items[i].id
+    for (var i = 0; i < $scope.dataStore.items.length; i++){
+      if ($scope.dataStore.items[i].name == name){
+        return $scope.dataStore.items[i].id
       }
     }
     return null;

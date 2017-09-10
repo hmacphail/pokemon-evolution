@@ -1,53 +1,43 @@
+DataStore = require('../../lib/dataStore');
+
 module.exports = function ($scope, Moves, Generations, Types) {
 
   $scope.formData = {};
-  getAllMoves();
-  getGenAndTypeData();
+  $scope.dataStore = new DataStore();
+
+  $scope.dataStore.getMoves(Moves);
+  $scope.dataStore.getGenerations(Generations);
+  $scope.dataStore.getTypes(Types);
 
   $scope.createMove = function() {
     Moves.create(createMoveObj($scope.formData.text))
-      .then(function(res) {
+      .then((res) => {
         if (res.status == 200) {
           $scope.formData = {};
-          getAllMoves();
+          $scope.dataStore.getMoves(Moves);
         }
       });
   };
 
   $scope.createMovesBulk = function() {
     Moves.bulkCreate(parseBulkData($scope.formData))
-      .then(function(res) {
+      .then((res) => {
         if (res.status == 200) {
           $scope.formData = {};
-          getAllMoves();
+          $scope.dataStore.getMoves(Moves);
         }
       });
   }
 
   $scope.deleteMove = function(id) {
     Moves.delete(id)
-      .then(function(res) {
-        getAllMoves();
+      .then((res) => {
+        $scope.dataStore.getMoves(Moves);
       });
   };
 
 
   // --- helper functions ---
-
-  function getAllMoves() {
-    Moves.get().then(function(res){
-      $scope.moves = res.data;
-    });
-  };
-
-  function getGenAndTypeData() {
-    Generations.get().then(function(res){
-      $scope.generations = res.data;
-    });
-    Types.get().then(function(res){
-      $scope.types = res.data;
-    });
-  }
 
   function parseBulkData(inputData) {
     // parse pasted data from bulbapedia
@@ -92,26 +82,26 @@ module.exports = function ($scope, Moves, Generations, Types) {
   }
 
   function mostRecentGen() {
-    var gen = $scope.generations[$scope.generations.length-1].id;
-    for (var i = 0; i < $scope.generations.length; i++){
-      if (gen < $scope.generations[i].id)
-        gen = $scope.generations[i].id;
+    var gen = $scope.dataStore.generations[$scope.dataStore.generations.length-1].id;
+    for (var i = 0; i < $scope.dataStore.generations.length; i++){
+      if (gen < $scope.dataStore.generations[i].id)
+        gen = $scope.dataStore.generations[i].id;
     }
     return gen;
   }
 
   function genIdByName(name) {
-    for (var i = 0; i < $scope.generations.length; i++){
-      if ($scope.generations[i].name == name){
-        return $scope.generations[i].id
+    for (var i = 0; i < $scope.dataStore.generations.length; i++){
+      if ($scope.dataStore.generations[i].name == name){
+        return $scope.dataStore.generations[i].id
       }
     }
   }
 
   function typeIdByName(name) {
-    for (var i = 0; i < $scope.types.length; i++){
-      if ($scope.types[i].name == name){
-        return $scope.types[i].id
+    for (var i = 0; i < $scope.dataStore.types.length; i++){
+      if ($scope.dataStore.types[i].name == name){
+        return $scope.dataStore.types[i].id
       }
     }
   }

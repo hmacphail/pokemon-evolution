@@ -13,7 +13,7 @@
           </div>
           <div class="col-sm-9">
             <select id="select-gen" class="form-control pull-right" ng-model="formData.generation">
-              <option ng-repeat="gen in generations">{{ gen.name }}</option>
+              <option ng-repeat="gen in dataStore.generations">{{ gen.name }}</option>
             </select>
           </div>
         </div>
@@ -47,7 +47,7 @@
           <th>Gen</th>
           <th></th>
         </tr>
-        <tr ng-repeat="game in games">
+        <tr ng-repeat="game in dataStore.games">
           <td> {{ game.code }} </td>
           <td> {{ game.name }} </td>
           <td> {{ game.generationId }} </td>

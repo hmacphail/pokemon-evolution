@@ -1,43 +1,41 @@
+DataStore = require('../../lib/dataStore');
+
 module.exports = function ($scope, Items) {
 
   $scope.formData = {};
-  getAllItems();
+  $scope.dataStore = new DataStore();
+
+  $scope.dataStore.getItems(Items);
 
   $scope.createItem = function() {
     Items.create($scope.formData)
-      .then(function(res) {
+      .then((res) => {
         if (res.status == 200) {
           $scope.formData = {};
-          getAllItems();
+          $scope.dataStore.getItems(Items);
         }
       });
   };
 
   $scope.createItemsBulk = function() {
     Items.bulkCreate(parseBulkData($scope.formData))
-      .then(function(res) {
+      .then((res) => {
         if (res.status == 200) {
           $scope.formData = {};
-          getAllItems();
+          $scope.dataStore.getItems(Items);
         }
       });
   }
 
   $scope.deleteItem = function(id) {
     Items.delete(id)
-      .then(function(res) {
-        getAllItems();
+      .then((res) => {
+        $scope.dataStore.getItems(Items);
       });
   };
 
 
   // --- helper functions ---
-
-  function getAllItems() {
-    Items.get().then(function(res){
-      $scope.items = res.data;
-    });
-  };
 
   function parseBulkData(inputData) {
     // parse pasted data from evolutionary items table

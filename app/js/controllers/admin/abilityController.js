@@ -3,40 +3,30 @@ DataStore = require('../../lib/dataStore');
 module.exports = function ($scope, Abilities, Generations) {
 
   $scope.formData = {};
-  getAllAbilities();
-  getGenData();
+  $scope.dataStore = new DataStore();
+
+  $scope.dataStore.getAbilities(Abilities);
+  $scope.dataStore.getGenerations(Generations);
 
   $scope.createAbilitiesBulk = function() {
     Abilities.bulkCreate(parseBulkData($scope.formData))
-      .then(function(res) {
+      .then((res) => {
         if (res.status == 200) {
           $scope.formData = {};
-          getAllAbilities();
+          $scope.dataStore.getAbilities(Abilities);
         }
       });
   }
 
   $scope.deleteAbility = function(id) {
     Abilities.delete(id)
-      .then(function(res) {
-        getAllAbilities();
+      .then((res) => {
+        $scope.dataStore.getAbilities(Abilities);
       });
   };
 
 
   // --- helper functions ---
-
-  function getAllAbilities() {
-    Abilities.get().then(function(res){
-      $scope.abilities = res.data;
-    });
-  };
-
-  function getGenData() {
-    Generations.get().then(function(res){
-      $scope.generations = res.data;
-    });
-  }
 
   function parseBulkData(inputData) {
     // parse pasted data from bulbapedia table
@@ -54,9 +44,9 @@ module.exports = function ($scope, Abilities, Generations) {
   }
 
   function genIdByName(name) {
-    for (var i = 0; i < $scope.generations.length; i++){
-      if ($scope.generations[i].name == name){
-        return $scope.generations[i].id
+    for (var i = 0; i < $scope.dataStore.generations.length; i++){
+      if ($scope.dataStore.generations[i].name == name){
+        return $scope.dataStore.generations[i].id
       }
     }
   }

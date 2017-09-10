@@ -1,32 +1,27 @@
+DataStore = require('../../lib/dataStore');
+
 module.exports = function ($scope, Types) {
 
   $scope.formData = {};
-  getAllTypes();
+  $scope.dataStore = new DataStore();
+
+  $scope.dataStore.getTypes(Types);
 
   $scope.createType = function() {
     Types.create($scope.formData)
-      .then(function(res) {
+      .then((res) => {
         if (res.status == 200) {
           $scope.formData = {};
-          getAllTypes();
+          $scope.dataStore.getTypes(Types);
         }
       });
   };
 
   $scope.deleteType = function(id) {
     Types.delete(id)
-      .then(function(res) {
-        getAllTypes();
+      .then((res) => {
+        $scope.dataStore.getTypes(Types);
       });
-  };
-
-
-  // --- helper functions ---
-
-  function getAllTypes() {
-    Types.get().then(function(res){
-      $scope.types = res.data;
-    });
   };
 
 };

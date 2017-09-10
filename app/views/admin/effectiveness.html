@@ -11,12 +11,12 @@
           <label class="col-sm-4">Generation Range:</label>
           <div class="col-sm-4">
             <select id="select-from-gen" class="form-control" ng-model="formData.fromGen">
-              <option ng-repeat="g in generations" value="{{ g.id }}">{{ g.name }}</option>
+              <option ng-repeat="g in dataStore.generations" value="{{ g.id }}">{{ g.name }}</option>
             </select>
           </div>
           <div class="col-sm-4">
             <select id="select-to-gen" class="form-control" ng-model="formData.toGen">
-              <option ng-repeat="g in generations" value="{{ g.id }}">{{ g.name }}</option>
+              <option ng-repeat="g in dataStore.generations" value="{{ g.id }}">{{ g.name }}</option>
             </select>
           </div>
         </div>
@@ -35,7 +35,7 @@
           <th>Gen Completed</th>
           <th></th>
         </tr>
-        <tr ng-repeat="effect in effectiveness">
+        <tr ng-repeat="effect in dataStore.effectiveness">
           <td> {{ effect.attackingTypeId }} </td>
           <td> {{ effect.defendingTypeId }} </td>
           <td> {{ effect.comparison }} </td>

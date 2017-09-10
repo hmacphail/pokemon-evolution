@@ -1,14 +1,21 @@
 require('../../lib/tableToJson');
+DataStore = require('../../lib/dataStore');
 
-module.exports = function ($scope, Learnset, PokemonLearnset, Generation, Pokemon, Move, Game) {
+module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pokemon, Moves, Games) {
 
   $scope.entryCount = 0;
   $scope.pokemonArrayIndex = 0;
   $scope.gameCodesToCheck = ["RGB", "Y", "DP", "PtHGSS", "DPPt", "HGSS", "BW", "B2W2", "XY", "ORAS"];
 
   $scope.formData = {};
-  getAllLearnsets();
-  getAssociatedData();
+  $scope.dataStore = new DataStore();
+
+  $scope.dataStore.getLearnsets(Learnsets);
+  $scope.dataStore.getPokemonLearnsets(PokemonLearnsets);
+  $scope.dataStore.getGenerations(Generations);
+  $scope.dataStore.getPokemon(Pokemon);
+  $scope.dataStore.getMoves(Moves);
+  $scope.dataStore.getGames(Games);
 
   $scope.runYqlScript = function() {
     // get list of all pokemon names for selected gen and down
@@ -54,27 +61,27 @@ module.exports = function ($scope, Learnset, PokemonLearnset, Generation, Pokemo
   };
 
   $scope.deleteLearnset = function(id) {
-    Learnset.delete(id)
-      .then(function(res) {
-        getAllLearnsets();
+    Learnsets.delete(id)
+      .then((res) => {
+        $scope.dataStore.getLearnsets(Learnsets);
       });
   };
 
   /*$scope.pokemonName = function(pokemonId) {
-    if ($scope.pokemon) {
-      for (var i = 0; i < $scope.pokemon.length; i++){
-        if ($scope.pokemon[i].id == [pokemonId]){
-          return $scope.pokemon[i].name + ($scope.pokemon[i].form == 'alolan' ? '*' : '');
+    if ($scope.dataStore.pokemon) {
+      for (var i = 0; i < $scope.dataStore.pokemon.length; i++){
+        if ($scope.dataStore.pokemon[i].id == [pokemonId]){
+          return $scope.dataStore.pokemon[i].name + ($scope.dataStore.pokemon[i].form == 'alolan' ? '*' : '');
         }
       }
     }
   };
 
   $scope.moveName = function(moveId) {
-    if ($scope.moves) {
-      for (var i = 0; i < $scope.moves.length; i++){
-        if ($scope.moves[i].id == [moveId]){
-          return $scope.moves[i].name;
+    if ($scope.dataStore.moves) {
+      for (var i = 0; i < $scope.dataStore.moves.length; i++){
+        if ($scope.dataStore.moves[i].id == [moveId]){
+          return $scope.dataStore.moves[i].name;
         }
       }
     }
@@ -140,8 +147,8 @@ module.exports = function ($scope, Learnset, PokemonLearnset, Generation, Pokemo
 
     // find game id based on given code string
     if (gameCode != null) {
-      for (var i = 0; i < $scope.games.length; i++) {
-        var gm = $scope.games[i];
+      for (var i = 0; i < $scope.dataStore.games.length; i++) {
+        var gm = $scope.dataStore.games[i];
         if (gameCode == gm.code) {
           gameId = gm.id;
           break;
@@ -175,8 +182,8 @@ module.exports = function ($scope, Learnset, PokemonLearnset, Generation, Pokemo
     }
 
     // loop through all pokemonLearnsets looking for duplicates on learnset/pokemon relationship
-    for (var i = 0; i < $scope.pokemonLearnsets.length; i++) {
-      var pl = $scope.pokemonLearnsets[i];
+    for (var i = 0; i < $scope.dataStore.pokemonLearnsets.length; i++) {
+      var pl = $scope.dataStore.pokemonLearnsets[i];
 
       // only check if old & new generation ranges are different
       // and gameId is null
@@ -205,8 +212,8 @@ module.exports = function ($scope, Learnset, PokemonLearnset, Generation, Pokemo
     // CHECK BOTH DB AND LOCAL BEING-CREATED ARRAY OF LEARNSETS
 
     // loop through all learnsets looking for duplicates on level/move/etc. association
-    for (var i = 0; i < $scope.learnsets.length; i++) {
-      var ls = $scope.learnsets[i];
+    for (var i = 0; i < $scope.dataStore.learnsets.length; i++) {
+      var ls = $scope.dataStore.learnsets[i];
 
       // if newLearnset is equivalent to another entry in DB
       if (newLearnset.level == ls.level
@@ -253,7 +260,7 @@ module.exports = function ($scope, Learnset, PokemonLearnset, Generation, Pokemo
         // OR SOMEHOW GUARANTEE IT GETS ADDED
         Learnset.create(newLearnset).then(function(res) {
           console.log(res.data);
-          PokemonLearnset.create(createPokemonLearnsetObj(res.data.id, pokemon.id, generationId, move.gameId));
+          PokemonLearnsets.create(createPokemonLearnsetObj(res.data.id, pokemon.id, generationId, move.gameId));
         })
         //pokemonLearnsets.push(createPokemonLearnsetObj());
       } else {
@@ -261,7 +268,7 @@ module.exports = function ($scope, Learnset, PokemonLearnset, Generation, Pokemo
         var pokemonLearnsetId = updateIfDuplicate(newPokemonLearnset);
         if (pokemonLearnsetId == -1) {
           // create new pokemonLearnset
-          PokemonLearnset.create(newPokemonLearnset);
+          PokemonLearnsets.create(newPokemonLearnset);
         }
 
       }
@@ -306,7 +313,7 @@ module.exports = function ($scope, Learnset, PokemonLearnset, Generation, Pokemo
   function allPokemonByGeneration(genString) {
     var pokemon = [];
     var gen = generationIdByName(genString);
-    $scope.pokemon.forEach(function(p){
+    $scope.dataStore.pokemon.forEach(function(p){
       if (p.genIntroducedId <= gen) {
         pokemon.push(p);
       }
@@ -356,44 +363,20 @@ module.exports = function ($scope, Learnset, PokemonLearnset, Generation, Pokemo
       });
   }
 
-  function getAllLearnsets() {
-    Learnset.get().then(function(res){
-      $scope.learnsets = res.data;
-    });
-  };
-
-  function getAssociatedData() {
-    Generation.get().then(function(res){
-      $scope.generations = res.data;
-    });
-    PokemonLearnset.get().then(function(res) {
-      $scope.pokemonLearnsets = res.data;
-    });
-    Pokemon.get().then(function(res){
-      $scope.pokemon = res.data;
-    });
-    Move.get().then(function(res){
-      $scope.moves = res.data;
-    });
-    Game.get().then(function(res){
-      $scope.games = res.data;
-    });
-  };
-
   //======= find entries by name string ========
   function generationIdByName(name) {
-    for (var i = 0; i < $scope.generations.length; i++){
-      if ($scope.generations[i].name == name){
-        return $scope.generations[i].id
+    for (var i = 0; i < $scope.dataStore.generations.length; i++){
+      if ($scope.dataStore.generations[i].name == name){
+        return $scope.dataStore.generations[i].id
       }
     }
     return null;
   };
 
   function pokemonIdByName(name) {
-    for (var i = 0; i < $scope.pokemon.length; i++){
-      if ($scope.pokemon[i].name == name){
-        return $scope.pokemon[i].id
+    for (var i = 0; i < $scope.dataStore.pokemon.length; i++){
+      if ($scope.dataStore.pokemon[i].name == name){
+        return $scope.dataStore.pokemon[i].id
       }
     }
     return null;
@@ -407,23 +390,23 @@ module.exports = function ($scope, Learnset, PokemonLearnset, Generation, Pokemo
    */
   function moveIdByName(name, genId) {
     name = name.replace(/[^a-zA-Z0-9]*/g, '').toLowerCase();
-    for (var i = 0; i < $scope.moves.length; i++){
-      var move = $scope.moves[i];
+    for (var i = 0; i < $scope.dataStore.moves.length; i++){
+      var move = $scope.dataStore.moves[i];
       var n = move.name.replace(/[^a-zA-Z0-9]*/g, '').toLowerCase();
       // check generation range
       if (genId >= move.genIntroducedId && (genId <= move.genCompletedId || move.genCompletedId == null)) {
         if (n == name){
-          return $scope.moves[i].id;
+          return $scope.dataStore.moves[i].id;
         }
         // special conditions
         else if (n == 'highjumpkick' && name == 'hijumpkick') {
-          return $scope.moves[i].id;
+          return $scope.dataStore.moves[i].id;
         }
         else if (n == 'feintattack' && name == 'faintattack') {
-          return $scope.moves[i].id;
+          return $scope.dataStore.moves[i].id;
         }
         else if (n = 'smellingsalts' && name == 'smellingsalt') {
-          return $scope.moves[i].id;
+          return $scope.dataStore.moves[i].id;
         }
       }
     }

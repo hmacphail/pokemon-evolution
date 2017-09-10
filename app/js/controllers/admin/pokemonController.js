@@ -1,43 +1,33 @@
+DataStore = require('../../lib/dataStore');
+
 module.exports = function ($scope, Pokemon, Generations, Types) {
 
   $scope.formData = {};
-  getAllPokemon();
-  getGenAndTypeData();
+  $scope.dataStore = new DataStore();
+
+  $scope.dataStore.getPokemon(Pokemon);
+  $scope.dataStore.getGenerations(Generations);
+  $scope.dataStore.getTypes(Types);
 
   $scope.createPokemonBulk = function() {
     Pokemon.bulkCreate(parseBulkData($scope.formData))
-      .then(function(res) {
+      .then((res) => {
         if (res.status == 200) {
           $scope.formData = {};
-          getAllPokemon();
+          $scope.dataStore.getPokemon(Pokemon);
         }
       });
   }
 
   $scope.deletePokemon = function(id) {
     Pokemon.delete(id)
-      .then(function(res) {
-        getAllPokemon();
+      .then((res) => {
+        $scope.dataStore.getPokemon(Pokemon);
       });
   };
 
 
   // --- helper functions ---
-
-  function getAllPokemon() {
-    Pokemon.get().then(function(res){
-      $scope.pokemon = res.data;
-    });
-  };
-
-  function getGenAndTypeData() {
-    Generations.get().then(function(res){
-      $scope.generations = res.data;
-    });
-    Types.get().then(function(res){
-      $scope.types = res.data;
-    });
-  }
 
   function parseBulkData(inputData) {
     // parse pasted data from bulbapedia table
@@ -58,9 +48,9 @@ module.exports = function ($scope, Pokemon, Generations, Types) {
   }
 
   function typeIdByName(name) {
-    for (var i = 0; i < $scope.types.length; i++){
-      if ($scope.types[i].name == name){
-        return $scope.types[i].id
+    for (var i = 0; i < $scope.dataStore.types.length; i++){
+      if ($scope.dataStore.types[i].name == name){
+        return $scope.dataStore.types[i].id
       }
     }
   }

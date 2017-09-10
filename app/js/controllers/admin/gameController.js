@@ -1,23 +1,27 @@
+DataStore = require('../../lib/dataStore');
+
 module.exports = function ($scope, Games, Generations) {
 
   $scope.formData = {};
-  getAllGames();
-  getAllGenerations();
+  $scope.dataStore = new DataStore();
+
+  $scope.dataStore.getGames(Games);
+  $scope.dataStore.getGenerations(Generations);
 
   $scope.createGame = function() {
     Games.create(createGameObj($scope.formData))
-      .then(function(res) {
+      .then((res) => {
         if (res.status == 200) {
           $scope.formData = {};
-          getAllGames();
+          $scope.dataStore.getGames(Games);
         }
       });
   };
 
   $scope.deleteGame = function(id) {
     Games.delete(id)
-      .then(function(res) {
-        getAllGames();
+      .then((res) => {
+        $scope.dataStore.getGames(Games);
       });
   };
 
@@ -32,22 +36,10 @@ module.exports = function ($scope, Games, Generations) {
     };
   }
 
-  function getAllGames() {
-    Games.get().then(function(res){
-      $scope.games = res.data;
-    });
-  };
-
-  function getAllGenerations() {
-    Generations.get().then(function(res){
-      $scope.generations = res.data;
-    });
-  }
-
   function generationIdByName(name) {
-    for (var i = 0; i < $scope.generations.length; i++){
-      if ($scope.generations[i].name == name){
-        return $scope.generations[i].id
+    for (var i = 0; i < $scope.dataStore.generations.length; i++){
+      if ($scope.dataStore.generations[i].name == name){
+        return $scope.dataStore.generations[i].id
       }
     }
     return null;

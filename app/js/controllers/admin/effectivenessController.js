@@ -1,46 +1,36 @@
+DataStore = require('../../lib/dataStore');
+
 module.exports = function ($scope, Effectiveness, Generations, Types) {
 
   $scope.formData = {};
-  getAllEffectiveness();
-  getGenAndTypeData();
+  $scope.dataStore = new DataStore();
+
+  $scope.dataStore.getEffectiveness(Effectiveness);
+  $scope.dataStore.getGenerations(Generations);
+  $scope.dataStore.getTypes(Types);
 
   $scope.createEffectivenessBulk = function() {
     // prep data to send
     var effectiveness = checkBulkForDuplicates(parseBulkData($scope.formData));
 
     Effectiveness.bulkCreate(effectiveness)
-      .then(function(res) {
+      .then((res) => {
         if (res.status == 200) {
           $scope.formData = {};
-          getAllEffectiveness();
+          $scope.dataStore.getEffectiveness(Effectiveness);
         }
       });
   }
 
   $scope.deleteEffectiveness = function(id) {
     Effectiveness.delete(id)
-      .then(function(res) {
-        getAllEffectiveness();
+      .then((res) => {
+        $scope.dataStore.getEffectiveness(Effectiveness);
       });
   };
 
 
   // --- helper functions ---
-
-  function getAllEffectiveness() {
-    Effectiveness.get().then(function(res){
-      $scope.effectiveness = res.data;
-    });
-  };
-
-  function getGenAndTypeData() {
-    Generations.get().then(function(res){
-      $scope.generations = res.data;
-    });
-    Types.get().then(function(res){
-      $scope.types = res.data;
-    });
-  }
 
   function parseBulkData(inputData) {
     // parse pasted data from bulbapedia table
@@ -80,8 +70,8 @@ module.exports = function ($scope, Effectiveness, Generations, Types) {
       // add every object to send array
       bulkDataToSend.push(newEffect);
 
-      for(var i = 0; i< $scope.effectiveness.length; i++) {
-        var oldEffect = $scope.effectiveness[i];
+      for(var i = 0; i< $scope.dataStore.effectiveness.length; i++) {
+        var oldEffect = $scope.dataStore.effectiveness[i];
 
         // skip if old & new generation ranges are equivalent
         if (newEffect.genIntroducedId != oldEffect.genIntroducedId
@@ -105,9 +95,9 @@ module.exports = function ($scope, Effectiveness, Generations, Types) {
   }
 
   function typeIdByName(name) {
-    for (var i = 0; i < $scope.types.length; i++){
-      if ($scope.types[i].name == name){
-        return $scope.types[i].id
+    for (var i = 0; i < $scope.dataStore.types.length; i++){
+      if ($scope.dataStore.types[i].name == name){
+        return $scope.dataStore.types[i].id
       }
     }
   }

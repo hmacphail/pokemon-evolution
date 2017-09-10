@@ -1,35 +1,26 @@
-var Promise = require('promise');
 DataStore = require('../../lib/dataStore');
 
 module.exports = function ($scope, Generations) {
 
   $scope.formData = {};
-  getAllGenerations();
-  //DataStore.getAllGenerations($scope.generations, Generations);
+  $scope.dataStore = new DataStore();
+
+  $scope.dataStore.getGenerations(Generations);
 
   $scope.createGen = function() {
     Generations.create($scope.formData)
-      .then(function(res) {
+      .then((res) => {
         if (res.status == 200) {
           $scope.formData = {};
-          getAllGenerations();
+          $scope.dataStore.getGenerations(Generations);
         }
       });
   };
 
   $scope.deleteGen = function(id) {
     Generations.delete(id)
-      .then(function(res) {
-        getAllGenerations();
+      .then((res) => {
+        $scope.dataStore.getGenerations(Generations);
       });
   };
-
-
-  // --- helper functions ---
-  function getAllGenerations() {
-    DataStore.getAllGenerations(Generations).then(function(res) {
-      $scope.generations = res;
-    });
-  };
-
 };

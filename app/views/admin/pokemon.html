@@ -13,7 +13,7 @@
         <div class="form-group">
           <label for="select-gen">Generation:</label>
           <select id="select-gen" class="form-control pull-right" ng-model="formData.gen">
-            <option ng-repeat="g in generations" value="{{ g.id }}">{{ g.name }}</option>
+            <option ng-repeat="g in dataStore.generations" value="{{ g.id }}">{{ g.name }}</option>
           </select>
         </div>
         <div class="form-group">
@@ -32,7 +32,7 @@
           <th>Form</th>
           <th></th>
         </tr>
-        <tr ng-repeat="pkmn in pokemon">
+        <tr ng-repeat="pkmn in dataStore.pokemon">
           <td> {{ pkmn.pokedexId }} </td>
           <td> {{ pkmn.name }} </td>
           <td> {{ pkmn.genIntroducedId }} </td>
