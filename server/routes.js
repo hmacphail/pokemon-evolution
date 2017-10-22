@@ -89,6 +89,7 @@ router.delete('/games/:id',             games.delete);
 router.get(   '/pokemon-learnsets',     pokemonLearnsets.index);
 router.get(   '/pokemon-learnsets/:id', pokemonLearnsets.show);
 router.post(  '/pokemon-learnsets',     pokemonLearnsets.create);
+router.put(   '/pokemon-learnsets/:id', pokemonLearnsets.update);
 router.delete('/pokemon-learnsets/:id', pokemonLearnsets.delete);
 
 router.get(   '/users',                 users.index);

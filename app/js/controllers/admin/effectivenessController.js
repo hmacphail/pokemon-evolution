@@ -67,7 +67,7 @@ module.exports = function ($scope, Effectiveness, Generations, Types) {
       // add every object to send array
       bulkDataToSend.push(newEffect);
 
-      for(let i = 0; i< $scope.dataStore.effectiveness.length; i++) {
+      for(let i = 0; i < $scope.dataStore.effectiveness.length; i++) {
         const oldEffect = $scope.dataStore.effectiveness[i];
 
         // skip if old & new generation ranges are equivalent

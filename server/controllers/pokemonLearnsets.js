@@ -45,6 +45,21 @@ module.exports = {
       });
   },
 
+  //Edit an existing pokemonLearnset details using model.update()
+  update(req, res) {
+    PokemonLearnset.update(req.body, {
+        where: {
+          id: req.params.id
+        }
+      })
+      .then((updatedRecords) => {
+        res.status(200).json(updatedRecords);
+      })
+      .catch((error) => {
+        res.status(500).json(error);
+      });
+  },
+
   //Delete an existing pokemonLearnset by the unique ID using model.destroy()
   delete(req, res) {
     PokemonLearnset.destroy({

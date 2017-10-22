@@ -20,12 +20,11 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
   $scope.runYqlScript = function() {
     // get list of all pokemon names for selected gen and down
     const pokemon = allPokemonByGeneration($scope.formData.gen);
-    const pm = pokemon[24];
+    //const pm = pokemon[24];
 
     // TEST
-    ajaxRequestLearnsetTable(createYqlQueryUrl(pm.name, $scope.formData.gen), pm, false);
+    //ajaxRequestLearnsetTable(createYqlQueryUrl(pm.name, $scope.formData.gen), pm, false);
 
-    /*
     const startIndex = $scope.pokemonArrayIndex;
     const endIndex = startIndex + 100;
     for (let i = startIndex; i < Math.min(endIndex, pokemon.length); i++) {
@@ -37,16 +36,6 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
       );
     }
     $scope.pokemonArrayIndex = endIndex;
-    */
-    /*
-    pokemon.forEach((pm) => {
-      ajaxRequestLearnsetTable(
-        createYqlQueryUrl(pm.name, $scope.formData.gen),
-        pm,
-        false
-      );
-    });
-    */
   }
 
   $scope.createIndividualLearnset = function() {
@@ -72,7 +61,7 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
       "level" : moveByLevel.level,
       "onEvo" : moveByLevel.onEvo,
       "byTM" : false,
-      "moveId" : moveIdByName(moveByLevel.move, generationId),
+      "moveId" : moveIdByName(moveByLevel.move, generationId, moveByLevel.gameId),
     };
   }
 
@@ -176,9 +165,9 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
           && newPokemonLearnset.pokemonId == pl.pokemonId
           && newPokemonLearnset.genIntroducedId == pl.genCompletedId + 1) {
 
-          newPokemonLearnset.genIntroducedId = ls.genIntroducedId;
-          PokemonLearnset.update(pl.id, newPokemonLearnset); // send update data
-          //console.log(newPokemonLearnset);
+          newPokemonLearnset.genIntroducedId = pl.genIntroducedId;
+          PokemonLearnsets.update(pl.id, newPokemonLearnset); // send update data
+
           return pl.id;
         }
 
@@ -216,10 +205,8 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
       return;
     }
 
-    //var learnsets = [], pokemonLearnsets = [];
     $scope.entryCount++;
 
-    console.log(pokemon.name);
     const results = $(res.query.results.result)
       .tableToJSON(
         { ignoreHiddenRows: false }
@@ -228,22 +215,40 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
     const movesByLevel = parseLearnsetJson(results); // parse JSON
     const generationId = $scope.dataStore.getGenerationIdByName($scope.formData.gen);
 
-    //console.log(movesByLevel);
+    let learnsetsToCreate = [];
 
     movesByLevel.forEach((move) => { // create objects to send
       const newLearnset = createLearnsetObj(move, generationId);
       const learnsetId = lookForExistingLearnset(newLearnset);
 
       if (learnsetId == -1) {
-        // create new learnset and pokemonLearnset
-        // NEED TO WAIT FOR THIS TO FINISH BEFORE LOOP CONTINUES...
-        // OR SOMEHOW GUARANTEE IT GETS ADDED
-        Learnset.create(newLearnset).then((res) => {
-          console.log(res.data);
-          PokemonLearnsets.create(createPokemonLearnsetObj(res.data.id, pokemon.id, generationId, move.gameId));
+        learnsetsToCreate.push(newLearnset);
+      }
+    });
+
+    const learnsets = checkForLearnsetDuplicates(learnsetsToCreate);
+    if (learnsets.length > 0) {
+      Learnsets.bulkCreate(learnsets).then((res) => {
+
+        Learnsets.get().then((res) => {
+          $scope.dataStore.learnsets = res.data;
+          createPokemonLearnsets(movesByLevel, pokemon, generationId);
         });
-        //pokemonLearnsets.push(createPokemonLearnsetObj());
-      } else {
+
+      });
+
+    } else {
+      createPokemonLearnsets(movesByLevel, pokemon, generationId);
+    }
+  };
+
+  function createPokemonLearnsets(movesByLevel, pokemon, generationId) {
+    //console.log(movesByLevel);
+    movesByLevel.forEach((move) => { // create objects to send
+      const learnset = createLearnsetObj(move, generationId);
+      const learnsetId = lookForExistingLearnset(learnset);
+
+      if (learnsetId != -1) {
         const newPokemonLearnset = createPokemonLearnsetObj(learnsetId, pokemon.id, generationId, move.gameId);
         const pokemonLearnsetId = updateIfDuplicate(newPokemonLearnset);
         if (pokemonLearnsetId == -1) {
@@ -251,39 +256,29 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
           PokemonLearnsets.create(newPokemonLearnset);
         }
 
+      } else {
+        console.error("learnset id not found", move);
       }
 
-      // if (!checkForDuplicates(newLearnset)) {
-      //   learnsets.push(newLearnset);
-      // }
     });
+  }
 
-    //Learnset.bulkCreate(learnsets);
+  function checkForLearnsetDuplicates(ls) {
+    for (let i = 0; i < ls.length; i++) {
+      for (let j = 0; j < ls.length; j++) {
+        if (i != j
+          && ls[i].level == ls[j].level
+          && ls[i].onEvo == ls[j].onEvo
+          && ls[i].byTM == ls[j].byTM
+          && ls[i].moveId == ls[j].moveId) {
 
-    //console.log(learnsets);
-    // send data
-    //learnsets.forEach(function(ls) {
-    //  Learnset.create(ls);
-    //});
-
-
-
-
-      // since we are going thru all pokemon in db not by number or name,
-      // create array with one pokemon for creating learnset, but only if form == 'original' or variation == null (??)
-      // otherwise, check for existing entry. if not found, create as array like above,
-      // if found, create single entry in pokemonLearnset (manually?)
-      //
-      // cant add variations into pokemon array b/c what if the current gen range is wrong for the pokemon youre adding?
-
-      // creating array like this only good for Gen 1
-      // or maybe only for things with no variation (or form..?)
-
-
-
-
-    //});
-  };
+          ls.splice(j, 1);
+          break;
+        }
+      }
+    }
+    return ls;
+  }
 
   /**
    * Produces an array containing pokemon that were introduced on or before the given level
@@ -305,7 +300,7 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
   function createYqlQueryUrl(pokemonName, genString) {
     // for generations excluding most recent
     const source = `https://query.yahooapis.com/v1/public/yql`;
-    const query = `select * from htmlstring where url="http://bulbapedia.bulbagarden.net/wiki/${pokemonName.replace('_', '_')}_(Pokémon)/Generation_${genString}_learnset" and xpath='//*[@id="mw-content-text"]/table[1]/tbody/tr[2]/td/table'`;
+    const query = `select * from htmlstring where url="http://bulbapedia.bulbagarden.net/wiki/${pokemonName.replace(' ', '_')}_(Pokémon)/Generation_${genString}_learnset" and xpath='//*[@id="mw-content-text"]/table[1]/tbody/tr[2]/td/table'`;
     const env = `store%3A%2F%2Fdatatables.org%2Falltableswithkeys`;
 
     return `${source}?q=${encodeURI(query)}&format=json&env=${env}&callback=`;
@@ -343,13 +338,13 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
    * @param  string name Name to find in existing moves table
    * @return string      ID of move
    */
-  function moveIdByName(name, genId) {
+  function moveIdByName(name, genId, gameId) {
     name = name.replace(/[^a-zA-Z0-9]*/g, '').toLowerCase();
     for (let i = 0; i < $scope.dataStore.moves.length; i++){
       const move = $scope.dataStore.moves[i];
       const n = move.name.replace(/[^a-zA-Z0-9]*/g, '').toLowerCase();
-      // check generation range
-      if (genId >= move.genIntroducedId && (genId <= move.genCompletedId || move.genCompletedId == null)) {
+      // check generation range and gameId
+      if (genId >= move.genIntroducedId && (genId <= move.genCompletedId || move.genCompletedId == null) && (move.gameId == gameId || move.gameId == null)) {
         if (n == name){
           return $scope.dataStore.moves[i].id;
         }
@@ -360,7 +355,7 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
         else if (n == 'feintattack' && name == 'faintattack') {
           return $scope.dataStore.moves[i].id;
         }
-        else if (n = 'smellingsalts' && name == 'smellingsalt') {
+        else if (n == 'smellingsalts' && name == 'smellingsalt') {
           return $scope.dataStore.moves[i].id;
         }
       }
