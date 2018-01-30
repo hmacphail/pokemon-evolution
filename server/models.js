@@ -40,12 +40,15 @@ if (!global.hasOwnProperty('db')) {
     // link to model definitions and add to db variable
     Generation: sequelize.import('./models/generation'),
     Pokemon: sequelize.import('./models/pokemon'),
+    PokemonStats: sequelize.import('./models/pokemonStats'),
     Evolution: sequelize.import('./models/evolution'),
     Type: sequelize.import('./models/type'),
     Effectiveness: sequelize.import('./models/effectiveness'),
     Ability: sequelize.import('./models/ability'),
     Abilityset: sequelize.import('./models/abilityset'),
     Move: sequelize.import('./models/move'),
+    ZMove: sequelize.import('./models/zMove'),
+    MoveFlags: sequelize.import('.models/moveFlags'),
     Learnset: sequelize.import('./models/learnset'),
     Item: sequelize.import('./models/item'),
     PokemonTypes: sequelize.import('./models/pokemonTypes'),
@@ -149,6 +152,11 @@ if (!global.hasOwnProperty('db')) {
       allowNull: false
     }
   });
+  db.Pokemon.hasMany(db.PokemonStats, {
+    foreignKey: {
+      allowNull: false
+    }
+  });
   db.Pokemon.hasMany(db.PokemonTypes, {
     foreignKey: {
       allowNull: false
@@ -198,7 +206,33 @@ if (!global.hasOwnProperty('db')) {
     }
   });
 
+  db.Move.hasMany(db.Move, {
+    as: 'commonMove',
+    foreignKey: {
+      name: 'commonMoveId'
+    }
+  });
   db.Move.hasMany(db.Learnset, {
+    foreignKey: {
+      allowNull: false
+    }
+  });
+  db.Move.hasMany(db.ZMove, {
+    as: 'zMove',
+    foreignKey: {
+      name: 'zMoveId',
+      allowNull: false
+    }
+  });
+  db.Move.hasMany(db.ZMove, {
+    as: 'originalMove',
+    foreignKey: {
+      name: 'originalMoveId',
+      allowNull: false
+    }
+  });
+
+  db.MoveFlags.hasMany(db.Move, {
     foreignKey: {
       allowNull: false
     }

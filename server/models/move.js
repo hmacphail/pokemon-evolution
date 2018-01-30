@@ -6,10 +6,6 @@ module.exports = function(sequelize, DataTypes) {
       type: Sequelize.STRING(50),
       allowNull: false
     },
-    isTM: {
-      type: Sequelize.BOOLEAN,
-      allowNull: false
-    },
     pp: {
       type: Sequelize.INTEGER,
       allowNull: false
@@ -25,14 +21,35 @@ module.exports = function(sequelize, DataTypes) {
       values: ['physical', 'special', 'status'],
       allowNull: false
     },
-    extraInfo: {
-      type: Sequelize.STRING(50)
+    target: {
+      type: Sequelize.STRING(50),
+      allowNull: false
     },
-    extraInfoColumn: {
-      type: Sequelize.STRING(50)
+    speedPriority: {
+      type: Sequelize.INTEGER,
+      allowNull: false
+    },
+    baseCritHitChance: {
+      type: Sequelize.FLOAT
+    },
+    physicalContact: {
+      type: Sequelize.BOOLEAN,
+      allowNull: false
+    },
+    secondaryEffect: {
+      type: Sequelize.STRING(255)
+    },
+    secondaryEffectRate: {
+      type: Sequelize.FLOAT
     },
     description: {
       type: Sequelize.STRING(255)
+    },
+    tmNumber: {
+      type: Sequelize.STRING(20)
+    },
+    hmNumber: {
+      type: Sequelize.STRING(20)
     }
   }, {
     timestamps: false

@@ -6,7 +6,8 @@ module.exports = function(sequelize, DataTypes) {
       type: Sequelize.INTEGER
     },
     onEvo: {
-      type: Sequelize.BOOLEAN
+      type: Sequelize.BOOLEAN,
+      allowNull: false
     },
     byTM: {
       type: Sequelize.BOOLEAN,

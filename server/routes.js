@@ -1,11 +1,14 @@
 generations       = require('./controllers/generations');
 pokemon           = require('./controllers/pokemon');
+pokemonStats	  = require('./controllers/pokemonStats');
 evolutions        = require('./controllers/evolutions');
 types             = require('./controllers/types');
 effectiveness     = require('./controllers/effectiveness');
 abilities         = require('./controllers/abilities');
 abilitysets       = require('./controllers/abilitysets');
 moves             = require('./controllers/moves');
+zMoves			  = require('./controllers/zMoves');
+moveFlags		  = require('./controllers/moveFlags');
 learnsets         = require('./controllers/learnsets');
 items             = require('./controllers/items');
 pokemonTypes      = require('./controllers/pokemonTypes');
@@ -26,6 +29,12 @@ router.get(   '/pokemon/:id',           pokemon.show);
 router.post(  '/pokemon',               pokemon.create);
 router.post(  '/pokemon/bulk',          pokemon.bulkCreate);
 router.delete('/pokemon/:id',           pokemon.delete);
+
+router.get(   '/pokemon-stats',         pokemonStats.index);
+router.get(   '/pokemon-stats/:id',     pokemonStats.show);
+router.post(  '/pokemon-stats',         pokemonStats.create);
+router.post(  '/pokemon-stats/bulk',    pokemonStats.bulkCreate);
+router.delete('/pokemon-stats/:id',     pokemonStats.delete);
 
 router.get(   '/evolutions',            evolutions.index);
 router.get(   '/evolutions/:id',        evolutions.show);
@@ -63,6 +72,18 @@ router.post(  '/moves',                 moves.create);
 router.post(  '/moves/bulk',            moves.bulkCreate);
 router.delete('/moves/:id',             moves.delete);
 
+router.get(   '/move-flags',            moveFlags.index);
+router.get(   '/move-flags/:id',        moveFlags.show);
+router.post(  '/move-flags',            moveFlags.create);
+router.post(  '/move-flags/bulk',       moveFlags.bulkCreate);
+router.delete('/move-flags/:id',        moveFlags.delete);
+
+router.get(   '/z-moves',               zMoves.index);
+router.get(   '/z-moves/:id',           zMoves.show);
+router.post(  '/z-moves',               zMoves.create);
+router.post(  '/z-moves/bulk',          zMoves.bulkCreate);
+router.delete('/z-moves/:id',           zMoves.delete);
+
 router.get(   '/learnsets',             learnsets.index);
 router.get(   '/learnsets/:id',         learnsets.show);
 router.post(  '/learnsets',             learnsets.create);
@@ -73,6 +94,7 @@ router.delete('/learnsets/:id',         learnsets.delete);
 router.get(   '/pokemon-types',         pokemonTypes.index);
 router.get(   '/pokemon-types/:id',     pokemonTypes.show);
 router.post(  '/pokemon-types',         pokemonTypes.create);
+router.post(  '/pokemon-types/bulk',    pokemonTypes.bulkCreate);
 router.delete('/pokemon-types/:id',     pokemonTypes.delete);
 
 router.get(   '/items',                 items.index);
@@ -89,6 +111,7 @@ router.delete('/games/:id',             games.delete);
 router.get(   '/pokemon-learnsets',     pokemonLearnsets.index);
 router.get(   '/pokemon-learnsets/:id', pokemonLearnsets.show);
 router.post(  '/pokemon-learnsets',     pokemonLearnsets.create);
+router.post(  '/pokemon-learnsets/bulk',pokemonLearnsets.bulkCreate);
 router.delete('/pokemon-learnsets/:id', pokemonLearnsets.delete);
 
 router.get(   '/users',                 users.index);
