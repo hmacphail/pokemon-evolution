@@ -1,7 +1,7 @@
-Sequelize = require('sequelize');
+var Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('move', {
+  var Move = sequelize.define('Move', {
     name: {
       type: Sequelize.STRING(50),
       allowNull: false
@@ -52,6 +52,17 @@ module.exports = function(sequelize, DataTypes) {
       type: Sequelize.STRING(20)
     }
   }, {
-    timestamps: false
+    tableName: 'moves',
+    timestamps: false,
+    classMethods: {
+      associate: function(db) {
+        Move.hasMany(db.Move, { as: 'commonMove', foreignKey: { name: 'commonMoveId' }});
+        Move.hasMany(db.Learnset, { foreignKey: { allowNull: false }});
+        Move.hasMany(db.ZMove, { as: 'zMove', foreignKey: { name: 'zMoveId', allowNull: false }});
+        Move.hasMany(db.ZMove, { as: 'originalMove', foreignKey: { name: 'originalMoveId', allowNull: false }});
+      }
+    }
   });
+  return Move;
+
 };

@@ -1,7 +1,7 @@
-Sequelize = require('sequelize');
+var Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('evolution', {
+  var Evolution = sequelize.define('Evolution', {
     trigger: {
       type: Sequelize.ENUM,
       values: ['level', 'item', 'trade', 'happiness', 'other'],
@@ -14,6 +14,9 @@ module.exports = function(sequelize, DataTypes) {
       type: Sequelize.INTEGER
     }
   }, {
+    tableName: 'evolutions',
     timestamps: false
   });
+  return Evolution;
+
 };

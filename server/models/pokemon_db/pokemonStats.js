@@ -1,7 +1,7 @@
-Sequelize = require('sequelize');
+var Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('pokemonStats', {
+  var PokemonStats = sequelize.define('PokemonStats', {
     baseHp: {
       type: Sequelize.INTEGER,
       allowNull: false
@@ -27,7 +27,9 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     }
   }, {
-    freezeTableName: true,
+    tableName: 'pokemonStats',
     timestamps: false
   });
+  return PokemonStats;
+
 };

@@ -1,12 +1,15 @@
-Sequelize = require('sequelize');
+var Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('zMove', {
+  var ZMove = sequelize.define('ZMove', {
     attack: {
       type: Sequelize.INTEGER,
       allowNull: false
     }
   }, {
+    tableName: 'zMoves',
     timestamps: false
   });
+  return ZMove;
+
 };

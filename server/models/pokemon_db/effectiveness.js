@@ -1,14 +1,16 @@
-Sequelize = require('sequelize');
+var Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('effectiveness', {
+  var Effectiveness = sequelize.define('Effectiveness', {
     comparison: {
       type: Sequelize.ENUM,
       values: ['strong', 'neutral', 'weak', 'unaffected'],
       allowNull: false
     }
   }, {
-    freezeTableName: true,
+    tableName: 'effectiveness',
     timestamps: false
   });
+  return Effectiveness;
+
 };

@@ -1,7 +1,7 @@
-Sequelize = require('sequelize');
+var Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('user', {
+  var User = sequelize.define('User', {
     username: {
       type: Sequelize.STRING(50),
       allowNull: false
@@ -11,6 +11,9 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     }
   }, {
+    tableName: 'users',
     timestamps: false
   });
+  return User;
+
 };
