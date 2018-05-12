@@ -47,7 +47,7 @@ module.exports = function(sequelize, DataTypes) {
     timestamps: false,
     classMethods: {
       associate: function(db) {
-        MoveFlags.hasMany(db.Move, { foreignKey: { allowNull: false }});
+        MoveFlags.hasMany(db.Move, { foreignKey: { name: 'moveFlagId', allowNull: false }});
       }
     }
   });

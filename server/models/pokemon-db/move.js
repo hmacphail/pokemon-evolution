@@ -57,7 +57,7 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(db) {
         Move.hasMany(db.Move, { as: 'commonMove', foreignKey: { name: 'commonMoveId' }});
-        Move.hasMany(db.Learnset, { foreignKey: { allowNull: false }});
+        Move.hasMany(db.Learnset, { foreignKey: { name: 'moveId', allowNull: false }});
         Move.hasMany(db.ZMove, { as: 'zMove', foreignKey: { name: 'zMoveId', allowNull: false }});
         Move.hasMany(db.ZMove, { as: 'originalMove', foreignKey: { name: 'originalMoveId', allowNull: false }});
       }

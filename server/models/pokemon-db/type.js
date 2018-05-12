@@ -15,7 +15,7 @@ module.exports = function(sequelize, DataTypes) {
 				Type.hasMany(db.PokemonTypes, { as: 'secondaryType', foreignKey: 'secondaryTypeId' });
 				Type.hasMany(db.Effectiveness, { as: 'attackingType', foreignKey: { name: 'attackingTypeId', allowNull: false }});
 				Type.hasMany(db.Effectiveness, { as: 'defendingType', foreignKey: { name: 'defendingTypeId', allowNull: false }});
-				Type.hasMany(db.Move, { foreignKey: { allowNull: false }});
+				Type.hasMany(db.Move, { foreignKey: { name: 'typeId', allowNull: false }});
       }
 	}
   });

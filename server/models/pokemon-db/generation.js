@@ -21,7 +21,7 @@ module.exports = function(sequelize, DataTypes) {
         Generation.hasMany(db.Move, { as: 'genCompleted', foreignKey: 'genCompletedId' });
         Generation.hasMany(db.PokemonTypes, { as: 'genIntroduced', foreignKey: { name: 'genIntroducedId', allowNull: false }});
         Generation.hasMany(db.PokemonTypes, { as: 'genCompleted', foreignKey: 'genCompletedId' });
-        Generation.hasMany(db.Game, { foreignKey: { allowNull: false }});
+        Generation.hasMany(db.Game, { foreignKey: { name: 'generationId', allowNull: false }});
         Generation.hasMany(db.PokemonLearnsets, { as: 'genIntroduced', foreignKey: { name: 'genIntroducedId', allowNull: false }});
         Generation.hasMany(db.PokemonLearnsets, { as: 'genCompleted', foreignKey: 'genCompletedId' });
       }

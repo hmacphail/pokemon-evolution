@@ -26,10 +26,10 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(db) {
         Pokemon.hasMany(db.Evolution, { as: 'fromPokemon', foreignKey: { name: 'fromPokemonId', allowNull: false }});
         Pokemon.hasMany(db.Evolution, { as: 'toPokemon', foreignKey: { name: 'toPokemonId', allowNull: false }});
-        Pokemon.hasMany(db.Abilityset, { foreignKey: { allowNull: false }});
-        Pokemon.hasMany(db.PokemonStats, { foreignKey: { allowNull: false }});
-        Pokemon.hasMany(db.PokemonTypes, { foreignKey: { allowNull: false }});
-        Pokemon.hasMany(db.PokemonLearnsets, { foreignKey: { allowNull: false }});
+        Pokemon.hasMany(db.Abilityset, { foreignKey: { name: 'pokemonId', allowNull: false }});
+        Pokemon.hasMany(db.PokemonStats, { foreignKey: { name: 'pokemonId', allowNull: false }});
+        Pokemon.hasMany(db.PokemonTypes, { foreignKey: { name: 'pokemonId', allowNull: false }});
+        Pokemon.hasMany(db.PokemonLearnsets, { foreignKey: { name: 'pokemonId', allowNull: false }});
       }
     }
   });
