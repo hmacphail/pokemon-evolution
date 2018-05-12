@@ -14,7 +14,7 @@ module.exports = function(sequelize, DataTypes) {
       type: Sequelize.INTEGER
     }
   }, {
-    tableName: 'evolutions',
+    tableName: 'evolution',
     timestamps: false
   });
   return Evolution;

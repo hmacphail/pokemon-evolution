@@ -9,6 +9,8 @@
   },
   "scripts": {
     "start": "node app.js",
+    "migrations": "sequelize db:migrate --migrations-path=server/migrations",
+    "seed": "sequelize db:seed:all --seeders-path=server/seeders",
     "dev": "nodemon app.js",
     "watch": "watchify app/js/app.js -o app/js/_bundle.js"
   },

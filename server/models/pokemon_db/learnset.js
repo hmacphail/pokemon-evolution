@@ -11,7 +11,8 @@ module.exports = function(sequelize, DataTypes) {
     },
     byTM: {
       type: Sequelize.BOOLEAN,
-      allowNull: false
+      allowNull: false,
+      defaultValue: false
     }
   }, {
     tableName: 'learnsets',
