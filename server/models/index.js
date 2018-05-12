@@ -12,12 +12,12 @@ var sequelize = (config.use_env_variable) ?
 	new Sequelize(process.env[config.use_env_variable], config) :
 	new Sequelize(config.database, config.username, config.password, config);
 
-fs.readdirSync(path.join(__dirname, 'pokemon_db'))
+fs.readdirSync(path.join(__dirname, 'pokemon-db'))
 	.filter((file) => {
 		return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
 	})
 	.forEach((file) => {
-		var model = sequelize['import'](path.join(__dirname, 'pokemon_db', file));
+		var model = sequelize['import'](path.join(__dirname, 'pokemon-db', file));
 		db[model.name] = model;
 	});
 

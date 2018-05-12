@@ -95,7 +95,7 @@ ctrl.controller('itemController', ['$scope', 'Items', itemController]);
 ctrl.controller('gameController', ['$scope', 'Games', 'Generations', gameController]);
 
 },{"./controllers/admin/abilityController":3,"./controllers/admin/abilitysetController":4,"./controllers/admin/effectivenessController":5,"./controllers/admin/evolutionController":6,"./controllers/admin/gameController":7,"./controllers/admin/generationController":8,"./controllers/admin/itemController":9,"./controllers/admin/learnsetController":10,"./controllers/admin/moveController":11,"./controllers/admin/pokemonController":12,"./controllers/admin/typeController":13,"./controllers/errorController":14,"./controllers/homeController":15}],3:[function(require,module,exports){
-DataStore = require('../../lib/dataStore');
+DataStore = require('../../lib/data-store');
 
 module.exports = function ($scope, Abilities, Generations) {
 
@@ -139,8 +139,8 @@ module.exports = function ($scope, Abilities, Generations) {
 
 };
 
-},{"../../lib/dataStore":16}],4:[function(require,module,exports){
-DataStore = require('../../lib/dataStore');
+},{"../../lib/data-store":16}],4:[function(require,module,exports){
+DataStore = require('../../lib/data-store');
 
 module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities) {
 
@@ -297,8 +297,8 @@ module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities)
 
 };
 
-},{"../../lib/dataStore":16}],5:[function(require,module,exports){
-DataStore = require('../../lib/dataStore');
+},{"../../lib/data-store":16}],5:[function(require,module,exports){
+DataStore = require('../../lib/data-store');
 
 module.exports = function ($scope, Effectiveness, Generations, Types) {
 
@@ -403,8 +403,8 @@ module.exports = function ($scope, Effectiveness, Generations, Types) {
 
 };
 
-},{"../../lib/dataStore":16}],6:[function(require,module,exports){
-DataStore = require('../../lib/dataStore');
+},{"../../lib/data-store":16}],6:[function(require,module,exports){
+DataStore = require('../../lib/data-store');
 
 module.exports = function ($scope, Evolutions, Pokemon, Items) {
 
@@ -619,8 +619,8 @@ module.exports = function ($scope, Evolutions, Pokemon, Items) {
 
 };
 
-},{"../../lib/dataStore":16}],7:[function(require,module,exports){
-DataStore = require('../../lib/dataStore');
+},{"../../lib/data-store":16}],7:[function(require,module,exports){
+DataStore = require('../../lib/data-store');
 
 module.exports = function ($scope, Games, Generations) {
 
@@ -657,8 +657,8 @@ module.exports = function ($scope, Games, Generations) {
 
 };
 
-},{"../../lib/dataStore":16}],8:[function(require,module,exports){
-DataStore = require('../../lib/dataStore');
+},{"../../lib/data-store":16}],8:[function(require,module,exports){
+DataStore = require('../../lib/data-store');
 
 module.exports = function ($scope, Generations) {
 
@@ -686,8 +686,8 @@ module.exports = function ($scope, Generations) {
 
 };
 
-},{"../../lib/dataStore":16}],9:[function(require,module,exports){
-DataStore = require('../../lib/dataStore');
+},{"../../lib/data-store":16}],9:[function(require,module,exports){
+DataStore = require('../../lib/data-store');
 
 module.exports = function ($scope, Items) {
 
@@ -742,9 +742,9 @@ module.exports = function ($scope, Items) {
 
 };
 
-},{"../../lib/dataStore":16}],10:[function(require,module,exports){
-require('../../lib/tableToJson');
-DataStore = require('../../lib/dataStore');
+},{"../../lib/data-store":16}],10:[function(require,module,exports){
+require('../../lib/table-to-json');
+DataStore = require('../../lib/data-store');
 
 module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pokemon, Moves, Games) {
 
@@ -1116,8 +1116,8 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
 
 };
 
-},{"../../lib/dataStore":16,"../../lib/tableToJson":17}],11:[function(require,module,exports){
-DataStore = require('../../lib/dataStore');
+},{"../../lib/data-store":16,"../../lib/table-to-json":17}],11:[function(require,module,exports){
+DataStore = require('../../lib/data-store');
 
 module.exports = function ($scope, Moves, Generations, Types) {
 
@@ -1215,8 +1215,8 @@ module.exports = function ($scope, Moves, Generations, Types) {
 
 };
 
-},{"../../lib/dataStore":16}],12:[function(require,module,exports){
-DataStore = require('../../lib/dataStore');
+},{"../../lib/data-store":16}],12:[function(require,module,exports){
+DataStore = require('../../lib/data-store');
 
 module.exports = function ($scope, Pokemon, Generations, Types) {
 
@@ -1267,8 +1267,8 @@ module.exports = function ($scope, Pokemon, Generations, Types) {
 
 };
 
-},{"../../lib/dataStore":16}],13:[function(require,module,exports){
-DataStore = require('../../lib/dataStore');
+},{"../../lib/data-store":16}],13:[function(require,module,exports){
+DataStore = require('../../lib/data-store');
 
 module.exports = function ($scope, Types) {
 
@@ -1296,7 +1296,7 @@ module.exports = function ($scope, Types) {
 
 };
 
-},{"../../lib/dataStore":16}],14:[function(require,module,exports){
+},{"../../lib/data-store":16}],14:[function(require,module,exports){
 module.exports = function ($scope) {
   $scope.message = 'Page not found!';
 };

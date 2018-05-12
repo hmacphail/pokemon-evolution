@@ -1,4 +1,4 @@
-DataStore = require('../../lib/dataStore');
+DataStore = require('../../lib/data-store');
 
 module.exports = function ($scope, Abilitysets, Generations, Pokemon, Abilities) {
 

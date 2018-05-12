@@ -1,4 +1,4 @@
-DataStore = require('../../lib/dataStore');
+DataStore = require('../../lib/data-store');
 
 module.exports = function ($scope, Evolutions, Pokemon, Items) {
 

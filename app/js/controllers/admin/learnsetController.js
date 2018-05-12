@@ -1,5 +1,5 @@
-require('../../lib/tableToJson');
-DataStore = require('../../lib/dataStore');
+require('../../lib/table-to-json');
+DataStore = require('../../lib/data-store');
 
 module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pokemon, Moves, Games) {
 
