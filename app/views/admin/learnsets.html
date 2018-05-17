@@ -4,7 +4,8 @@
     <div class="col-sm-3">
       <h2>Learnsets</h2>
       <div>
-        <i class="fa fa-warning"></i> Refresh page between adding each generation.
+        <svg class="px px-warning"><use xlink:href="/static/symbol-defs.svg#px-warning"></use></svg>
+        <span> Refresh page between adding each generation.</span>
       </div>
     </div>
 
@@ -92,7 +93,7 @@
           <td> {{ ls.genCompletedId }} </td>
           <td>
             <a href="#" class="lnk-danger pull-right" ng-click="deleteLearnset(ls.id)">
-              <i class="fa fa-times"></i>
+              <svg class="pxsmall px-cross"><use xlink:href="/static/symbol-defs.svg#px-cross"></use></svg>
             </a>
           </td>
         </tr>

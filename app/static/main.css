@@ -1,0 +1,36 @@
+body {
+    font-family: 'VT323', monospace;
+}
+
+h1, h2, h3, h4, h5, h6, 
+.h1, .h2, .h3, .h4, .h5, .h6 {
+	font-family: 'Open Sans', sans-serif;
+}
+
+.lnk-danger, .lnk-danger:hover {
+	color: #d9534f;
+}
+
+#admin-pokemon #select-gen,
+#admin-evolutions #select-trigger{
+	width: 75%;
+	display: inline;
+}
+
+.px, .pxsmall {
+	display: inline-block;
+	stroke-width: 0;
+	stroke: currentColor;
+	fill: currentColor;
+}
+
+.px {
+	width: 1em;
+	height: 1em;
+	margin-bottom: -2px;
+}
+
+.pxsmall {
+	width: 0.6em;
+	height: 0.6em;
+}

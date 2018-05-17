@@ -1,9 +1,0 @@
-.lnk-danger, .lnk-danger:hover {
-  color: #d9534f;
-}
-
-#admin-pokemon #select-gen,
-#admin-evolutions #select-trigger{
-  width: 75%;
-  display: inline;
-}

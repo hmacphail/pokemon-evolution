@@ -6,10 +6,17 @@
       </div>
 
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="/"><i class="fa fa-home"></i> Home</a></li>
+        <li>
+          <a href="/">
+            <svg class="px px-home"><use xlink:href="/static/symbol-defs.svg#px-home"></use></svg>
+            <span> Home</span>
+          </a>
+        </li>
         <li role="presentation" class="dropdown">
           <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-            <i class="fa fa-shield"></i> Admin <span class="caret"></span>
+            <svg class="px px-shield"><use xlink:href="/static/symbol-defs.svg#px-shield"></use></svg>
+            <span> Admin</span>
+            <svg class="pxsmall px-chevron-down"><use xlink:href="/static/symbol-defs.svg#px-chevron-down"></use></svg>
           </a>
           <ul class="dropdown-menu">
             <li><a href="/admin/generations">Generations</a></li>

@@ -10,7 +10,7 @@ learnsetService         = require('./services/learnsetService');
 itemService             = require('./services/itemService');
 pokemonTypeService      = require('./services/gameService');
 gameService             = require('./services/gameService');
-pokemonLearnsetService  = require('./services/gameService');
+pokemonLearnsetService  = require('./services/pokemonLearnsetService');
 
 // create factories
 var srvc = angular.module('services', []);
