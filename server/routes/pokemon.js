@@ -2,7 +2,7 @@ var Pokemon = require('../models').Pokemon;
 
 module.exports = {
   //Get a list of all pokemons using model.findAll()
-  index(req, res) {
+  list(req, res) {
     Pokemon.findAll()
       .then((pokemons) => {
         res.status(200).json(pokemons);

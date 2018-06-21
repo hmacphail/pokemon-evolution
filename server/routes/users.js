@@ -2,7 +2,7 @@ var User = require('../models').User;
 
 module.exports = {
   //Get a list of all users using model.findAll()
-  index(req, res) {
+  list(req, res) {
     User.findAll()
       .then((users) => {
         res.status(200).json(users);

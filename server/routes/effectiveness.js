@@ -2,7 +2,7 @@ var Effectiveness = require('../models').Effectiveness;
 
 module.exports = {
   //Get a list of all effectivenesss using model.findAll()
-  index(req, res) {
+  list(req, res) {
     Effectiveness.findAll()
       .then((effectivenesss) => {
         res.status(200).json(effectivenesss);

@@ -3,7 +3,7 @@ var Learnset = require('../models').Learnset;
 
 module.exports = {
   //Get a list of all learnsets using model.findAll()
-  index(req, res) {
+  list(req, res) {
     Learnset.findAll({
         //include: Pokemon
       })

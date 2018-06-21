@@ -2,7 +2,7 @@ var PokemonType = require('../models').PokemonTypes;
 
 module.exports = {
   //Get a list of all pokemonTypes using model.findAll()
-  index(req, res) {
+  list(req, res) {
     PokemonType.findAll()
       .then((pokemonTypes) => {
         res.status(200).json(pokemonTypes);

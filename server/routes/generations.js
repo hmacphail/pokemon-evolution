@@ -3,7 +3,7 @@ var Generation = require('../models').Generation;
 
 module.exports = {
   //Get a list of all generations using model.findAll()
-  index(req, res) {
+  list(req, res) {
     Generation.findAll({
         //include: Abilityset
       })

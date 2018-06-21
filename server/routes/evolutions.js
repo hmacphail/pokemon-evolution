@@ -2,7 +2,7 @@ var Evolution = require('../models').Evolution;
 
 module.exports = {
   //Get a list of all evolutions using model.findAll()
-  index(req, res) {
+  list(req, res) {
     Evolution.findAll()
       .then((evolutions) => {
         res.status(200).json(evolutions);

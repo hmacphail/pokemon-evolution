@@ -1136,6 +1136,23 @@ module.exports = function ($scope, Learnsets, PokemonLearnsets, Generations, Pok
 
 };
 
+function isMoveNameEquivalent(originalName, newName) {
+  if (originalName == newName){
+    return true;
+  }
+  // special conditions
+  else if (originalName == 'highjumpkick' && newName == 'hijumpkick') {
+    return true;
+  }
+  else if (originalName == 'feintattack' && newName == 'faintattack') {
+    return true;
+  }
+  else if (originalName == 'smellingsalts' && newName == 'smellingsalt') {
+    return true;
+  }
+  return false;
+}
+
 },{"../../lib/data-store":16,"../../lib/table-to-json":17}],11:[function(require,module,exports){
 DataStore = require('../../lib/data-store');
 

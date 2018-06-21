@@ -2,7 +2,7 @@ var ZMove = require('../models').ZMove;
 
 module.exports = {
   //Get a list of all zMove using model.findAll()
-  index(req, res) {
+  list(req, res) {
     ZMove.findAll()
       .then((zMoves) => {
         res.status(200).json(zMoves);

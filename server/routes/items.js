@@ -2,7 +2,7 @@ var Item = require('../models').Item;
 
 module.exports = {
   //Get a list of all items using model.findAll()
-  index(req, res) {
+  list(req, res) {
     Item.findAll()
       .then((items) => {
         res.status(200).json(items);

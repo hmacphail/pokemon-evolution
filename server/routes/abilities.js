@@ -2,7 +2,7 @@ var Ability = require('../models').Ability;
 
 module.exports = {
   //Get a list of all abilities using model.findAll()
-  index(req, res) {
+  list(req, res) {
     Ability.findAll()
       .then((abilities) => {
         res.status(200).json(abilities);

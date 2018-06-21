@@ -2,7 +2,7 @@ var PokemonLearnset = require('../models').PokemonLearnsets;
 
 module.exports = {
   //Get a list of all pokemonLearnsets using model.findAll()
-  index(req, res) {
+  list(req, res) {
     PokemonLearnset.findAll()
       .then((pokemonLearnsets) => {
         res.status(200).json(pokemonLearnsets);

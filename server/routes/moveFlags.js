@@ -2,7 +2,7 @@ var MoveFlag = require('../models').MoveFlags;
 
 module.exports = {
   //Get a list of all moveFlags using model.findAll()
-  index(req, res) {
+  list(req, res) {
     MoveFlag.findAll()
       .then((moveFlags) => {
         res.status(200).json(moveFlags);

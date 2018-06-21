@@ -9,7 +9,8 @@
     "dialect": "postgres",
     "dialectOptions": {
       "ssl": true
-    }
+    },
+    "migrationStorageTableName": "sequelizeMeta"
   },
   "test": {
     "username": "postgres",
@@ -21,7 +22,8 @@
     "dialect": "postgres",
     "dialectOptions": {
       "ssl": true
-    }
+    },
+    "migrationStorageTableName": "sequelizeMeta"
   },
   "production": {
     "username": "postgres",
@@ -33,6 +35,7 @@
     "dialect": "postgres",
     "dialectOptions": {
       "ssl": true
-    }
+    },
+    "migrationStorageTableName": "sequelizeMeta"
   }
 }

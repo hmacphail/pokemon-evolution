@@ -2,7 +2,7 @@ var Move = require('../models').Move;
 
 module.exports = {
   //Get a list of all moves using model.findAll()
-  index(req, res) {
+  list(req, res) {
     Move.findAll()
       .then((moves) => {
         res.status(200).json(moves);

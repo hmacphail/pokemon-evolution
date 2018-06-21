@@ -2,7 +2,7 @@ var Abilityset = require('../models').Abilityset;
 
 module.exports = {
   //Get a list of all abilitysets using model.findAll()
-  index(req, res) {
+  list(req, res) {
     Abilityset.findAll()
       .then((abilitysets) => {
         res.status(200).json(abilitysets);
