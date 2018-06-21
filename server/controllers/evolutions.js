@@ -1,4 +1,4 @@
-Evolution = require('../models').Evolution;
+var Evolution = require('../models').Evolution;
 
 module.exports = {
   //Get a list of all evolutions using model.findAll()

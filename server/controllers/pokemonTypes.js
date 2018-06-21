@@ -1,4 +1,4 @@
-PokemonType = require('../models').PokemonTypes;
+var PokemonType = require('../models').PokemonTypes;
 
 module.exports = {
   //Get a list of all pokemonTypes using model.findAll()

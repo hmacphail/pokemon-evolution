@@ -1,4 +1,4 @@
-PokemonStat = require('../models').PokemonStats;
+var PokemonStat = require('../models').PokemonStats;
 
 module.exports = {
   //Get a list of all pokemonStats using model.findAll()

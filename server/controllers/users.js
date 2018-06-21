@@ -1,4 +1,4 @@
-User = require('../models').User;
+var User = require('../models').User;
 
 module.exports = {
   //Get a list of all users using model.findAll()

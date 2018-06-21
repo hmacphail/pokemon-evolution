@@ -1,4 +1,4 @@
-Game = require('../models').Game;
+var Game = require('../models').Game;
 
 module.exports = {
   //Get a list of all games using model.findAll()

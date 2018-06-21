@@ -1,4 +1,4 @@
-Move = require('../models').Move;
+var Move = require('../models').Move;
 
 module.exports = {
   //Get a list of all moves using model.findAll()

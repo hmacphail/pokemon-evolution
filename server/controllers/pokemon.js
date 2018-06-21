@@ -1,4 +1,4 @@
-Pokemon = require('../models').Pokemon;
+var Pokemon = require('../models').Pokemon;
 
 module.exports = {
   //Get a list of all pokemons using model.findAll()

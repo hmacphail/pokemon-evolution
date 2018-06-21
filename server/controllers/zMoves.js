@@ -1,4 +1,4 @@
-ZMove = require('../models').ZMove;
+var ZMove = require('../models').ZMove;
 
 module.exports = {
   //Get a list of all zMove using model.findAll()

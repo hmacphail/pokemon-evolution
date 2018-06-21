@@ -1,4 +1,4 @@
-Item = require('../models').Item;
+var Item = require('../models').Item;
 
 module.exports = {
   //Get a list of all items using model.findAll()

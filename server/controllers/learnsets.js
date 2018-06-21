@@ -1,5 +1,5 @@
-Learnset = require('../models').Learnset;
-Pokemon = require('../models').Pokemon;
+var Learnset = require('../models').Learnset;
+//var Pokemon = require('../models').Pokemon;
 
 module.exports = {
   //Get a list of all learnsets using model.findAll()

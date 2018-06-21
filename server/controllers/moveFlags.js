@@ -1,4 +1,4 @@
-MoveFlag = require('../models').MoveFlags;
+var MoveFlag = require('../models').MoveFlags;
 
 module.exports = {
   //Get a list of all moveFlags using model.findAll()

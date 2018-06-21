@@ -1,4 +1,4 @@
-Effectiveness = require('../models').Effectiveness;
+var Effectiveness = require('../models').Effectiveness;
 
 module.exports = {
   //Get a list of all effectivenesss using model.findAll()
