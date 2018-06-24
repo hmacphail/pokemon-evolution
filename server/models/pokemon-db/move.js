@@ -22,7 +22,20 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     target: {
-      type: Sequelize.STRING(50),
+      type: Sequelize.ENUM,
+      values: [
+        'special',
+        'user',
+        'ally',
+        'user-or-ally',
+        'users-field',
+        'selected-opponent',
+        'random-opponent',
+        'adjacent-opponents',
+        'opponents-field',
+        'all-others',
+        'entire-field'
+      ],
       allowNull: false
     },
     speedPriority: {

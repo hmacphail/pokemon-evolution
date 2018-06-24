@@ -1,4 +1,15 @@
+# node
 /node_modules
 npm-debug.log
 .DS_Store
+
+# build
+/dist
+
+# environment
+/config/db_config.json
+/config/server_config.ts
 /*.env
+
+# temporary
+/app-old

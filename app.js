@@ -19,10 +19,20 @@ app.use(bodyParser.json());                                     // parse applica
 app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
 app.use(methodOverride());
 
+// allow cross-origin for development ===
+if (process.env.NODE_ENV != "production") {
+	app.use(function(req, res, next) {
+		res.setHeader("Access-Control-Allow-Origin", "*");
+		res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control, Pragma, Expires");
+		res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+		res.setHeader("Accept", "application/json");
+		next();
+	});
+}
 // routes ================================
 app.use('/api', require('./server/routes'));
 app.get('*', function (req, res) {
-  res.sendFile(__dirname + '/app/index.html');
+  res.sendFile(__dirname + '/dist/index.html');
 });
 
 // start up server =======================
