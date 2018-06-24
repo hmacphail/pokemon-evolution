@@ -8,9 +8,9 @@
     <div class="col-sm-9">
       <form>
         <div class="form-group">
-          <textarea class="form-control" rows="5" ng-model="formData.bulk"></textarea>
+          <!-- <textarea class="form-control" rows="5" ng-model="formData.bulk"></textarea> -->
         </div>
-        <button type="submit" class="btn btn-primary" ng-click="createAbilitiesBulk()">Add</button>
+        <button type="submit" class="btn btn-primary" (click)="createAbilitiesBulk()">Add</button>
       </form>
       <br />
       <table class="table table-condensed">
@@ -20,12 +20,12 @@
           <th>Generation</th>
           <th></th>
         </tr>
-        <tr ng-repeat="a in dataStore.abilities">
+        <tr *ngFor="let a of abilities">
           <td> {{ a.name }} </td>
           <td> {{ a.description }} </td>
           <td> {{ a.genIntroducedId }} </td>
           <td>
-            <a href="#" class="lnk-danger pull-right" ng-click="deleteAbility(a.id)">
+            <a href="#" class="lnk-danger pull-right" (click)="deleteAbility(a.id)">
               <svg class="pxsmall px-cross"><use xlink:href="/static/symbol-defs.svg#px-cross"></use></svg>
             </a>
           </td>
