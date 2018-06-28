@@ -34,6 +34,7 @@
     "@swimlane/ngx-datatable": "^13.0.1",
     "body-parser": "^1.18.3",
     "bootstrap": "^4.1.1",
+    "core.js": "^0.4.2",
     "express": "^4.16.3",
     "jquery": "^3.3.1",
     "method-override": "^2.3.10",
@@ -45,7 +46,6 @@
     "rxjs": "^6.2.1",
     "sequelize": "^4.37.10",
     "sequelize-cli": "^4.0.0",
-    "typescript": "~2.7.2",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {
@@ -53,6 +53,7 @@
     "@angular/compiler-cli": "^6.0.6",
     "@types/node": "^10.3.4",
     "nodemon": "^1.17.5",
+    "typescript": "~2.7.2",
     "watchify": "^3.11.0"
   },
   "license": "ISC",

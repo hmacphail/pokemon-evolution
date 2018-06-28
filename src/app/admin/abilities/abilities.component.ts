@@ -14,7 +14,7 @@ import { IAbility, IGeneration } from "../../models";
 @Component({
   selector: 'app-abilities',
   templateUrl: './abilities.component.html',
-  styleUrls: ['./abilities.component.css']
+  styleUrls: ['./abilities.component.scss']
 })
 export class AbilitiesComponent implements OnInit {
   abilities: IAbility[];
