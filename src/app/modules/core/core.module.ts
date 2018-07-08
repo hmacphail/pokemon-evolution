@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 import { CoreRoutingModule } from './core-routing.module';
 
@@ -9,7 +10,9 @@ import { TypeComparisonComponent } from './type-comparison/type-comparison.compo
 @NgModule({
   imports: [
     CommonModule,
-    CoreRoutingModule
+    CoreRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   declarations: [
   	HomeComponent,

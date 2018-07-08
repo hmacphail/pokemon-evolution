@@ -6,11 +6,11 @@
     </div>
 
     <div class="col-sm-4">
-      <form class="form-inline pull-right">
+      <form class="form-inline" [formGroup]="adminForm" (ngSubmit)="createGen()" autocomplete="off" novalidate>
         <div class="form-group">
-          <!-- <input type="text" class="form-control" ng-model="formData.name"> -->
+          <input type="text" class="form-control" [formControl]="adminForm.controls.name">
         </div>
-        <button type="submit" class="btn btn-primary" (click)="createGen()">Add</button>
+        <button type="submit" class="btn btn-primary">Add</button>
       </form>
       <br />
       <br />

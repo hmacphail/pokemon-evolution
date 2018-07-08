@@ -3,6 +3,7 @@ import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 /* External Libraries */
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
@@ -34,12 +35,14 @@ import { clientUrl, serverUrl } from "../../config/server_config";
         AppRoutingModule,
         BrowserModule,
         CoreModule,
+        FormsModule,
         HttpClientModule,
         HttpModule,
         MovesModule,
         NgbModule.forRoot(),
         NgxDatatableModule,
         PokemonModule,
+        ReactiveFormsModule,
         RouterModule.forRoot([])
     ],
     declarations: [

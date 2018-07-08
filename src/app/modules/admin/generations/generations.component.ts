@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 
 /* External Libraries */
@@ -19,13 +20,24 @@ import { IGeneration } from "../../../models";
 export class GenerationsComponent implements OnInit {
   generations: IGeneration[];
 
+  adminForm: FormGroup;
+
   constructor(
-    private generationsService: GenerationsService) {
+    private generationsService: GenerationsService,
+    private formBuilder: FormBuilder) {
   }
 
   ngOnInit() {
     this.getGenerations();
+    this.buildForm();
   }
+
+  buildForm() {
+    this.adminForm = this.formBuilder.group({
+      name: null
+    });
+  }
+
   getGenerations() {
     this.generationsService.get().subscribe((data: any) => {
         this.generations = data;
@@ -35,18 +47,16 @@ export class GenerationsComponent implements OnInit {
   }
 
   createGen() {
-    // this.generationsService.create($scope.formData)
-    //   .then((res) => {
-    //     if (res.status == 200) {
-    //       $scope.formData = {};
-    //       $scope.dataStore.getGenerations(Generations);
-    //     }
-    //   });
+    this.generationsService.create(this.adminForm.value)
+      .subscribe((data) => {
+          this.adminForm.reset();
+          this.getGenerations();
+      });
   }
 
-  deleteGen (id) {
+  deleteGen (id: number) {
     this.generationsService.delete(id)
-      .subscribe((res) => {
+      .subscribe((data) => {
         this.getGenerations();
       });
   }
