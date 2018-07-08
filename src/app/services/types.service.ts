@@ -28,4 +28,14 @@ export class TypesService {
     	return this.authHttp.delete(this.url + "/" + id);
     }
 
+    getTypeIdByName(typeName) {
+        // if (this.types) {
+        //   for (let i = 0; i < this.types.length; i++){
+        //     if (this.types[i].name == typeName){
+        //       return this.types[i].id
+        //     }
+        //   }
+        // }
+        // return null;
+    }
 }

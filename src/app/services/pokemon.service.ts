@@ -32,4 +32,15 @@ export class PokemonService {
     	return this.authHttp.delete(this.url + "/" + id);
     }
 
+    getPokemonNameById(pokemonId) {
+        // if (this.pokemon) {
+        //   for (let i = 0; i < this.pokemon.length; i++){
+        //     if (this.pokemon[i].id == [pokemonId]){
+        //       return this.pokemon[i].name + (this.pokemon[i].form == 'alolan' ? '*' : '');
+        //     }
+        //   }
+        // }
+        // return null;
+    }
+
 }

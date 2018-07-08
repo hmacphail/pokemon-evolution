@@ -1,3 +1,34 @@
-<p>
-  types works!
-</p>
+<div id="admin-types" class="container">
+  <div class="row">
+
+    <div class="col-sm-4">
+      <h2>Types</h2>
+    </div>
+
+    <div class="col-sm-4">
+      <form class="form-inline pull-right">
+        <div class="form-group">
+          <!-- <input type="text" class="form-control" ng-model="formData.name"> -->
+        </div>
+        <button type="submit" class="btn btn-primary" (click)="createType()">Add</button>
+      </form>
+      <br />
+      <br />
+      <table class="table table-condensed">
+        <tr>
+          <th>Name</th>
+          <th></th>
+        </tr>
+        <tr *ngFor="let type of types">
+          <td> {{ type.name }}</td>
+          <td>
+            <a href="#" class="lnk-danger pull-right" (click)="deleteType(type.id)">
+              <svg class="pxsmall px-cross"><use xlink:href="/static/symbol-defs.svg#px-cross"></use></svg>
+            </a>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+  </div>
+</div>

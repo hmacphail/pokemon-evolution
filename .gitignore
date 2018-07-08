@@ -10,6 +10,3 @@ npm-debug.log
 /config/db_config.json
 /config/server_config.ts
 /*.env
-
-# temporary
-/app-old

@@ -27,4 +27,27 @@ export class AbilitiesService {
     delete(id: number) {
         return this.authHttp.delete(this.url + "/" + id);
     }
+
+    getAbilityNameById(abilityId: number) {
+        // if (this.abilities) {
+        //   for (let i = 0; i < this.abilities.length; i++){
+        //     if (this.abilities[i].id == [abilityId]){
+        //       return this.abilities[i].name;
+        //     }
+        //   }
+        // }
+        // return null;
+    }
+
+    getAbilityIdByName(abilityName) {
+        // if (this.abilities) {
+        //   abilityName = abilityName.replace('*', '');
+        //   for (let i = 0; i < this.abilities.length; i++){
+        //     if (this.abilities[i].name == abilityName){
+        //       return this.abilities[i].id;
+        //     }
+        //   }
+        // }
+        // return null;
+    }
 }

@@ -28,4 +28,15 @@ export class GenerationsService {
     	return this.authHttp.delete(this.url + "/" + id);
     }
 
+    getGenerationIdByName(generationName) {
+        // if (this.generations) {
+        //   for (let i = 0; i < this.generations.length; i++){
+        //     if (this.generations[i].name == generationName){
+        //       return this.generations[i].id;
+        //     }
+        //   }
+        // }
+        // return null;
+    }
+
 }

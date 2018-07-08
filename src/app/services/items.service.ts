@@ -32,4 +32,28 @@ export class ItemsService {
         return this.authHttp.delete(this.url + "/" + id);
     }
 
+    getItemNameById(itemId) {
+        // if (this.items) {
+        //   for (let i = 0; i < this.items.length; i++){
+        //     if (this.items[i].id == [itemId]){
+        //       return this.items[i].name;
+        //     }
+        //   }
+        // }
+        // return null;
+        return "";
+    }
+
+    getItemIdByName(itemName) {
+        // if (this.items) {
+        //   for (let i = 0; i < this.items.length; i++){
+        //     if (this.items[i].name == itemName){
+        //       return this.items[i].id
+        //     }
+        //   }
+        // }
+        // return null;
+        return -1;
+    }
+
 }

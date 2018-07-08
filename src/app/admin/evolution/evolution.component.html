@@ -1,3 +1,49 @@
-<p>
-  evolution works!
-</p>
+<div id="admin-evolutions" class="container">
+  <div class="row">
+
+    <div class="col-sm-3">
+      <h2>Evolutions</h2>
+    </div>
+
+    <div class="col-sm-9">
+      <form>
+        <div class="form-group">
+          <label for="select-trigger">Trigger:</label>
+          <!-- <select id="select-trigger" class="form-control pull-right" ng-model="formData.trigger">
+            <option ng-repeat="t in triggers">{{ t }}</option>
+          </select> -->
+        </div>
+        <div class="form-group">
+          <!-- <textarea class="form-control" rows="5" ng-model="formData.bulk"></textarea> -->
+        </div>
+        <button type="submit" class="btn btn-primary" (click)="createEvolutionsBulk()">Add</button>
+      </form>
+      <br />
+      <table class="table table-condensed">
+        <tr>
+          <th>From Pokémon</th>
+          <th>To Pokémon</th>
+          <th>Trigger</th>
+          <th>Condition</th>
+          <th>Level</th>
+          <th>Item</th>
+          <th></th>
+        </tr>
+        <tr *ngFor="let evo of evolutions">
+          <td> {{ pokemonName(evo.fromPokemonId) }} </td>
+          <td> {{ pokemonName(evo.toPokemonId) }} </td>
+          <td> {{ evo.trigger }} </td>
+          <td> {{ evo.condition }} </td>
+          <td> {{ evo.atLevel }} </td>
+          <td> {{ itemName(evo.itemId) }} </td>
+          <td>
+            <a href="#" class="lnk-danger pull-right" (click)="deleteEvolution(evo.id)">
+              <svg class="pxsmall px-cross"><use xlink:href="/static/symbol-defs.svg#px-cross"></use></svg>
+            </a>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+  </div>
+</div>
