@@ -1,0 +1,52 @@
+<div id="admin-pokemon" class="container-fluid">
+  <div class="row">
+
+    <div class="col-sm-3">
+      <h2>Pokémon</h2>
+      <div>
+        TODO: Add pokemonTypes when entering data (and display types)
+      </div>
+    </div>
+
+    <div class="col-sm-9">
+      <form>
+        <div class="form-group">
+          <label for="select-gen">Generation:</label>
+          <!-- <select id="select-gen" class="form-control pull-right" ng-model="formData.gen">
+            <option ng-repeat="g in dataStore.generations" value="{{ g.id }}">{{ g.name }}</option>
+          </select> -->
+        </div>
+        <div class="form-group">
+          <!-- <textarea class="form-control" rows="5" ng-model="formData.bulk"></textarea> -->
+        </div>
+        <button type="submit" class="btn btn-primary" (click)="createPokemonBulk()">Add</button>
+      </form>
+      <br />
+      <table class="table table-condensed">
+        <tr>
+          <th>Pokédex ID</th>
+          <th>Name</th>
+          <th>Generation</th>
+          <th>Primary Type</th>
+          <th>Secondary Type</th>
+          <th>Form</th>
+          <th></th>
+        </tr>
+        <tr *ngFor="let pkmn of pokemon">
+          <td> {{ pkmn.pokedexId }} </td>
+          <td> {{ pkmn.name }} </td>
+          <td> {{ pkmn.genIntroducedId }} </td>
+          <td> {{ pkmn.primaryTypeId }} </td>
+          <td> {{ pkmn.secondaryTypeId }} </td>
+          <td> {{ pkmn.form }} </td>
+          <td>
+            <a href="#" class="lnk-danger pull-right" (click)="deletePokemon(pkmn.id)">
+              <svg class="pxsmall px-cross"><use xlink:href="/static/symbol-defs.svg#px-cross"></use></svg>
+            </a>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,9 @@
+<div class="sidebar">
+    <div class="links">
+        <ul class="list-group">
+            <li *ngFor="let option of navOptions" [routerLink]="[option.route]" class="list-group-item">
+                <a class="navbar-link">{{option.name}}</a>
+            </li>
+        </ul>
+    </div>
+</div>
