@@ -1,0 +1,145 @@
+/* Ngx-Datatable Styles */
+@import '_colors';
+
+$border-width: 1px;
+
+:host /deep/ {
+
+  // Basic Bootstrap table
+  .ngx-datatable {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 1rem;
+    background-color: transparent;
+
+    .datatable-header, .datatable-body-row, .empty-row, .datatable-footer {
+      border-top: $border-width solid $border-color;
+    }
+
+    .datatable-header {
+      font-weight: bold;
+      color: $grey;
+      background-color: $grey-lightest;
+      border-color: $border-color;
+
+      .datatable-header-cell {
+        vertical-align: bottom;
+        border-bottom: (2 * $border-width) solid $border-color !important;
+      }
+    }
+
+    .datatable-body .datatable-scroll {
+      display: inline;
+    }
+
+    .datatable-header-cell, .datatable-body-cell, .empty-row {
+      padding: .75rem;
+      vertical-align: top;
+    }
+
+    .datatable-body + .datatable-body {
+      border-top: (2 * $border-width) solid $border-color;
+    }
+
+    .ngx-datatable {
+      background-color: $white;
+    }
+  }
+
+  // Pagination
+  .page-count {
+    color: $grey-lighter;
+    font-size: 13px;
+  }
+
+  .datatable-pager {
+    margin-right: 30px;
+
+    li {
+      &:first-child a {
+        margin-left: 0;
+        border-bottom-left-radius: .25rem;
+        border-top-left-radius: .25rem;
+      }
+      &:last-child a {
+        border-bottom-right-radius: .25rem;
+        border-top-right-radius: .25rem;
+      }
+
+      &.active a {
+        z-index: 1;
+        color: $white;
+        background-color: $table-header-color;
+        border-color: $table-header-color;
+      }
+
+      &.disabled a {
+        color: $grey-lighter;
+        pointer-events: none;
+        cursor: auto;
+        background-color: $white;
+      }
+
+      a {
+        position: relative;
+        display: block;
+        padding: .5rem .75rem;
+        margin-left: -$border-width;
+        line-height: 1.25;
+        background-color: $white;
+        border: $border-width solid $border-color;
+
+        &:hover {
+          text-decoration: none;
+        }
+      }
+
+      &:not(.active) a:hover {
+        background-color: rgba($black, .075);
+      }
+    }
+  }
+
+  // Font Awesome icons for pagination and sort
+  .sort-btn, .pager i {
+    font-family: 'Font Awesome 5 Pro';
+    font: normal normal normal 14px;
+  }
+  .datatable-icon-prev:before {
+    content: "\f100"; // fa-angle-double-left
+  }
+  .datatable-icon-left:before {
+    content: "\f104"; // fa-angle-left
+  }
+  .datatable-icon-right:before {
+    content: "\f105"; // fa-angle-right
+  }
+  .datatable-icon-skip:before {
+    content: "\f101"; // fa-angle-double-right
+  }
+
+  .sortable {
+    .sort-btn {
+      padding-left: 5px;
+      color: $grey-lighter;
+      &:before {
+        content: "\f0dc";
+      }
+    }
+    .datatable-icon-down, .datatable-icon-up {
+      &:before {
+        margin-right: -10px;
+        color: $white;
+      }
+      &:after {
+        color: $grey-lighter;
+      }
+    }
+    .datatable-icon-down:before, .datatable-icon-up:after {
+      content: "\f0dd"; // fa-sort-down
+    }
+    .datatable-icon-down:after, .datatable-icon-up:before {
+      content: "\f0de"; // fa-sort-up
+    }
+  }
+}

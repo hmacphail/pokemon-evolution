@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 
 /* External Libraries */
 import { NgbModal, NgbModalRef, NgbPopover } from "@ng-bootstrap/ng-bootstrap";
-import { DatatableComponent } from "@swimlane/ngx-datatable";
 
 /* Services */
 import { GenerationsService } from "../../../services";
@@ -18,9 +17,11 @@ import { IGeneration } from "../../../models";
   styleUrls: ['./generations.component.scss']
 })
 export class GenerationsComponent implements OnInit {
-  generations: IGeneration[];
-
+  @ViewChild("rowDeleteEntry") rowDeleteEntry: TemplateRef<any>;
   adminForm: FormGroup;
+  columns = [];
+
+  generations: IGeneration[];
 
   constructor(
     private generationsService: GenerationsService,
@@ -30,12 +31,20 @@ export class GenerationsComponent implements OnInit {
   ngOnInit() {
     this.getGenerations();
     this.buildForm();
+    this.tableColumnSetup();
   }
 
   buildForm() {
     this.adminForm = this.formBuilder.group({
       name: null
     });
+  }
+
+  tableColumnSetup() {
+    this.columns = [
+      { prop: "name", name: "Name", flexGrow: 4 },
+      { flexGrow: 1, width: 50, sortable: false, cellTemplate: this.rowDeleteEntry }
+    ];
   }
 
   getGenerations() {

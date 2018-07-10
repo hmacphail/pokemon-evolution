@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { NgxDatatableModule } from "@swimlane/ngx-datatable";
 
 import { AdminComponent } from './admin.component';
 import { AdminRoutingModule } from './admin-routing.module';
@@ -22,6 +23,7 @@ import { TypesComponent } from './types/types.component';
         CommonModule,
         AdminRoutingModule,
         FormsModule,
+        NgxDatatableModule,
         ReactiveFormsModule,
     ],
     declarations: [
