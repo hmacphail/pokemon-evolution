@@ -1,13 +1,17 @@
 import { IGeneration } from ".";
 
 export interface IType {
-  id: number;
+  id?: number;
   name: string;
 }
 
 export interface IEffectiveness {
-  id: number;
+  id?: number;
   comparison: EffectComparison;
+  genIntroducedId: number;
+  genCompletedId: number;
+  attackingTypeId: number;
+  defendingTypeId: number;
   genIntroduced?: IGeneration;
   genCompleted?: IGeneration;
   attackingType?: IType;

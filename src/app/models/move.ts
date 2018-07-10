@@ -1,7 +1,7 @@
 import { IGame, IGeneration, IType } from ".";
 
 export interface IMove {
-  id: number;
+  id?: number;
   name: string;
   pp: number;
   power: number;
@@ -16,6 +16,12 @@ export interface IMove {
   description: string;
   tmNumber: string;
   hmNumber: string;
+  genIntroducedId: number;
+  genCompletedId: number;
+  commonMoveId: number;
+  gameId: number;
+  typeId: number;
+  moveFlagId: number;
   genIntroduced?: IGeneration;
   genCompleted?: IGeneration;
   commonMove?: IMove;
@@ -25,22 +31,24 @@ export interface IMove {
 }
 
 export interface IZMove {
-  id: number,
-  attack: number,
-  zMove?: IMove,
-  originalMove?: IMove
+  id?: number;
+  attack: number;
+  zMoveId: number;
+  originalMoveId: number;
+  zMove?: IMove;
+  originalMove?: IMove;
 }
 
 export interface IMoveFlag {
-  id: number,
-  blockable: boolean,
-  reflectable: boolean,
-  snatchable: boolean,
-  copiedByMirrorMove: boolean,
-  soundBased: boolean,
-  punchBased: boolean,
-  affectedByGravity: boolean,
-  affectedByKingsRock: boolean
+  id?: number;
+  blockable: boolean;
+  reflectable: boolean;
+  snatchable: boolean;
+  copiedByMirrorMove: boolean;
+  soundBased: boolean;
+  punchBased: boolean;
+  affectedByGravity: boolean;
+  affectedByKingsRock: boolean;
 }
 
 export enum MoveCategory {

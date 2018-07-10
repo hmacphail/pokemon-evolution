@@ -1,15 +1,21 @@
 import { IGame, IGeneration, IPokemon } from ".";
 
 export interface IAbility {
-  id: number;
+  id?: number;
   name: string;
   description: string;
+  genIntroducedId: number;
   genIntroduced?: IGeneration;
 }
 
 export interface IAbilityset {
-  id: number;
+  id?: number;
   trait: AbilitysetTrait;
+  genIntroducedId: number;
+  genCompletedId: number;
+  pokemonId: number;
+  abilityId: number;
+  gameId: number;
   genIntroduced?: IGeneration;
   genCompleted?: IGeneration;
   pokemon?: IPokemon;

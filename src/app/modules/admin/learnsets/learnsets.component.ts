@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from "@angular/router";
 
 /* External Libraries */
 import { NgbModal, NgbModalRef, NgbPopover } from "@ng-bootstrap/ng-bootstrap";
-import { DatatableComponent } from "@swimlane/ngx-datatable";
 
 /* Services */
 import { LearnsetsService, PokemonLearnsetsService, GenerationsService, PokemonService, MovesService, GamesService } from "../../../services";

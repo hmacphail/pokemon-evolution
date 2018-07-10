@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 
 /* External Libraries */
 import { NgbModal, NgbModalRef, NgbPopover } from "@ng-bootstrap/ng-bootstrap";
-import { DatatableComponent } from "@swimlane/ngx-datatable";
 
 /* Services */
 import { GamesService, GenerationsService } from "../../../services";
@@ -17,17 +17,23 @@ import { IGame, IGeneration } from "../../../models";
   styleUrls: ['./games.component.scss']
 })
 export class GamesComponent implements OnInit {
+  @ViewChild("rowDeleteEntry") rowDeleteEntry: TemplateRef<any>;
+  adminForm: FormGroup;
+  columns = [];
   games: IGame[];
   generations: IGeneration[];
 
   constructor(
     private gamesService: GamesService,
-    private generationsService: GenerationsService) {
+    private generationsService: GenerationsService,
+    private formBuilder: FormBuilder) {
   }
 
   ngOnInit() {
     this.getGames();
     this.getGenerations();
+    this.buildForm();
+    this.tableColumnSetup();
   }
 
   getGames() {
@@ -37,6 +43,7 @@ export class GamesComponent implements OnInit {
       }
     );
   }
+
   getGenerations() {
     this.generationsService.get().subscribe((data: any) => {
         this.generations = data;
@@ -45,28 +52,43 @@ export class GamesComponent implements OnInit {
     );
   }
 
-  createGame() {
-    // this.gamesService.create(this.createGameObj($scope.formData))
-    //   .then((res) => {
-    //     if (res.status == 200) {
-    //       $scope.formData = {};
-    //       $scope.dataStore.getGames(Games);
-    //     }
-    //   });
+ buildForm() {
+    this.adminForm = this.formBuilder.group({
+      generation: null,
+      code: null,
+      name: null
+    });
   }
 
-  deleteGame(id) {
+  tableColumnSetup() {
+    this.columns = [
+      { prop: "code", name: "Code", flexGrow: 2 },
+      { prop: "name", name: "Name", flexGrow: 4 },
+      { prop: "generationId", name: "Gen", flexGrow: 1 },
+      { flexGrow: 1, width: 50, sortable: false, cellTemplate: this.rowDeleteEntry }
+    ];
+  }
+
+  createGame() {
+    this.gamesService.create(this.createGameObj(this.adminForm.value))
+      .subscribe((res) => {
+        this.adminForm.reset();
+        this.getGames();
+      });
+  }
+
+  deleteGame(id: number) {
     this.gamesService.delete(id)
       .subscribe((res) => {
         this.getGames();
       });
   }
 
-  createGameObj(formData) {
+  createGameObj(formData: any): IGame {
     return {
-      "code": formData.code,
-      "name": formData.name,
-      "generationId": this.generationsService.getGenerationIdByName(formData.generation)
+      code: formData.code,
+      name: formData.name,
+      generationId: formData.generation
     };
   }
 }

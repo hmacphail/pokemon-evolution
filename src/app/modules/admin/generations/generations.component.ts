@@ -34,6 +34,14 @@ export class GenerationsComponent implements OnInit {
     this.tableColumnSetup();
   }
 
+  getGenerations() {
+    this.generationsService.get().subscribe((data: any) => {
+        this.generations = data;
+        return this.generations;
+      }
+    );
+  }
+
   buildForm() {
     this.adminForm = this.formBuilder.group({
       name: null
@@ -45,14 +53,6 @@ export class GenerationsComponent implements OnInit {
       { prop: "name", name: "Name", flexGrow: 4 },
       { flexGrow: 1, width: 50, sortable: false, cellTemplate: this.rowDeleteEntry }
     ];
-  }
-
-  getGenerations() {
-    this.generationsService.get().subscribe((data: any) => {
-        this.generations = data;
-        return this.generations;
-      }
-    );
   }
 
   createGen() {

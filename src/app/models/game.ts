@@ -1,8 +1,9 @@
 import { IGeneration } from ".";
 
 export interface IGame {
-  id: number;
+  id?: number;
   code: string;
-  description: string;
+  name: string;
+  generationId: number;
   generation?: IGeneration;
 }
