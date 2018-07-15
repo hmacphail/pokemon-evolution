@@ -1,7 +1,7 @@
-var Sequelize = require('sequelize');
+const Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  var ZMove = sequelize.define('ZMove', {
+  const ZMove = sequelize.define('ZMove', {
     attack: {
       type: Sequelize.INTEGER,
       allowNull: false
@@ -10,6 +10,11 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'zMoves',
     timestamps: false
   });
-  return ZMove;
 
+  ZMove.associate = function(db) {
+    ZMove.belongsTo(db.Move, { as: 'zMove', foreignKey: { name: 'zMoveId', allowNull: false }});
+    ZMove.belongsTo(db.Move, { as: 'originalMove', foreignKey: { name: 'originalMoveId', allowNull: false }});
+  };
+
+  return ZMove;
 };

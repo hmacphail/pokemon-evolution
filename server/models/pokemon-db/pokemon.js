@@ -1,7 +1,7 @@
-var Sequelize = require('sequelize');
+const Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  var Pokemon = sequelize.define('Pokemon', {
+  const Pokemon = sequelize.define('Pokemon', {
     pokedexId: {
       type: Sequelize.INTEGER,
       allowNull: false
@@ -21,18 +21,12 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     tableName: 'pokemon',
-    timestamps: false,
-    classMethods: {
-      associate: function(db) {
-        Pokemon.hasMany(db.Evolution, { as: 'fromPokemon', foreignKey: { name: 'fromPokemonId', allowNull: false }});
-        Pokemon.hasMany(db.Evolution, { as: 'toPokemon', foreignKey: { name: 'toPokemonId', allowNull: false }});
-        Pokemon.hasMany(db.Abilityset, { foreignKey: { name: 'pokemonId', allowNull: false }});
-        Pokemon.hasMany(db.PokemonStats, { foreignKey: { name: 'pokemonId', allowNull: false }});
-        Pokemon.hasMany(db.PokemonTypes, { foreignKey: { name: 'pokemonId', allowNull: false }});
-        Pokemon.hasMany(db.PokemonLearnsets, { foreignKey: { name: 'pokemonId', allowNull: false }});
-      }
-    }
+    timestamps: false
   });
-  return Pokemon;
 
+  Pokemon.associate = function(db) {
+    Pokemon.belongsTo(db.Generation, { as: 'genIntroduced', foreignKey: { name: 'genIntroducedId', allowNull: false }});
+  };
+
+  return Pokemon;
 };

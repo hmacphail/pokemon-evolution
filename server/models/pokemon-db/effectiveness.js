@@ -1,7 +1,7 @@
-var Sequelize = require('sequelize');
+const Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  var Effectiveness = sequelize.define('Effectiveness', {
+  const Effectiveness = sequelize.define('Effectiveness', {
     comparison: {
       type: Sequelize.ENUM,
       values: ['strong', 'neutral', 'weak', 'unaffected'],
@@ -11,6 +11,13 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'effectiveness',
     timestamps: false
   });
-  return Effectiveness;
 
+  Effectiveness.associate = function(db) {
+    Effectiveness.belongsTo(db.Generation, { as: 'genIntroduced', foreignKey: { name: 'genIntroducedId', allowNull: false}});
+    Effectiveness.belongsTo(db.Generation, { as: 'genCompleted', foreignKey: 'genCompletedId' });
+    Effectiveness.belongsTo(db.Type, { as: 'attackingType', foreignKey: { name: 'attackingTypeId', allowNull: false }});
+    Effectiveness.belongsTo(db.Type, { as: 'defendingType', foreignKey: { name: 'defendingTypeId', allowNull: false }});
+  };
+
+  return Effectiveness;
 };

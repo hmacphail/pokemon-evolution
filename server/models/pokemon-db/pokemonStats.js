@@ -1,7 +1,7 @@
-var Sequelize = require('sequelize');
+const Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  var PokemonStats = sequelize.define('PokemonStats', {
+  const PokemonStats = sequelize.define('PokemonStats', {
     baseHp: {
       type: Sequelize.INTEGER,
       allowNull: false
@@ -30,6 +30,10 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'pokemonStats',
     timestamps: false
   });
-  return PokemonStats;
 
+  PokemonStats.associate = function(db) {
+    PokemonStats.belongsTo(db.Pokemon, { foreignKey: { name: 'pokemonId', allowNull: false }});
+  };
+
+  return PokemonStats;
 };

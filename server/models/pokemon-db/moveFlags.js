@@ -1,7 +1,7 @@
-var Sequelize = require('sequelize');
+const Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  var MoveFlags = sequelize.define('MoveFlags', {
+  const MoveFlags = sequelize.define('MoveFlags', {
     blockable: {
       type: Sequelize.BOOLEAN,
       allowNull: false,
@@ -44,13 +44,8 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     tableName: 'moveFlags',
-    timestamps: false,
-    classMethods: {
-      associate: function(db) {
-        MoveFlags.hasMany(db.Move, { foreignKey: { name: 'moveFlagId', allowNull: false }});
-      }
-    }
+    timestamps: false
   });
-  return MoveFlags;
 
+  return MoveFlags;
 };

@@ -1,7 +1,7 @@
-var Sequelize = require('sequelize');
+const Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  var Move = sequelize.define('Move', {
+  const Move = sequelize.define('Move', {
     name: {
       type: Sequelize.STRING(50),
       allowNull: false
@@ -66,16 +66,17 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     tableName: 'moves',
-    timestamps: false,
-    classMethods: {
-      associate: function(db) {
-        Move.hasMany(db.Move, { as: 'commonMove', foreignKey: { name: 'commonMoveId' }});
-        Move.hasMany(db.Learnset, { foreignKey: { name: 'moveId', allowNull: false }});
-        Move.hasMany(db.ZMove, { as: 'zMove', foreignKey: { name: 'zMoveId', allowNull: false }});
-        Move.hasMany(db.ZMove, { as: 'originalMove', foreignKey: { name: 'originalMoveId', allowNull: false }});
-      }
-    }
+    timestamps: false
   });
-  return Move;
 
+  Move.associate = function(db) {
+    Move.belongsTo(db.Game, { foreignKey: 'gameId' });
+    Move.belongsTo(db.Generation, { as: 'genIntroduced', foreignKey: { name: 'genIntroducedId', allowNull: false }});
+    Move.belongsTo(db.Generation, { as: 'genCompleted', foreignKey: 'genCompletedId' });
+    Move.belongsTo(db.Move, { as: 'commonMove', foreignKey: { name: 'commonMoveId' }});
+    Move.belongsTo(db.MoveFlags, { foreignKey: { name: 'moveFlagId', allowNull: false }});
+    Move.belongsTo(db.Type, { foreignKey: { name: 'typeId', allowNull: false }});
+  };
+
+  return Move;
 };

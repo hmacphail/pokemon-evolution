@@ -1,7 +1,7 @@
-var Sequelize = require('sequelize');
+const Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  var Learnset = sequelize.define('Learnset', {
+  const Learnset = sequelize.define('Learnset', {
     level: {
       type: Sequelize.INTEGER
     },
@@ -16,13 +16,12 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     tableName: 'learnsets',
-    timestamps: false,
-    classMethods: {
-      associate: function(db) {
-        Learnset.hasMany(db.PokemonLearnsets, { foreignKey: 'learnsetId' });
-      }
-    }
+    timestamps: false
   });
-  return Learnset;
 
+  Learnset.associate = function(db) {
+    Learnset.belongsTo(db.Move, { foreignKey: { name: 'moveId', allowNull: false }});
+  };
+
+  return Learnset;
 };

@@ -1,7 +1,7 @@
-var Sequelize = require('sequelize');
+const Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  var Item = sequelize.define('Item', {
+  const Item = sequelize.define('Item', {
     name: {
       type: Sequelize.STRING(50),
       allowNull: false
@@ -11,13 +11,8 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     tableName: 'items',
-    timestamps: false,
-    classMethods: {
-      associate: function(db) {
-        Item.hasMany(db.Evolution, { foreignKey: 'itemId' });
-      }
-    }
+    timestamps: false
   });
-  return Item;
 
+  return Item;
 };

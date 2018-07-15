@@ -1,7 +1,7 @@
-var Sequelize = require('sequelize');
+const Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  var Ability = sequelize.define('Ability', {
+  const Ability = sequelize.define('Ability', {
     name: {
       type: Sequelize.STRING(50),
       allowNull: false
@@ -11,13 +11,12 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     tableName: 'abilities',
-    timestamps: false,
-    classMethods: {
-      associate: function(db) {
-        Ability.hasMany(db.Abilityset, { foreignKey: { name: 'abilityId', allowNull: false }});
-      }
-    }
+    timestamps: false
   });
-  return Ability;
 
+  Ability.associate = function(db) {
+    Ability.belongsTo(db.Generation, { as: 'genIntroduced', foreignKey: { name: 'genIntroducedId', allowNull: false }});
+  };
+
+  return Ability;
 };

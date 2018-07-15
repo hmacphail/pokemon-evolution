@@ -1,7 +1,7 @@
-var Sequelize = require('sequelize');
+const Sequelize = require('sequelize');
 
 module.exports = function(sequelize, DataTypes) {
-  var Evolution = sequelize.define('Evolution', {
+  const Evolution = sequelize.define('Evolution', {
     trigger: {
       type: Sequelize.ENUM,
       values: ['level', 'item', 'trade', 'happiness', 'other'],
@@ -17,6 +17,12 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'evolution',
     timestamps: false
   });
-  return Evolution;
 
+  Evolution.associate = function(db) {
+    Evolution.belongsTo(db.Item, { foreignKey: 'itemId' });
+    Evolution.belongsTo(db.Pokemon, { as: 'fromPokemon', foreignKey: { name: 'fromPokemonId', allowNull: false }});
+    Evolution.belongsTo(db.Pokemon, { as: 'toPokemon', foreignKey: { name: 'toPokemonId', allowNull: false }});
+  };
+
+  return Evolution;
 };
