@@ -24,7 +24,7 @@ export class EffectivenessService {
     	return this.authHttp.post(this.url, data);
     }
 
-    bulkCreate(data: IEffectiveness) {
+    bulkCreate(data: IEffectiveness[]) {
     	return this.authHttp.post(this.url + "/bulk", data);
     }
 

@@ -6,57 +6,42 @@
     </div>
 
     <div class="col-sm-9">
-      <form class="row">
-        <div class="form-group col-sm-10">
-          <!-- <input type="text" class="form-control" ng-model="formData.text"> -->
+      <form [formGroup]="adminFormItem" (ngSubmit)="createMove()" autocomplete="off" novalidate>
+        <div class="form-group">
+          <input type="text" class="form-control" [formControl]="adminFormItem.controls.text">
         </div>
-        <div class="col-sm-2">
-          <button type="submit" class="btn btn-primary pull-right" (click)="createMove()">Add One</button>
-        </div>
+        <button type="submit" class="btn btn-primary">Add</button>
       </form>
 
       <hr />
 
-      <form>
+      <form [formGroup]="adminFormBulk" (ngSubmit)="createMovesBulk()" autocomplete="off" novalidate>
         <div class="form-group">
-          <!-- <input type="checkbox" ng-model="formData.includeStarred"> Include starred moves -->
+          <input type="checkbox" [formControl]="adminFormBulk.controls.includeStarred"> Include starred moves
         </div>
         <div class="form-group">
-          <!-- <textarea class="form-control" rows="5" ng-model="formData.bulk"></textarea> -->
+          <textarea class="form-control" rows="5" [formControl]="adminFormBulk.controls.bulk"></textarea>
         </div>
-        <button type="submit" class="btn btn-primary" (click)="createMovesBulk()">Add Multiple</button>
+        <button type="submit" class="btn btn-primary">Add</button>
       </form>
 
       <hr />
 
-      <table class="table table-condensed">
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Category</th>
-          <th>PP</th>
-          <th>Power</th>
-          <th>Accuracy</th>
-          <th>Gen Introduced</th>
-          <th>Gen Completed</th>
-          <th></th>
-        </tr>
-        <tr *ngFor="let move of moves">
-          <td> {{ move.name }} </td>
-          <td> {{ move.typeId }} </td>
-          <td> {{ move.category }} </td>
-          <td> {{ move.pp }} </td>
-          <td> {{ move.power }} </td>
-          <td> {{ move.accuracy }} </td>
-          <td> {{ move.genIntroducedId }} </td>
-          <td> {{ move.genCompletedId }} </td>
-          <td>
-            <a href="#" class="lnk-danger pull-right" (click)="deleteMove(move.id)">
-              <svg class="pxsmall px-cross"><use xlink:href="/static/symbol-defs.svg#px-cross"></use></svg>
-            </a>
-          </td>
-        </tr>
-      </table>
+      <ngx-datatable
+        [columns]="columns"
+        [columnMode]="'flex'"
+        [headerHeight]="50"
+        [footerHeight]="60"
+        [rowHeight]="'auto'"
+        [limit]="20"
+        [reorderable]="false"
+        [rows]="moves">
+      </ngx-datatable>
+      <ng-template #rowDeleteEntry let-row="row">
+        <a href="#" class="lnk-danger float-right" (click)="deleteMove(row.id)">
+          <i class="fa fa-times"></i>
+        </a>
+      </ng-template>
     </div>
 
   </div>

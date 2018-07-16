@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 
 /* External Libraries */
@@ -16,6 +17,12 @@ import { IAbilityset, IAbility, IGeneration, IPokemon } from "../../../models";
   styleUrls: ['./abilitysets.component.scss']
 })
 export class AbilitysetsComponent implements OnInit {
+  @ViewChild("rowPokemonName") rowPokemonName: TemplateRef<any>;
+  @ViewChild("rowAbilityName") rowAbilityName: TemplateRef<any>;
+  @ViewChild("rowDeleteEntry") rowDeleteEntry: TemplateRef<any>;
+  adminForm: FormGroup;
+  columns = [];
+
   abilitysets: IAbilityset[];
   abilities: IAbility[];
   generations: IGeneration[];
@@ -25,7 +32,8 @@ export class AbilitysetsComponent implements OnInit {
     private abilitysetsService: AbilitysetsService,
     private abilitiesService: AbilitiesService,
     private generationsService: GenerationsService,
-    private pokemonService: PokemonService) {
+    private pokemonService: PokemonService,
+    private formBuilder: FormBuilder) {
   }
 
   ngOnInit() {
@@ -33,6 +41,8 @@ export class AbilitysetsComponent implements OnInit {
     this.getAbilities();
     this.getGenerations();
     this.getPokemon();
+    this.buildForm();
+    this.tableColumnSetup();
   }
 
   getAbilitysets() {
@@ -42,6 +52,7 @@ export class AbilitysetsComponent implements OnInit {
       }
     );
   }
+
   getAbilities() {
     this.abilitiesService.get().subscribe((data: any) => {
         this.abilities = data;
@@ -49,6 +60,7 @@ export class AbilitysetsComponent implements OnInit {
       }
     );
   }
+
   getGenerations() {
     this.generationsService.get().subscribe((data: any) => {
         this.generations = data;
@@ -56,6 +68,7 @@ export class AbilitysetsComponent implements OnInit {
       }
     );
   }
+
   getPokemon() {
     this.pokemonService.get().subscribe((data: any) => {
         this.pokemon = data;
@@ -64,19 +77,35 @@ export class AbilitysetsComponent implements OnInit {
     );
   }
 
+  buildForm() {
+    this.adminForm = this.formBuilder.group({
+      includeStarred: null,
+      bulk: null
+    });
+  }
+
+  tableColumnSetup() {
+    this.columns = [
+      { prop: "pokemonId", name: "Pokémon", flexGrow: 3, cellTemplate: this.rowPokemonName },
+      { prop: "abilityId", name: "Ability", flexGrow: 3, cellTemplate: this.rowAbilityName },
+      { prop: "trait", name: "Trait", flexGrow: 2 },
+      { prop: "genIntroducedId", name: "Gen Introduced", flexGrow: 1 },
+      { prop: "genCompletedId", name: "Gen Completed", flexGrow: 1 },
+      { flexGrow: 1, width: 50, sortable: false, cellTemplate: this.rowDeleteEntry }
+    ];
+  }
+
   createAbilitysetsBulk() {
-    // this.abilitysetsService.bulkCreate(this.parseBulkData($scope.formData))
-    //   .then((res) => {
-    //     if (res.status == 200) {
-    //       $scope.formData = {};
-    //       this.getAbilitysets();
-    //     }
-    //   });
+    this.abilitysetsService.bulkCreate(this.parseBulkData(this.adminForm.value))
+      .subscribe((data) => {
+          this.adminForm.reset();
+          this.getAbilitysets();
+      });
   }
 
   deleteAbilityset(id: number) {
     this.abilitysetsService.delete(id)
-      .subscribe((res: any) => {
+      .subscribe((data: any) => {
         this.getAbilitysets();
       });
   }

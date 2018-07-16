@@ -4,26 +4,26 @@
     <div class="col-sm-3">
       <h2>Learnsets</h2>
       <div>
-        <svg class="px px-warning"><use xlink:href="/static/symbol-defs.svg#px-warning"></use></svg>
+        <i class="far fa-exclamation-triangle"></i>
         <span> Refresh page between adding each generation.</span>
       </div>
     </div>
 
     <div class="col-sm-9">
-      <form>
+      <form [formGroup]="adminFormItem" (ngSubmit)="runYqlScript()" autocomplete="off" novalidate>
         <div class="form-group row">
           <div class="col-sm-3">
             <label for="select-gen">Generation:</label>
           </div>
           <div class="col-sm-9">
-            <!-- <select id="select-gen" class="form-control pull-right" ng-model="formData.gen">
-              <option ng-repeat="g in dataStore.generations">{{ g.name }}</option>
-            </select> -->
+            <select id="select-gen" class="form-control pull-right" [formControl]="adminFormItem.controls.gen">
+              <option *ngFor="let g of generations">{{ g.name }}</option>
+            </select>
           </div>
         </div>
         <div class="form-group row">
           <div class="col-sm-3">
-            <button type="button" class="btn btn-primary" (click)="runYqlScript()">Run YQL Scripts</button>
+            <button type="button" class="btn btn-primary">Run YQL Scripts</button>
           </div>
           <div class="col-sm-9">
             Num of Pokemon added: <span>{{ entryCount }}</span>
@@ -39,19 +39,20 @@
         Create individual entries for Pokemon with different forms and variations. Requires selecting generation from dropdown above.
       </div>
       <br />
-      <form>
+
+      <form [formGroup]="adminFormBulk" (ngSubmit)="createIndividualLearnset()" autocomplete="off" novalidate>
         <div class="form-group row">
           <div class="col-sm-3">
             <label for="input-pokemon-id">Pokemon ID:</label>
           </div>
           <div class="col-sm-3">
-            <!-- <input id="input-pokemon-id" type="text" class="form-control" ng-model="formData.individualPokemonId"> -->
+            <input id="input-pokemon-id" type="text" class="form-control" [formControl]="adminFormBulk.controls.individualPokemonId">
           </div>
           <div class="col-sm-3">
             <label for="input-game-code">Game Code:</label>
           </div>
           <div class="col-sm-3">
-            <!-- <input id="input-game-code" type="text" class="form-control" ng-model="formData.individualGameCode"> -->
+            <input id="input-game-code" type="text" class="form-control" [formControl]="adminFormBulk.controls.individualGameCode">
           </div>
         </div>
         <div class="form-group row">
@@ -59,8 +60,7 @@
             <label for="input-bulba-url">Bulbapedia URL:</label>
           </div>
           <div class="col-sm-9">
-            <!-- <input id="input-bulba-url" type="text" class="form-control" ng-model="formData.individualUrl"> -->
-
+            <input id="input-bulba-url" type="text" class="form-control" [formControl]="adminFormBulk.controls.individualUrl">
           </div>
         </div>
         <div class="form-group row">
@@ -68,36 +68,35 @@
             <label for="input-table-xpath">Table XPath:</label>
           </div>
           <div class="col-sm-9">
-            <!-- <input id="input-table-xpath" type="text" class="form-control" ng-model="formData.individualTableXPath"> -->
+            <input id="input-table-xpath" type="text" class="form-control" [formControl]="adminFormBulk.controls.individualTableXPath">
             <span>Default: //*[@id="mw-content-text"]/table[1]/tbody/tr[2]/td/table</span>
           </div>
         </div>
-        <button type="submit" class="btn btn-primary" (click)="createIndividualLearnset()">Add Individual</button>
+        <button type="submit" class="btn btn-primary">Add Individual</button>
       </form>
 
-      <!--<br />
-      <table class="table table-condensed">
-        <tr>
-          <th>Pokémon</th>
-          <th>Move</th>
-          <th>Level</th>
-          <th>Gen Introduced</th>
-          <th>Gen Completed</th>
-          <th></th>
-        </tr>
-        <tr ng-repeat="ls in dataStore.learnsets">
-          <td> {{ pokemonName(ls.pokemonId) }} </td>
-          <td> {{ moveName(ls.moveId) }} </td>
-          <td> {{ ls.level }} </td>
-          <td> {{ ls.genIntroducedId }} </td>
-          <td> {{ ls.genCompletedId }} </td>
-          <td>
-            <a href="#" class="lnk-danger pull-right" ng-click="deleteLearnset(ls.id)">
-              <svg class="pxsmall px-cross"><use xlink:href="/static/symbol-defs.svg#px-cross"></use></svg>
-            </a>
-          </td>
-        </tr>
-      </table>-->
+      <!-- <br />
+      <ngx-datatable
+        [columns]="columns"
+        [columnMode]="'flex'"
+        [headerHeight]="50"
+        [footerHeight]="60"
+        [rowHeight]="'auto'"
+        [limit]="20"
+        [reorderable]="false"
+        [rows]="learnsets">
+      </ngx-datatable>
+      <ng-template #rowPokemonName let-row="row">
+        {{ pokemonName(row.pokemonId) }}
+      </ng-template>
+      <ng-template #rowMoveName let-row="row">
+        {{ moveName(row.itemId) }}
+      </ng-template>
+      <ng-template #rowDeleteEntry let-row="row">
+        <a href="#" class="lnk-danger float-right" (click)="deleteLearnset(row.id)">
+          <i class="fa fa-times"></i>
+        </a>
+      </ng-template> -->
     </div>
 
   </div>

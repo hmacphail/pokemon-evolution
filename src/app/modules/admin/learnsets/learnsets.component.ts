@@ -1,6 +1,7 @@
 // require('src/assets/table-to-json');
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 
 /* External Libraries */
@@ -18,6 +19,13 @@ import { ILearnset, IPokemonLearnset, IGeneration, IPokemon, IMove, IGame } from
   styleUrls: ['./learnsets.component.scss']
 })
 export class LearnsetsComponent implements OnInit {
+  @ViewChild("rowPokemonName") rowPokemonName: TemplateRef<any>;
+  @ViewChild("rowMoveName") rowMoveName: TemplateRef<any>;
+  @ViewChild("rowDeleteEntry") rowDeleteEntry: TemplateRef<any>;
+  adminFormItem: FormGroup;
+  adminFormBulk: FormGroup;
+  columns = [];
+
   learnsets: ILearnset[];
   pokemonLearnsets: IPokemonLearnset[];
   generations: IGeneration[];
@@ -35,7 +43,8 @@ export class LearnsetsComponent implements OnInit {
     private generationsService: GenerationsService,
     private pokemonService: PokemonService,
     private movesService: MovesService,
-    private gamesService: GamesService) {
+    private gamesService: GamesService,
+    private formBuilder: FormBuilder) {
   }
 
   ngOnInit() {
@@ -45,6 +54,8 @@ export class LearnsetsComponent implements OnInit {
     this.getPokemon();
     this.getMoves();
     this.getGames();
+    this.buildForm();
+    this.tableColumnSetup();
   }
 
   getLearnsets() {
@@ -54,6 +65,7 @@ export class LearnsetsComponent implements OnInit {
       }
     );
   }
+
   getPokemonLearnsets() {
     this.pokemonLearnsetsService.get().subscribe((data: any) => {
         this.pokemonLearnsets = data;
@@ -61,6 +73,7 @@ export class LearnsetsComponent implements OnInit {
       }
     );
   }
+
   getGenerations() {
     this.generationsService.get().subscribe((data: any) => {
         this.generations = data;
@@ -68,6 +81,7 @@ export class LearnsetsComponent implements OnInit {
       }
     );
   }
+
   getPokemon() {
     this.pokemonService.get().subscribe((data: any) => {
         this.pokemon = data;
@@ -75,6 +89,7 @@ export class LearnsetsComponent implements OnInit {
       }
     );
   }
+
   getMoves() {
     this.movesService.get().subscribe((data: any) => {
         this.moves = data;
@@ -82,12 +97,36 @@ export class LearnsetsComponent implements OnInit {
       }
     );
   }
+
   getGames() {
     this.gamesService.get().subscribe((data: any) => {
         this.games = data;
         return this.games;
       }
     );
+  }
+
+  buildForm() {
+    this.adminFormItem = this.formBuilder.group({
+      gen: null
+    });
+    this.adminFormBulk = this.formBuilder.group({
+      individualPokemonId: null,
+      individualGameCode: null,
+      individualUrl: null,
+      individualTableXPath: null
+    });
+  }
+
+  tableColumnSetup() {
+    this.columns = [
+      { prop: "pokemonId", name: "Pokémon", flexGrow: 2, cellTemplate: this.rowPokemonName },
+      { prop: "moveId", name: "Move", flexGrow: 2, cellTemplate: this.rowMoveName },
+      { prop: "level", name: "Level", flexGrow: 1 },
+      { prop: "genIntroducedId", name: "Gen Introduced", flexGrow: 1 },
+      { prop: "genCompletedId", name: "Gen Completed", flexGrow: 1 },
+      { flexGrow: 1, width: 50, sortable: false, cellTemplate: this.rowDeleteEntry }
+    ];
   }
 
   runYqlScript() {

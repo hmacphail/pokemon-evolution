@@ -24,7 +24,7 @@ export class ItemsService {
         return this.authHttp.post(this.url, data);
     }
 
-    bulkCreate(data: IItem) {
+    bulkCreate(data: IItem[]) {
         return this.authHttp.post(this.url + "/bulk", data);
     }
 

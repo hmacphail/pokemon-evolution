@@ -24,7 +24,7 @@ export class MovesService {
     	return this.authHttp.post(this.url, data);
     }
 
-    bulkCreate(data: IMove) {
+    bulkCreate(data: IMove[]) {
     	return this.authHttp.post(this.url + "/bulk", data);
     }
 

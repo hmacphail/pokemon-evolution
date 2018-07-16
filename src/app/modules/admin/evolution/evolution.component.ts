@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 
 /* External Libraries */
@@ -16,6 +17,12 @@ import { IEvolution, IPokemon, IItem } from "../../../models";
   styleUrls: ['./evolution.component.scss']
 })
 export class EvolutionComponent implements OnInit {
+  @ViewChild("rowPokemonName") rowPokemonName: TemplateRef<any>;
+  @ViewChild("rowItemName") rowItemName: TemplateRef<any>;
+  @ViewChild("rowDeleteEntry") rowDeleteEntry: TemplateRef<any>;
+  adminForm: FormGroup;
+  columns = [];
+
   evolutions: IEvolution[];
   pokemon: IPokemon[];
   items: IItem[];
@@ -25,13 +32,16 @@ export class EvolutionComponent implements OnInit {
   constructor(
     private evolutionService: EvolutionService,
     private pokemonService: PokemonService,
-    private itemsService: ItemsService) {
+    private itemsService: ItemsService,
+    private formBuilder: FormBuilder) {
   }
 
   ngOnInit() {
     this.getEvolutions();
     this.getPokemon();
     this.getItems();
+    this.buildForm();
+    this.tableColumnSetup();
   }
 
   getEvolutions() {
@@ -41,6 +51,7 @@ export class EvolutionComponent implements OnInit {
       }
     );
   }
+
   getPokemon() {
     this.pokemonService.get().subscribe((data: any) => {
         this.pokemon = data;
@@ -48,6 +59,7 @@ export class EvolutionComponent implements OnInit {
       }
     );
   }
+
   getItems() {
     this.itemsService.get().subscribe((data: any) => {
         this.items = data;
@@ -56,21 +68,38 @@ export class EvolutionComponent implements OnInit {
     );
   }
 
-  createEvolutionsBulk() {
-    // if ($scope.formData.trigger) {
-    //   Evolutions.bulkCreate(parseBulkData($scope.formData))
-    //     .then((res) => {
-    //       if (res.status == 200) {
-    //         $scope.formData = {};
-    //         $scope.dataStore.getEvolutions(Evolutions);
-    //       }
-    //     });
-    // }
+  buildForm() {
+    this.adminForm = this.formBuilder.group({
+      trigger: null,
+      bulk: null
+    });
   }
 
-  deleteEvolution(id) {
+  tableColumnSetup() {
+    this.columns = [
+      { prop: "fromPokemonId", name: "From Pokémon", flexGrow: 3, cellTemplate: this.rowPokemonName },
+      { prop: "toPokemonId", name: "To Pokémon", flexGrow: 3, cellTemplate: this.rowPokemonName },
+      { prop: "trigger", name: "Trigger", flexGrow: 2 },
+      { prop: "condition", name: "Condition", flexGrow: 2 },
+      { prop: "level", name: "Level", flexGrow: 1 },
+      { prop: "itemId", name: "Item", flexGrow: 3, cellTemplate: this.rowItemName },
+      { flexGrow: 1, width: 50, sortable: false, cellTemplate: this.rowDeleteEntry }
+    ];
+  }
+
+  createEvolutionsBulk() {
+    if (this.adminForm.value.trigger) {
+      this.evolutionService.bulkCreate(this.parseBulkData(this.adminForm.value))
+        .subscribe((data) => {
+          this.adminForm.reset();
+          this.getEvolutions();
+        });
+    }
+  }
+
+  deleteEvolution(id: number) {
     this.evolutionService.delete(id)
-      .subscribe((res) => {
+      .subscribe((data) => {
         this.getEvolutions();
       });
   }
@@ -84,7 +113,7 @@ export class EvolutionComponent implements OnInit {
   }
 
   //======= main parser functions ========
-  parseBulkData(inputData) {
+  parseBulkData(inputData: any): IEvolution[] {
     // parse pasted data from evolutions tables
     // https://pokemondb.net/evolution/level
     let evolutions = [];
@@ -195,7 +224,7 @@ export class EvolutionComponent implements OnInit {
         evs.push({
           "fromPokemonId" : from.id,
           "toPokemonId" : to.id,
-          // "trigger" : $scope.formData.trigger,
+          "trigger" : this.adminForm.value.trigger,
           "condition" : condition ? condition : null,
           "atLevel" : level,
           "itemId" : item

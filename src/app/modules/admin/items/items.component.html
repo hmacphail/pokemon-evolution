@@ -6,45 +6,44 @@
     </div>
 
     <div class="col-sm-9">
-      <form class="row">
+      <form [formGroup]="adminFormItem" (ngSubmit)="createItem()" autocomplete="off" novalidate>
         <div class="form-group col-sm-3">
-          <!-- <input type="text" class="form-control" ng-model="formData.name"> -->
+          <input type="text" class="form-control" [formControl]="adminFormItem.controls.name">
         </div>
         <div class="form-group col-sm-7">
-          <!-- <input type="text" class="form-control" ng-model="formData.description"> -->
+          <input type="text" class="form-control" [formControl]="adminFormItem.controls.description">
         </div>
         <div class="col-sm-2">
-          <button type="submit" class="btn btn-primary pull-right" (click)="createItem()">Add One</button>
+          <button type="submit" class="btn btn-primary pull-right">Add One</button>
         </div>
       </form>
 
       <hr />
 
-      <form>
-        <div class="form-group">
-          <!-- <textarea class="form-control" rows="5" ng-model="formData.bulk"></textarea> -->
+      <form [formGroup]="adminFormBulk" (ngSubmit)="createItemsBulk()" autocomplete="off" novalidate>
+        <div class="form-group col-sm-12">
+          <textarea class="form-control" rows="5" [formControl]="adminFormBulk.controls.bulk"></textarea>
         </div>
-        <button type="submit" class="btn btn-primary" (click)="createItemsBulk()">Add Multiple</button>
+        <div class="col-sm-12">
+          <button type="submit" class="btn btn-primary">Add Multiple</button>
+        </div>
       </form>
-
-      <hr />
-
-      <table class="table table-condensed">
-        <tr>
-          <th>Name</th>
-          <th>Description</th>
-          <th></th>
-        </tr>
-        <tr *ngFor="let item of items">
-          <td> {{ item.name }}</td>
-          <td> {{ item.description }} </td>
-          <td>
-            <a href="#" class="lnk-danger pull-right" (click)="deleteItem(item.id)">
-              <svg class="pxsmall px-cross"><use xlink:href="/static/symbol-defs.svg#px-cross"></use></svg>
-            </a>
-          </td>
-        </tr>
-      </table>
+      <br />
+      <ngx-datatable
+        [columns]="columns"
+        [columnMode]="'flex'"
+        [headerHeight]="50"
+        [footerHeight]="60"
+        [rowHeight]="'auto'"
+        [limit]="20"
+        [reorderable]="false"
+        [rows]="items">
+      </ngx-datatable>
+      <ng-template #rowDeleteEntry let-row="row">
+        <a href="#" class="lnk-danger float-right" (click)="deleteItem(row.id)">
+          <i class="fa fa-times"></i>
+        </a>
+      </ng-template>
     </div>
 
   </div>

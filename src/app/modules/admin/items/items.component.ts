@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 
 /* External Libraries */
@@ -16,14 +17,22 @@ import { IItem } from "../../../models";
   styleUrls: ['./items.component.scss']
 })
 export class ItemsComponent implements OnInit {
+  @ViewChild("rowDeleteEntry") rowDeleteEntry: TemplateRef<any>;
+  adminFormItem: FormGroup;
+  adminFormBulk: FormGroup;
+  columns = [];
+
   items: IItem[];
 
   constructor(
-    private itemsService: ItemsService) {
+    private itemsService: ItemsService,
+    private formBuilder: FormBuilder) {
   }
 
   ngOnInit() {
     this.getItems();
+    this.buildForm();
+    this.tableColumnSetup();
   }
 
   getItems() {
@@ -34,29 +43,43 @@ export class ItemsComponent implements OnInit {
     );
   }
 
+  buildForm() {
+    this.adminFormItem = this.formBuilder.group({
+      name: null,
+      description: null
+    });
+    this.adminFormBulk = this.formBuilder.group({
+      bulk: null
+    });
+  }
+
+  tableColumnSetup() {
+    this.columns = [
+      { prop: "name", name: "Name", flexGrow: 2 },
+      { prop: "description", name: "Description", flexGrow: 4 },
+      { flexGrow: 1, width: 50, sortable: false, cellTemplate: this.rowDeleteEntry }
+    ];
+  }
+
   createItem() {
-    // Items.create($scope.formData)
-    //   .then((res) => {
-    //     if (res.status == 200) {
-    //       $scope.formData = {};
-    //       $scope.dataStore.getItems(Items);
-    //     }
-    //   });
+    this.itemsService.create(this.adminFormItem.value)
+      .subscribe((data) => {
+          this.adminFormItem.reset();
+          this.getItems();
+      });
   }
 
   createItemsBulk() {
-    // Items.bulkCreate(parseBulkData($scope.formData))
-    //   .then((res) => {
-    //     if (res.status == 200) {
-    //       $scope.formData = {};
-    //       $scope.dataStore.getItems(Items);
-    //     }
-    //   });
+    this.itemsService.bulkCreate(this.parseBulkData(this.adminFormBulk.value))
+      .subscribe((data) => {
+          this.adminFormBulk.reset();
+          this.getItems();
+      });
   }
 
-  deleteItem(id) {
+  deleteItem(id: number) {
     this.itemsService.delete(id)
-      .subscribe((res) => {
+      .subscribe((data) => {
         this.getItems();
       });
   }

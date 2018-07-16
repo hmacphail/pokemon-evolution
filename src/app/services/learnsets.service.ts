@@ -24,7 +24,7 @@ export class LearnsetsService {
     	return this.authHttp.post(this.url, data);
     }
 
-    bulkCreate(data: ILearnset) {
+    bulkCreate(data: ILearnset[]) {
     	return this.authHttp.post(this.url + "/bulk", data);
     }
 

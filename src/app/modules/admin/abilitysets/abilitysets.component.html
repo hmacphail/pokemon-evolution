@@ -6,38 +6,37 @@
     </div>
 
     <div class="col-sm-9">
-      <form>
+      <form [formGroup]="adminForm" (ngSubmit)="createAbilitysetsBulk()" autocomplete="off" novalidate>
         <div class="form-group">
-          <!-- <input type="checkbox" ng-model="formData.includeStarred"> Include starred abilitysets -->
+          <input type="checkbox" [formControl]="adminForm.controls.includeStarred"> Include starred abilitysets
         </div>
         <div class="form-group">
-          <!-- <textarea class="form-control" rows="5" ng-model="formData.bulk"></textarea> -->
+          <textarea class="form-control" rows="5" [formControl]="adminForm.controls.bulk"></textarea>
         </div>
-        <button type="submit" class="btn btn-primary" (click)="createAbilitysetsBulk()">Add</button>
+        <button type="submit" class="btn btn-primary">Add</button>
       </form>
       <br />
-      <table class="table table-condensed">
-        <tr>
-          <th>Pokémon</th>
-          <th>Ability</th>
-          <th>Trait</th>
-          <th>Gen Introduced</th>
-          <th>Gen Completed</th>
-          <th></th>
-        </tr>
-        <tr *ngFor="let as of abilitysets">
-<!--           <td> {{ pokemonName(as.pokemonId) }} </td>
-          <td> {{ abilityName(as.abilityId) }} </td> -->
-          <!-- <td> {{ as.trait }} </td> -->
-          <!-- <td> {{ as.genIntroducedId }} </td> -->
-          <!-- <td> {{ as.genCompletedId }} </td> -->
-          <td>
-            <!-- <a href="#" class="lnk-danger pull-right" (click)="deleteAbilityset(as.id)"> -->
-              <svg class="pxsmall px-cross"><use xlink:href="/static/symbol-defs.svg#px-cross"></use></svg>
-            <!-- </a> -->
-          </td>
-        </tr>
-      </table>
+      <ngx-datatable
+        [columns]="columns"
+        [columnMode]="'flex'"
+        [headerHeight]="50"
+        [footerHeight]="60"
+        [rowHeight]="'auto'"
+        [limit]="20"
+        [reorderable]="false"
+        [rows]="abilitysets">
+      </ngx-datatable>
+      <ng-template #rowPokemonName let-row="row">
+        {{ pokemonName(row.pokemonId) }}
+      </ng-template>
+      <ng-template #rowAbilityName let-row="row">
+        {{ abilityName(row.abilityId) }}
+      </ng-template>
+      <ng-template #rowDeleteEntry let-row="row">
+        <a href="#" class="lnk-danger float-right" (click)="deleteAbilityset(row.id)">
+          <i class="fa fa-times"></i>
+        </a>
+      </ng-template>
     </div>
 
   </div>

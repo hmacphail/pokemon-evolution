@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 
 /* External Libraries */
@@ -16,14 +17,21 @@ import { IType } from "../../../models";
   styleUrls: ['./types.component.scss']
 })
 export class TypesComponent implements OnInit {
+  @ViewChild("rowDeleteEntry") rowDeleteEntry: TemplateRef<any>;
+  adminForm: FormGroup;
+  columns = [];
+
   types: IType[];
 
   constructor(
-    private typesService: TypesService) {
+    private typesService: TypesService,
+    private formBuilder: FormBuilder) {
   }
 
   ngOnInit() {
     this.getTypes();
+    this.buildForm();
+    this.tableColumnSetup();
   }
 
   getTypes() {
@@ -34,19 +42,30 @@ export class TypesComponent implements OnInit {
     );
   }
 
-  createType() {
-    // Types.create($scope.formData)
-    //   .then((res) => {
-    //     if (res.status == 200) {
-    //       $scope.formData = {};
-    //       $scope.dataStore.getTypes(Types);
-    //     }
-    //   });
+  buildForm() {
+    this.adminForm = this.formBuilder.group({
+      name: null
+    });
   }
 
-  deleteType(id) {
+  tableColumnSetup() {
+    this.columns = [
+      { prop: "name", name: "Name", flexGrow: 4 },
+      { flexGrow: 1, width: 50, sortable: false, cellTemplate: this.rowDeleteEntry }
+    ];
+  }
+
+  createType() {
+    this.typesService.create(this.adminForm.value)
+      .subscribe((data) => {
+          this.adminForm.reset();
+          this.getTypes();
+      });
+  }
+
+  deleteType(id: number) {
     this.typesService.delete(id)
-      .subscribe((res) => {
+      .subscribe((data) => {
         this.getTypes();
       });
   }

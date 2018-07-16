@@ -6,28 +6,29 @@
     </div>
 
     <div class="col-sm-4">
-      <form class="form-inline pull-right">
+      <form [formGroup]="adminForm" (ngSubmit)="createType()" autocomplete="off" novalidate>
         <div class="form-group">
-          <!-- <input type="text" class="form-control" ng-model="formData.name"> -->
+          <input type="text" class="form-control" [formControl]="adminForm.controls.name">
         </div>
-        <button type="submit" class="btn btn-primary" (click)="createType()">Add</button>
+        <button type="submit" class="btn btn-primary">Add</button>
       </form>
       <br />
       <br />
-      <table class="table table-condensed">
-        <tr>
-          <th>Name</th>
-          <th></th>
-        </tr>
-        <tr *ngFor="let type of types">
-          <td> {{ type.name }}</td>
-          <td>
-            <a href="#" class="lnk-danger pull-right" (click)="deleteType(type.id)">
-              <svg class="pxsmall px-cross"><use xlink:href="/static/symbol-defs.svg#px-cross"></use></svg>
-            </a>
-          </td>
-        </tr>
-      </table>
+      <ngx-datatable
+        [columns]="columns"
+        [columnMode]="'flex'"
+        [headerHeight]="50"
+        [footerHeight]="60"
+        [rowHeight]="'auto'"
+        [limit]="20"
+        [reorderable]="false"
+        [rows]="types">
+      </ngx-datatable>
+      <ng-template #rowDeleteEntry let-row="row">
+        <a href="#" class="lnk-danger float-right" (click)="deleteGen(row.id)">
+          <i class="fa fa-times"></i>
+        </a>
+      </ng-template>
     </div>
 
   </div>

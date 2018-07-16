@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 
 /* External Libraries */
@@ -16,6 +17,10 @@ import { IGeneration, IPokemon, IType } from "../../../models";
   styleUrls: ['./pokemon.component.scss']
 })
 export class PokemonComponent implements OnInit {
+  @ViewChild("rowDeleteEntry") rowDeleteEntry: TemplateRef<any>;
+  adminForm: FormGroup;
+  columns = [];
+
   pokemon: IPokemon[];
   generations: IGeneration[];
   types: IType[];
@@ -23,13 +28,16 @@ export class PokemonComponent implements OnInit {
   constructor(
     private pokemonService: PokemonService,
     private generationsService: GenerationsService,
-    private typesService: TypesService) {
+    private typesService: TypesService,
+    private formBuilder: FormBuilder) {
   }
 
   ngOnInit() {
     this.getPokemon();
     this.getGenerations();
     this.getTypes();
+    this.buildForm();
+    this.tableColumnSetup();
   }
 
   getPokemon() {
@@ -39,6 +47,7 @@ export class PokemonComponent implements OnInit {
       }
     );
   }
+
   getGenerations() {
     this.generationsService.get().subscribe((data: any) => {
         this.generations = data;
@@ -46,6 +55,7 @@ export class PokemonComponent implements OnInit {
       }
     );
   }
+
   getTypes() {
     this.typesService.get().subscribe((data: any) => {
         this.types = data;
@@ -54,27 +64,36 @@ export class PokemonComponent implements OnInit {
     );
   }
 
-
-  // $scope.formData = {};
-  // $scope.dataStore = new DataStore();
-
-  // $scope.dataStore.getPokemon(Pokemon);
-  // $scope.dataStore.getGenerations(Generations);
-  // $scope.dataStore.getTypes(Types);
-
-  createPokemonBulk() {
-    // this.pokemonService.bulkCreate(parseBulkData($scope.formData))
-    //   .then((res) => {
-    //     if (res.status == 200) {
-    //       $scope.formData = {};
-    //       $scope.dataStore.getPokemon(Pokemon);
-    //     }
-    //   });
+  buildForm() {
+    this.adminForm = this.formBuilder.group({
+      gen: null,
+      bulk: null
+    });
   }
 
-  deletePokemon(id) {
+  tableColumnSetup() {
+    this.columns = [
+      { prop: "pokedexId", name: "Pokédex ID", flexGrow: 1 },
+      { prop: "name", name: "Name", flexGrow: 2 },
+      { prop: "genIntroducedId", name: "Generation", flexGrow: 1 },
+      { prop: "primaryTypeId", name: "Primary Type", flexGrow: 2 },
+      { prop: "secondaryTypeId", name: "Secondary Type", flexGrow: 2 },
+      { prop: "form", name: "Form", flexGrow: 2 },
+      { flexGrow: 1, width: 50, sortable: false, cellTemplate: this.rowDeleteEntry }
+    ];
+  }
+
+  createPokemonBulk() {
+    this.pokemonService.bulkCreate(this.parseBulkData(this.adminForm.value))
+      .subscribe((data) => {
+          this.adminForm.reset();
+          this.getGenerations();
+      });
+  }
+
+  deletePokemon(id: number) {
     this.pokemonService.delete(id)
-      .subscribe((res) => {
+      .subscribe((data) => {
         this.getPokemon();
       });
   }

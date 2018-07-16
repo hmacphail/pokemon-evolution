@@ -24,7 +24,7 @@ export class PokemonService {
     	return this.authHttp.get(this.url + "/" + id)
     }
 
-    bulkCreate(data: IPokemon) {
+    bulkCreate(data: IPokemon[]) {
     	return this.authHttp.post(this.url + "/bulk", data);
     }
 

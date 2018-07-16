@@ -24,7 +24,7 @@ export class PokemonLearnsetsService {
     	return this.authHttp.post(this.url, data);
     }
 
-    bulkCreate(data: IPokemonLearnset) {
+    bulkCreate(data: IPokemonLearnset[]) {
     	return this.authHttp.post(this.url + "/bulk", data);
     }
 

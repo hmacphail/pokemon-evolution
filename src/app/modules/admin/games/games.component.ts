@@ -71,7 +71,7 @@ export class GamesComponent implements OnInit {
 
   createGame() {
     this.gamesService.create(this.createGameObj(this.adminForm.value))
-      .subscribe((res) => {
+      .subscribe((data) => {
         this.adminForm.reset();
         this.getGames();
       });
@@ -79,7 +79,7 @@ export class GamesComponent implements OnInit {
 
   deleteGame(id: number) {
     this.gamesService.delete(id)
-      .subscribe((res) => {
+      .subscribe((data) => {
         this.getGames();
       });
   }

@@ -20,7 +20,7 @@ export class AbilitysetsService {
     	return this.authHttp.get(this.url);
     }
 
-    bulkCreate(data: IAbilityset) {
+    bulkCreate(data: IAbilityset[]) {
     	return this.authHttp.post(this.url + "/bulk", data);
     }
 

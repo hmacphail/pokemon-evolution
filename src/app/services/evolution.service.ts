@@ -20,7 +20,7 @@ export class EvolutionService {
     	return this.authHttp.get(this.url);
     }
 
-    bulkCreate(data: IEvolution) {
+    bulkCreate(data: IEvolution[]) {
     	return this.authHttp.post(this.url + "/bulk", data);
     }
 

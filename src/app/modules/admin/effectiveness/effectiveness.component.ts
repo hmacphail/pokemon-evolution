@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 
 /* External Libraries */
@@ -16,6 +17,10 @@ import { IEffectiveness, IGeneration, IType } from "../../../models";
   styleUrls: ['./effectiveness.component.scss']
 })
 export class EffectivenessComponent implements OnInit {
+  @ViewChild("rowDeleteEntry") rowDeleteEntry: TemplateRef<any>;
+  adminForm: FormGroup;
+  columns = [];
+
   effectiveness: IEffectiveness[];
   generations: IGeneration[];
   types: IType[];
@@ -23,13 +28,16 @@ export class EffectivenessComponent implements OnInit {
   constructor(
     private effectivenessService: EffectivenessService,
     private generationsService: GenerationsService,
-    private typesService: TypesService) {
+    private typesService: TypesService,
+    private formBuilder: FormBuilder) {
   }
 
   ngOnInit() {
     this.getEffectiveness();
     this.getGenerations();
     this.getTypes();
+    this.buildForm();
+    this.tableColumnSetup();
   }
 
   getEffectiveness() {
@@ -39,6 +47,7 @@ export class EffectivenessComponent implements OnInit {
       }
     );
   }
+
   getGenerations() {
     this.generationsService.get().subscribe((data: any) => {
         this.generations = data;
@@ -46,6 +55,7 @@ export class EffectivenessComponent implements OnInit {
       }
     );
   }
+
   getTypes() {
     this.typesService.get().subscribe((data: any) => {
         this.types = data;
@@ -53,27 +63,39 @@ export class EffectivenessComponent implements OnInit {
       }
     );
   }
-  //   $scope.formData = {};
-  // $scope.dataStore = new DataStore();
 
-  // $scope.dataStore.getEffectiveness(Effectiveness);
-  // $scope.dataStore.getGenerations(Generations);
-  // $scope.dataStore.getTypes(Types);
+  buildForm() {
+    this.adminForm = this.formBuilder.group({
+      fromGen: null,
+      toGen: null,
+      bulk: null
+    });
+  }
+
+  tableColumnSetup() {
+    this.columns = [
+      { prop: "attackingTypeId", name: "Attacking", flexGrow: 2 },
+      { prop: "defendingTypeId", name: "Defending", flexGrow: 2 },
+      { prop: "comparison", name: "Comparison", flexGrow: 2 },
+      { prop: "genIntroducedId", name: "Gen Introduced", flexGrow: 1 },
+      { prop: "genCompletedId", name: "Gen Completed", flexGrow: 1 },
+      { flexGrow: 1, width: 50, sortable: false, cellTemplate: this.rowDeleteEntry }
+    ];
+  }
 
   createEffectivenessBulk() {
     // prep data to send
-    // Effectiveness.bulkCreate(checkBulkForDuplicates(parseBulkData($scope.formData)))
-    //   .then((res) => {
-    //     if (res.status == 200) {
-    //       $scope.formData = {};
-    //       $scope.dataStore.getEffectiveness(Effectiveness);
-    //     }
-    //   });
+    this.effectivenessService.bulkCreate(this.checkBulkForDuplicates(
+      this.parseBulkData(this.adminForm.value)))
+      .subscribe((data) => {
+          this.adminForm.reset();
+          this.getEffectiveness();
+      });
   }
 
   deleteEffectiveness(id: number) {
     this.effectivenessService.delete(id)
-      .subscribe((res: any) => {
+      .subscribe((data: any) => {
         this.getEffectiveness();
       });
   }
