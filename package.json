@@ -4,9 +4,6 @@
   "description": "Pokemon Evolution",
   "main": "index.js",
   "author": "Heather MacPhail",
-  "engines": {
-    "node": "8.11.4"
-  },
   "scripts": {
     "start": "node app.js",
     "migrations": "sequelize db:migrate --migrations-path=server/migrations",
