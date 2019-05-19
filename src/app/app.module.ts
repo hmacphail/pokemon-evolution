@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
@@ -37,7 +37,7 @@ import { clientUrl, serverUrl } from "../../config/server_config";
         CoreModule,
         FormsModule,
         HttpClientModule,
-        HttpModule,
+        HttpClientModule,
         MovesModule,
         NgbModule.forRoot(),
         NgxDatatableModule,
